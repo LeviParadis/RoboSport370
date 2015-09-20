@@ -1,0 +1,15 @@
+2015_09_18 Meeting Minutes
+
+Members present:
+Corey (notetaker)
+Dan
+Landon
+Levi
+Matt
+
+Tasks completed:
+Decided to have everyone connect to our git accounts
+Created file directories and attempted some pushes/pulls
+Decided to begin documenting meeting minutes
+Exchanged phone numbers and contact info
+Discussed skills and experience
