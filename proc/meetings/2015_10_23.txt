@@ -1,0 +1,18 @@
+2015_10_23 Meeting Minutes
+
+Spinks 342
+
+Members present:
+Corey
+Daniel
+Levi
+Matt
+
+Tasks completed:
+Decided on MVC, interpreter
+Created individual goals:
+	Corey - decision matrix/diagrams
+	Daniel - classes/diagrams
+	Levi - decision matrix/diagrams
+	Matt - architecture details
+	Landon - Setting up report structure
