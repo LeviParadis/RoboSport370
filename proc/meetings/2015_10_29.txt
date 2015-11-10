@@ -1,0 +1,16 @@
+2015_10_29 Meeting Minutes
+
+Spinks 371
+
+Members present:
+Corey
+Daniel
+Landon
+Levi
+Matt
+
+Tasks completed:
+Began group work for sequence diagrams
+Reviewed classes and design doc progress
+Edited portions of the document
+Made final preparations to finish the document

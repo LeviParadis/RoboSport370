@@ -1,0 +1,20 @@
+2015_10_16 Meeting Minutes
+
+Spinks 342
+
+Members present:
+Corey
+Dan
+Landon
+Levi
+Matt
+
+Tasks completed:
+Considered requirements alterations, architecture, and detailed design
+Merged our previous branch and created a new design branch
+Discussed architecture:
+	interpreters
+	MVC
+	repositories
+	layered
+Began identifying classes
