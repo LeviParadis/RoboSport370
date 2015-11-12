@@ -4,6 +4,8 @@ import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import Models.Robot;
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -13,15 +15,19 @@ public class JsonInterpreter {
    JSONParser parser=new JSONParser(); 
    try {
        JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
-       Object robot = robotFromJSON(json);
+       Robot newRobot = robotFromJSON(json);
    } catch (IOException | ParseException e1) {
        e1.printStackTrace();
    }
 	}
 
 
-static public Object robotFromJSON(JSONObject json){
+static public Robot robotFromJSON(JSONObject json){
+    Robot newRobot = new Robot();
+    
+    
     JSONObject root = (JSONObject) json.get("script");
+    
     long wins = (long) root.get("wins");
     long kills = (long) root.get("kills");
     
@@ -48,8 +54,8 @@ static public Object robotFromJSON(JSONObject json){
     }
     
  
-    System.out.println(wordList);
-    return null;
+    System.out.println(root);
+    return newRobot;
 }
 
 }
