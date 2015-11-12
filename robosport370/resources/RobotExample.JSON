@@ -17,19 +17,22 @@
         "kills" : 12,
         "movement" : 1,
         "distance" : 0,
-        "code" : {  "variable" : "maxRange",
-                    "word" :    {   "name" : "init",
-                                    "comment" : "( -- )",
-                                    "body" : "3 maxRange !"
-                                },
-                    "word" :    {   "name" : "hexesPerRange",
-                                    "comment" : "( -- i)",
-                                    "body" : "6"
-                                },
-                    "word" :    {  "name" : "turn",
-                                    "comment" : "( -- )",
-                                    "body" : "maxRange ? 1 - random 1 + dup hexesPerRange * 1 - random swap shoot!"
-                                }
-        }
+        "code" : [  {"variable" : "maxRange"},
+                    {"word" :      {   "name" : "init",
+                                        "comment" : "( -- )",
+                                        "body" : "3 maxRange !"
+                                    }
+                    },
+                    {"word" :       {   "name" : "hexesPerRange",
+                                        "comment" : "( -- i)",
+                                        "body" : "6"
+                                    }
+                    },
+                    {"word" :       {   "name" : "turn",
+                                        "comment" : "( -- )",
+                                        "body" : "maxRange ? 1 - random 1 + dup hexesPerRange * 1 - random swap shoot!"
+                                    }
+                    }
+                ]
     }
 }
