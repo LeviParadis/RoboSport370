@@ -1,6 +1,7 @@
 package Models;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Stack;
 
 
@@ -129,7 +130,7 @@ public class Robot {
 	    /**
 	     * @return the number of moves the robot can do each turn
 	     */
-    long getMovesPerTurn(){
+    public long getMovesPerTurn(){
         return movesPerTurn;
     }
 
@@ -176,6 +177,13 @@ public class Robot {
         return this.forthVariables.get(variableName);
     }
     
+    /**
+     * @return the names of all forth variables the robot is saving
+     */
+    public Set<String> getAllForthVariables(){
+        return this.forthVariables.keySet();
+    }
+    
    /**
     * Sets a new value to the saved variable passed in
     * @param variableName the name of the variable to set
@@ -192,6 +200,13 @@ public class Robot {
      */
     public String getForthWord(String wordName){
         return this.forthWords.get(wordName);
+    }
+    
+    /**
+     * @return the names of all forth words the robot has
+     */
+    public Set<String> getAllForthWords(){
+        return this.forthWords.keySet();
     }
     
   
