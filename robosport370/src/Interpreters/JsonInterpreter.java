@@ -11,25 +11,41 @@ import java.util.HashMap;
 
 public class JsonInterpreter {
 
+    //test method
 	public static void main(String[] args) {
    JSONParser parser=new JSONParser(); 
    try {
        JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
        Robot newRobot = robotFromJSON(json);
+       System.out.println(newRobot);
    } catch (IOException | ParseException e1) {
        e1.printStackTrace();
    }
 	}
 
-
+/**
+ * Creates a robot object from a standard robot JSON file
+ * @param json a JSONObject representing the robot
+ * @return a robot object with the information saved in the JSON file
+ */
 static public Robot robotFromJSON(JSONObject json){
-    Robot newRobot = new Robot();
-    
-    
+      
     JSONObject root = (JSONObject) json.get("script");
     
+    //get the identification information
+    String name = (String) root.get("name");
+    String team = (String) root.get("team");
+    long serial = (long) root.get("serial");
+    
+    //get the robot's attributes
+    long health = (long) root.get("health");
+    long strength = (long) root.get("firepower");
+    long moves = (long) root.get("movement");
+    
+    //get the robot's win record
     long wins = (long) root.get("wins");
-    long kills = (long) root.get("kills");
+    long losses = (long) root.get("losses");
+    long matches = (long) root.get("matches");
     
     //find the forth code from the json
     JSONArray forth = (JSONArray) root.get("code");
@@ -53,8 +69,11 @@ static public Robot robotFromJSON(JSONObject json){
         }
     }
     
+    //create a robot from the information in the json
+    Robot newRobot = new Robot( name, team, serial, health, strength, moves, 
+                                variableList, wordList, 
+                                wins, losses, matches);
  
-    System.out.println(root);
     return newRobot;
 }
 
