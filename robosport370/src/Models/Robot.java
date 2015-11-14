@@ -8,6 +8,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
+import Exceptions.ForthRunTimeException;
+
 
 /**
  * 
@@ -312,7 +314,7 @@ public class Robot {
 	     * Pops a value off the robot's mailbox 
 	     * @returns the top value stored in the mailbox stack
 	     */
-	    public String popMessageFromMember(int sender){
+	    public String popMessageFromMember(int sender) throws ForthRunTimeException{
 	        
 	        Integer member = new Integer(sender);
         Queue<String> memberMessages = this.mailBox.get(new Integer(member));
@@ -322,8 +324,10 @@ public class Robot {
             this.mailBox.put(member, memberMessages);
             return message;
         } else {
-          //TODO: throw an exception if there is no mail from the sender  
-            return "";
+            String errorMessage = "robot " + this.simMemberNumber + 
+                                  " attempted to recieve mail from teammate " + sender 
+                                  + ", but there were no messages in the mailbox";
+          throw new ForthRunTimeException(errorMessage);
         }
 	    }
 	    
