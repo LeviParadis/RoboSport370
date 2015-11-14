@@ -2,6 +2,7 @@ package Interpreters;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -13,6 +14,7 @@ import org.json.simple.parser.ParseException;
 
 import Controllers.GameController;
 import Enums.SystemCommandType;
+import Exceptions.ForthRunTimeException;
 import Models.ForthCustomWord;
 import Models.ForthBoolLiteral;
 import Models.ForthIntegerLiteral;
@@ -38,7 +40,7 @@ public class ForthInterpreter {
             max = newRobot.getForthVariable("maxRange");
             System.out.println(max);
             
-        } catch (IOException | ParseException e1) {
+        } catch (IOException | ParseException | ForthRunTimeException e1) {
             e1.printStackTrace();
         }
         
@@ -49,7 +51,7 @@ public class ForthInterpreter {
      * @param robot             the robot we are setting up
      * @param GameController    the controller that controls the game
      */
-    public static void initRobot(Robot robot, GameController controller){
+    public static void initRobot(Robot robot, GameController controller) throws ForthRunTimeException{
         shotAvailable = false;
         movesAvailable = 0;
         
@@ -67,7 +69,7 @@ public class ForthInterpreter {
      * @param robot             the robot we are setting up
      * @param GameController    the controller that controls the game
      */
-    public static void executeTurn(Robot robot, GameController controller){
+    public static void executeTurn(Robot robot, GameController controller) throws ForthRunTimeException{
         movesAvailable = robot.getMovesPerTurn();
         shotAvailable = true;
         
@@ -86,7 +88,7 @@ public class ForthInterpreter {
      * @param command      the name of the forth word to execute
      * @param controller   the controller that control's the game 
      */
-    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller){
+    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller) throws ForthRunTimeException{
         while(!commandQueue.isEmpty()){
             //if the robot fired at it's own space and killed itself this turn, don't execute any more commands
             if(!robot.isAlive()){
@@ -106,7 +108,9 @@ public class ForthInterpreter {
         }
     }
     
-    private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot, GameController controller){
+    private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot, GameController controller) throws ForthRunTimeException{
+      try{
+            
         SystemCommandType wordType = word.getType();
         ForthWord first;
         ForthWord second;
@@ -166,7 +170,7 @@ public class ForthInterpreter {
                     ForthIntegerLiteral newWord = new ForthIntegerLiteral(r);
                     forthStack.push(newWord);   
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("random word called without an int on top of the stack");
                 }
                 break;
             case SHOOT:
@@ -227,7 +231,7 @@ public class ForthInterpreter {
                     result = wordFromString(value, robot);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("? word called without a variable pointer on top of the stack");
                 }
                 break;
             case VAR_ASSIGN:
@@ -239,7 +243,7 @@ public class ForthInterpreter {
                 if(first instanceof ForthPointerLiteral){
                     ((ForthPointerLiteral) first).setVariableValue(robot, second);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("! word called without a variable pointer on top of the stack");
                 }
                 break;
             case AND:
@@ -253,7 +257,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(firstBool && secondBool);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("AND word called without two booleans on top of the stack");
                 }
                 break;
             case OR:
@@ -267,7 +271,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(firstBool || secondBool);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("OR word called without two booleans on top of the stack");
                 }
                 break;
             case INVERT:
@@ -279,7 +283,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(!firstBool);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("invert word called without a boolean on top of the stack");
                 }
                 break;
             case LESS:
@@ -293,7 +297,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(secondInt < firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("< word called without two ints on top of the stack");
                 }
                 break;
             case LESS_EQUAL:
@@ -307,7 +311,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(secondInt <= firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("<= word called without two ints on top of the stack");
                 }
                 break;
             case EQUAL:
@@ -321,7 +325,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(secondInt == firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("= word called without two ints on top of the stack");
                 }
                 break;
             case NOT_EQUAL:
@@ -335,7 +339,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(secondInt != firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("<> word called without two ints on top of the stack");
                 }
                 break;
             case GREATER_EQUAL:
@@ -349,7 +353,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(secondInt >= firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException(">= word called without two ints on top of the stack");
                 }
                 break;
             case GREATER:
@@ -363,7 +367,7 @@ public class ForthInterpreter {
                     result = new ForthBoolLiteral(secondInt > firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("> word called without two ints on top of the stack");
                 }
                 break;
             case ADD:
@@ -376,7 +380,7 @@ public class ForthInterpreter {
                     result = new ForthIntegerLiteral(secondInt + firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("+ word called without two ints on top of the stack");
                 }
                 break;
             case SUBTRACT:
@@ -390,7 +394,7 @@ public class ForthInterpreter {
                     result = new ForthIntegerLiteral(secondInt - firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("- word called without two ints on top of the stack");
                 }
                  break;
             case MULTIPLY:
@@ -404,7 +408,7 @@ public class ForthInterpreter {
                     result = new ForthIntegerLiteral(secondInt * firstInt);
                     forthStack.push(result);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("* word called without two ints on top of the stack");
                 }
                 break;
             case DIVIDE:
@@ -420,7 +424,7 @@ public class ForthInterpreter {
                     forthStack.push(ir);
                     forthStack.push(iq);
                 } else {
-                    //TODO: throw exception
+                    throw new ForthRunTimeException("/mod word called without two ints on top of the stack");
                 }
                 break;
             case DROP:
@@ -454,8 +458,13 @@ public class ForthInterpreter {
                 forthStack.push(second);
                 break;      
         }
+        //if the stack ever fails to pop because it's run out of entries, it will throw
+        //an empty stack exception. We can change it into our ForthRunTimeException
+      } catch (EmptyStackException e){
+          throw new ForthRunTimeException("attempted to pop off an empty stack");
+      }
   
-    }
+   }
     
 
     
