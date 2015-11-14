@@ -2,7 +2,7 @@ package Exceptions;
 
 public class ForthRunTimeException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8050699301872910522L;
 
     public ForthRunTimeException() {
         super();

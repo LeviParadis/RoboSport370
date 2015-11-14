@@ -14,6 +14,7 @@ import org.json.simple.parser.ParseException;
 
 import Controllers.GameController;
 import Enums.SystemCommandType;
+import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Models.ForthCustomWord;
 import Models.ForthBoolLiteral;
@@ -40,7 +41,7 @@ public class ForthInterpreter {
             max = newRobot.getForthVariable("maxRange");
             System.out.println(max);
             
-        } catch (IOException | ParseException | ForthRunTimeException e1) {
+        } catch (IOException | ParseException | ForthRunTimeException | ForthParseException e1) {
             e1.printStackTrace();
         }
         
@@ -51,7 +52,7 @@ public class ForthInterpreter {
      * @param robot             the robot we are setting up
      * @param GameController    the controller that controls the game
      */
-    public static void initRobot(Robot robot, GameController controller) throws ForthRunTimeException{
+    public static void initRobot(Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
         shotAvailable = false;
         movesAvailable = 0;
         
@@ -69,7 +70,7 @@ public class ForthInterpreter {
      * @param robot             the robot we are setting up
      * @param GameController    the controller that controls the game
      */
-    public static void executeTurn(Robot robot, GameController controller) throws ForthRunTimeException{
+    public static void executeTurn(Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
         movesAvailable = robot.getMovesPerTurn();
         shotAvailable = true;
         
@@ -88,7 +89,7 @@ public class ForthInterpreter {
      * @param command      the name of the forth word to execute
      * @param controller   the controller that control's the game 
      */
-    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller) throws ForthRunTimeException{
+    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller) throws ForthRunTimeException, ForthParseException{
         while(!commandQueue.isEmpty()){
             //if the robot fired at it's own space and killed itself this turn, don't execute any more commands
             if(!robot.isAlive()){
@@ -108,9 +109,8 @@ public class ForthInterpreter {
         }
     }
     
-    private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot, GameController controller) throws ForthRunTimeException{
-      try{
-            
+    private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
+      try{      
         SystemCommandType wordType = word.getType();
         ForthWord first;
         ForthWord second;
@@ -468,7 +468,7 @@ public class ForthInterpreter {
     
 
     
-    private static Queue<ForthWord> parseForthBodyString(String logicString, Robot robot){
+    private static Queue<ForthWord> parseForthBodyString(String logicString, Robot robot) throws ForthParseException{
         String[] elements = logicString.split(" ");
         Queue<ForthWord> commandQueue = new LinkedList<ForthWord>();
         
@@ -493,7 +493,7 @@ public class ForthInterpreter {
         return commandQueue;
     }
 
-    private static ForthWord wordFromString(String item, Robot robot){
+    private static ForthWord wordFromString(String item, Robot robot) throws ForthParseException{
         ForthWord newWord;
         if(ForthSystemWord.isThisKind(item)){
             newWord = new ForthSystemWord(item);
@@ -508,9 +508,7 @@ public class ForthInterpreter {
         } else if (ForthCustomWord.isThisKind(item, robot)){
             newWord = new ForthCustomWord(item);
         } else {
-            System.out.print("Could not find word: " + item);
-            //TODO: add exception
-            newWord = new ForthStringLiteral(item);
+            throw new ForthParseException("Could not find meaning of forth word " + item);
         }
         return newWord;
     }
