@@ -186,17 +186,14 @@ public class ForthInterpreter {
                 //generates a random integer between 0 and i inclusive
                 //( i -- )
                 first = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral){
+                if(first instanceof ForthIntegerLiteral && ((ForthIntegerLiteral)first).getValue() >= 0){
                     int i = (int)((ForthIntegerLiteral)first).getValue();
-                    if(i<0){
-                        throw new ForthRunTimeException("random word called with a negative int on top of the stack");
-                    }
                     Random rand = new Random();
                     long r = rand.nextInt(i+1);
                     ForthIntegerLiteral newWord = new ForthIntegerLiteral(r);
                     forthStack.push(newWord);   
                 } else {
-                    throw new ForthRunTimeException("random word called without an int on top of the stack");
+                    throw new ForthRunTimeException("random word called without a positive int on top of the stack");
                 }
                 break;
             case SHOOT:
