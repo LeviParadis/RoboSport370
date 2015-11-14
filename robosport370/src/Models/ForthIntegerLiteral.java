@@ -5,8 +5,12 @@ public class ForthIntegerLiteral implements ForthWord {
     private ForthWord nextWord;
     private long value;
     
-    public ForthIntegerLiteral(long value){
-        this.value = value;
+    public ForthIntegerLiteral(String wordString){
+        try{
+            this.value = Integer.parseInt(wordString);
+        } catch (NumberFormatException e){
+            this.value =0;
+        }
     }
 
     public long getValue(){
@@ -28,8 +32,7 @@ public class ForthIntegerLiteral implements ForthWord {
         nextWord = next;
     }
     
-    @Override
-    public boolean isThisKind(String wordString){
+    public static boolean isThisKind(String wordString){
         try{
             Integer.parseInt(wordString);
             return true;
@@ -44,6 +47,6 @@ public class ForthIntegerLiteral implements ForthWord {
     }
 
     public String toString(){
-        return forthStringEncoding();
+        return "int:" + forthStringEncoding();
     }
 }

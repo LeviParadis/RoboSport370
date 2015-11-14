@@ -7,7 +7,7 @@ public class ForthSystemWord implements ForthWord {
     private SystemForthWord kind;
     
     public ForthSystemWord(String wordName) {
-        this.kind = this.wordType(wordName);
+        this.kind = wordType(wordName);
         this.name = wordName;
     }
     
@@ -30,7 +30,7 @@ public class ForthSystemWord implements ForthWord {
         nextWord = next;
     }
     
-    private SystemForthWord wordType(String wordName){
+    private static SystemForthWord wordType(String wordName){
         if(wordName.equals("health")){
             return SystemForthWord.HEALTH;
         } else if(wordName.equals("movesLeft")){
@@ -104,8 +104,7 @@ public class ForthSystemWord implements ForthWord {
         return SystemForthWord.NOT_FORTH_WORD;
     }
     
-    @Override
-    public boolean isThisKind(String wordName) {
+    public static boolean isThisKind(String wordName) {
         SystemForthWord type = wordType(wordName);
         return (type != SystemForthWord.NOT_FORTH_WORD);
     }
@@ -116,7 +115,7 @@ public class ForthSystemWord implements ForthWord {
     }
     
     public String toString(){
-        return forthStringEncoding();
+        return "system:" + forthStringEncoding();
     }
 
 }

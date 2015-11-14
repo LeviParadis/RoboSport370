@@ -33,8 +33,7 @@ public class ForthStringLiteral implements ForthWord {
         nextWord = next;
     }
 
-    @Override
-    public boolean isThisKind(String item){
+    public static boolean isThisKind(String item){
         int length = item.length();
         return  (item.length() > 2 && item.charAt(0) == '.' && item.charAt(1) == '"' && item.charAt(length-1) == '"');
     }
@@ -46,6 +45,6 @@ public class ForthStringLiteral implements ForthWord {
     }
 
     public String toString(){
-        return forthStringEncoding();
+        return "string:" + forthStringEncoding();
     }
 }

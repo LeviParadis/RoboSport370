@@ -12,6 +12,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import Controllers.GameController;
+import Models.CustomForthWord;
+import Models.ForthBoolLiteral;
+import Models.ForthIntegerLiteral;
+import Models.ForthPointerLiteral;
+import Models.ForthStringLiteral;
+import Models.ForthSystemWord;
+import Models.ForthWord;
 import Models.Robot;
 
 public class ForthInterpreter {
@@ -23,7 +30,7 @@ public class ForthInterpreter {
             Robot newRobot = JsonInterpreter.robotFromJSON(json);
             String max = newRobot.getForthVariable("maxRange");
             System.out.println(max);
-            initRobot(newRobot, null);
+            executeTurn(newRobot, null);
             max = newRobot.getForthVariable("maxRange");
             System.out.println(max);
             
@@ -40,8 +47,10 @@ public class ForthInterpreter {
      */
     public static void initRobot(Robot robot, GameController controller){
         String logicString = robot.getForthWord("init");
-        Queue<String> forthBody = parseForthBodyString(logicString);
-        Stack<String> forthStack = new Stack<String>();
+        Queue<ForthWord> forthBody = parseForthBodyString(logicString, robot);
+        Stack<ForthWord> forthStack = new Stack<ForthWord>();
+        
+        System.out.println(forthBody);
         
         executeForthCommand(forthBody, robot, forthStack, controller);
     }
@@ -53,8 +62,10 @@ public class ForthInterpreter {
      */
     public static void executeTurn(Robot robot, GameController controller){
         String logicString = robot.getForthWord("turn");
-        Queue<String> forthBody = parseForthBodyString(logicString);
-        Stack<String> forthStack = new Stack<String>();
+        Queue<ForthWord> forthBody = parseForthBodyString(logicString, robot);
+        Stack<ForthWord> forthStack = new Stack<ForthWord>();
+        
+        System.out.println(forthBody);
         
         executeForthCommand(forthBody, robot, forthStack, controller);
     }
@@ -65,35 +76,14 @@ public class ForthInterpreter {
      * @param command      the name of the forth word to execute
      * @param controller   the controller that control's the game 
      */
-    private static void executeForthCommand(Queue<String> commandQueue, Robot robot, Stack<String> forthStack, GameController controller){
+    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller){
         while(!commandQueue.isEmpty()){
-            String nextItem = commandQueue.poll();
-            //check for forth literals
-            if(isLiteral(nextItem, robot)){
-                forthStack.push(nextItem);
-            } else {
-              //if the command is a system word, execute the word
-                boolean isSystemWord = attemptSystemCommand(nextItem, forthStack, robot, controller);
-                if(!isSystemWord){
-                  //if the command is one of the robot's custom words, execute it
-                    if (robot.getForthWord(nextItem) != null){
-                        String newWord = robot.getForthWord(nextItem);
-                        Queue<String> newWordLogic = parseForthBodyString(newWord);
-                        executeForthCommand(newWordLogic, robot, forthStack, controller);
-                    } else {
-                        //it's not a literal, or a system word, or a custom word
-                        //check if it's a control state
-                        if(nextItem.equals("if")){
-                            
-                        }
-                    }
-                }
-            
-            }
+            ForthWord nextItem = commandQueue.poll();
+           
         }
     }
-    
-    private static boolean attemptSystemCommand(String wordName, Stack<String> forthStack, Robot robot, GameController controller){
+    /*
+    private static boolean executeSystemCommand(String wordName, Stack<ForthWord> forthStack, Robot robot, GameController controller){
         if(wordName.equals("health")){
             //returns the robot’s current health (1–3)
            // ( -- i )
@@ -355,36 +345,17 @@ public class ForthInterpreter {
         //command is not one of the built in commands
         return false;
     }
+    */
+
     
-    private static boolean isLiteral(String command, Robot robot){
-        //check if the command is a string
-        if(command.length() > 1 && command.charAt(0) == '.' && command.charAt(1) == '"'){
-            return true;
-        //check if the command is a boolean
-        } else if (command == "true" || command == "false"){
-            return true;
-        //check of the command is a variable pointer
-        } else if (robot.getForthVariable(command) != null){
-            return true;
-        //check if the command is an integer
-        } else {
-            try{
-                Integer.parseInt(command);
-               return true;
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        }
-    }
-    
-    private static Queue<String> parseForthBodyString(String logicString){
+    private static Queue<ForthWord> parseForthBodyString(String logicString, Robot robot){
         String[] elements = logicString.split(" ");
-        Queue<String> commandQueue = new LinkedList<String>();
+        Queue<ForthWord> commandQueue = new LinkedList<ForthWord>();
         
-        //we need to keep strings of text together. If a section starts with .", keep the next sections together
-        //until it reaches the closing ".
         for(int i=0; i<elements.length; i++){
             String item = elements[i];
+            //we need to keep strings of text together. If a section starts with .", keep the next sections together
+            //until it reaches the closing ".
             if(item.length() > 1 && item.charAt(0) == '.' && item.charAt(1) == '"'){
                 boolean stringEnd = false;
                 while(!stringEnd && i<elements.length){
@@ -394,7 +365,25 @@ public class ForthInterpreter {
                     stringEnd = nextItem.indexOf('"') > -1;
                 }
             }
-            commandQueue.add(item);
+            //we now have a string value that represents a forth class
+            ForthWord newWord;
+            if(ForthSystemWord.isThisKind(item)){
+                newWord = new ForthSystemWord(item);
+            } else if(ForthIntegerLiteral.isThisKind(item)){
+                newWord = new ForthIntegerLiteral(item);
+            } else if(ForthBoolLiteral.isThisKind(item)){
+                newWord = new ForthBoolLiteral(item);
+            } else if(ForthStringLiteral.isThisKind(item)){
+                newWord = new ForthStringLiteral(item);
+            } else if(ForthPointerLiteral.isThisKind(item, robot)){
+                newWord = new ForthPointerLiteral(item);
+            } else if (CustomForthWord.isThisKind(item, robot)){
+                newWord = new CustomForthWord(item);
+            } else {
+                System.out.print("Could not find word: " + item);
+                break;
+            }
+            commandQueue.add(newWord);
         }
         return commandQueue;
     }

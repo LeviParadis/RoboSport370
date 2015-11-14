@@ -5,8 +5,12 @@ public class ForthBoolLiteral implements ForthWord {
     private ForthWord nextWord;
     private boolean value;
     
-    public ForthBoolLiteral(boolean value){
-        this.value = value;
+    public ForthBoolLiteral(String wordString){
+        if(wordString.equals("true")){
+            this.value = true;
+        } else {
+            this.value = false;
+        }
     }
 
     public boolean getValue(){
@@ -28,8 +32,7 @@ public class ForthBoolLiteral implements ForthWord {
         nextWord = next;
     }
 
-    @Override
-    public boolean isThisKind(String wordString){
+    public static boolean isThisKind(String wordString){
        return (wordString.equals("true") || wordString.equals("false"));
     }
     
@@ -43,7 +46,7 @@ public class ForthBoolLiteral implements ForthWord {
     }
     
     public String toString(){
-        return forthStringEncoding();
+        return "bool:" + forthStringEncoding();
     }
 
 }

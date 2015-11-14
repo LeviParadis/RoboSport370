@@ -28,12 +28,8 @@ public class ForthPointerLiteral implements ForthWord {
         nextWord = next;
     }
 
-    @Override
-    public boolean isThisKind(String wordString){
-        return true;
-    }
-    
-    public boolean isThisKind(String wordString, Robot robot){
+
+    public static boolean isThisKind(String wordString, Robot robot){
         return (robot.getForthVariable(wordString) != null);
     }
     
@@ -43,6 +39,6 @@ public class ForthPointerLiteral implements ForthWord {
     }
     
     public String toString(){
-        return forthStringEncoding();
+        return "var:" + forthStringEncoding();
     }
 }

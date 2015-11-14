@@ -28,13 +28,8 @@ public class CustomForthWord implements ForthWord {
     public void setNextWord(ForthWord next){
         nextWord = next;
     }
-
-    @Override
-    public boolean isThisKind(String wordString){
-        return true;
-    }
     
-    public boolean isThisKind(String wordString, Robot robot){
+    public static boolean isThisKind(String wordString, Robot robot){
         return (robot.getForthWord(wordString) != null);
     }
     
@@ -45,7 +40,7 @@ public class CustomForthWord implements ForthWord {
     }
 
     public String toString(){
-        return forthStringEncoding();
+        return "custom:" + forthStringEncoding();
     }
 
 }
