@@ -17,7 +17,7 @@ public class Robot {
     
     private long serialNumber;
     private String name, teamName;
-    private long baseHealth, currentHealth, strength, movesPerTurn, movesLeft, hexPosition;
+    private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;
     private long wins,losses, matches; 
     private long simTeamNumber, simMemberNumber;
     private Color teamColor;
@@ -51,7 +51,6 @@ public class Robot {
         this.currentHealth = health;
         this.strength = strength;
         this.movesPerTurn = moves;
-        this.movesLeft = moves;
         this.wins = winCount;
         this.losses = lossCount;
         this.matches = matchCount;
@@ -171,20 +170,6 @@ public class Robot {
         return movesPerTurn;
     }
     
-    /**
-     * @return the number of moves the robot has left this turn
-     */
-    public long getRemainingMoves(){
-        return movesLeft;
-    }
-    
-    public void setRemainingMoves(int moves){
-        movesLeft = moves;
-    }
-    
-    public void decrementRemainingMoves(){
-        movesLeft = movesLeft - 1;
-    }
 
     /**
      * @return a number representing the robot's position on the board
@@ -301,6 +286,10 @@ public class Robot {
 	     */
 	    public String popMailbox(){
 	        return this.mailBox.pop();
+	    }
+	    
+	    public boolean HasMailFromSender(int senderNumber){
+	        return (this.mailBox.size() > 0);
 	    }
 	    
 	    /**
