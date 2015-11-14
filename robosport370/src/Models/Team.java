@@ -7,7 +7,8 @@ import java.util.Queue;
 import java.util.Random;
 
 public class Team {
-    
+    //we use this static value to ensure that each team is assigned a unique number
+    private static int uniqueNumber = 0;
     //the name of the team
     private String teamName;
     //the list of robots in the team. It's a queue so we can keep track of turn orders if we choose to
@@ -18,6 +19,27 @@ public class Team {
     private long teamNumber;
     
     
+    public static void main(String[] args) {
+        Team testTeam1 = new Team(new LinkedList<Robot>(), "test1");
+        Team testTeam2 = new Team(new LinkedList<Robot>(), "test1");
+        Team testTeam3 = new Team(new LinkedList<Robot>(), "test1");
+        Team testTeam4 = new Team(new LinkedList<Robot>(), "test1");
+        Team testTeam5 = new Team(new LinkedList<Robot>(), "test1");
+        
+        System.out.println(testTeam1.getTeamNumber());
+        System.out.println(testTeam2.getTeamNumber());
+        System.out.println(testTeam3.getTeamNumber());
+        System.out.println(testTeam4.getTeamNumber());
+        System.out.println(testTeam5.getTeamNumber());
+    }
+    
+    /**
+     * @return the team's unique number
+     */
+    public long getTeamNumber(){
+        return teamNumber;
+    }
+    
     /**
      * Default Constructor
      * @param robots a list of robots to make up the team
@@ -25,12 +47,14 @@ public class Team {
      * @param teamColor the team's color
      * @param uniqueNumber a number assigned to this team by the simulator for id purposes
      */
-    public Team(Queue<Robot> robots, String name, Color teamColor, int uniqueNumber){
+    public Team(Queue<Robot> robots, String name, Color teamColor){ 
+       
         this.robotList = robots;
         this.teamName = name;
         this.teamColor = teamColor;
         this.teamNumber = uniqueNumber;
         
+        //assign each robot it's id information for this game
         Iterator<Robot> robotIterator = robots.iterator();
         int i = 0;
         while(robotIterator.hasNext()){
@@ -38,6 +62,8 @@ public class Team {
             thisRobot.setTeamIDs(uniqueNumber, i, name, teamColor);
             i++;
         }
+        //increment unique number, so the next team will have a different number than this
+        uniqueNumber++;
     }
     
     /**
@@ -46,8 +72,8 @@ public class Team {
      * @param name   the team's name
      * @param uniqueNumber a number assigned to this team by the simulator for id purposes
      */
-    public Team(Queue<Robot> robots, String name, int uniqueNumber){
-        this(robots, name, null, uniqueNumber);
+    public Team(Queue<Robot> robots, String name){
+        this(robots, name, null);
         //create a random color to represent this team
         Random rand = new Random();
         int r = rand.nextInt(255);
