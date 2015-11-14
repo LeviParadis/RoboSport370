@@ -23,6 +23,9 @@ import Models.ForthWord;
 import Models.Robot;
 
 public class ForthInterpreter {
+    
+    private static boolean shotAvailable;
+    private static long movesAvailable;
 
     public static void main(String[] args) {
         JSONParser parser=new JSONParser(); 
@@ -47,6 +50,9 @@ public class ForthInterpreter {
      * @param GameController    the controller that controls the game
      */
     public static void initRobot(Robot robot, GameController controller){
+        shotAvailable = false;
+        movesAvailable = 0;
+        
         String logicString = robot.getForthWord("init");
         Queue<ForthWord> forthBody = parseForthBodyString(logicString, robot);
         Stack<ForthWord> forthStack = new Stack<ForthWord>();
@@ -62,6 +68,9 @@ public class ForthInterpreter {
      * @param GameController    the controller that controls the game
      */
     public static void executeTurn(Robot robot, GameController controller){
+        movesAvailable = robot.getMovesPerTurn();
+        shotAvailable = true;
+        
         String logicString = robot.getForthWord("turn");
         Queue<ForthWord> forthBody = parseForthBodyString(logicString, robot);
         Stack<ForthWord> forthStack = new Stack<ForthWord>();
@@ -79,6 +88,10 @@ public class ForthInterpreter {
      */
     private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller){
         while(!commandQueue.isEmpty()){
+            //if the robot fired at it's own space and killed itself this turn, don't execute any more commands
+            if(!robot.isAlive()){
+                return;
+            }
             ForthWord nextItem = commandQueue.poll();
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
                 forthStack.push(nextItem);
@@ -106,30 +119,34 @@ public class ForthInterpreter {
                 //returns the robot’s current health (1–3)
                 // ( -- i )
                  long health = robot.getHealth();
-                 ForthIntegerLiteral healthWord = new ForthIntegerLiteral(health);
-                 forthStack.push(healthWord);
+                 result = new ForthIntegerLiteral(health);
+                 forthStack.push(result);
                  break;
             case MOVES_LEFT:
               //returns the robot’s range of movement (0–3)
-                //( -- i )
-                //TODO: After game controller is set up
+                result = new ForthIntegerLiteral(movesAvailable);
+                forthStack.push(result);
                 break;
             case FIRE_POWER:
                 //returns the robot’s firepower (1–3)
                 //( -- i )
                 long strength = robot.getStrength();
-                ForthIntegerLiteral wordValue = new ForthIntegerLiteral(strength);
-                forthStack.push(wordValue);
+                result = new ForthIntegerLiteral(strength);
+                forthStack.push(result);
                 break;
             case TEAM:
                 //returns the robot’s team number
                 //member ( -- i )
-              //TODO: After game controller is set up
+                long team = robot.getTeamNumber();
+                result = new ForthIntegerLiteral(team);
+                forthStack.push(result);
                 break;
             case MEMBER:
                 //returns the robot’s member number
                 //member ( -- i )
-              //TODO: After game controller is set up
+                long member = robot.getMemberNumber();
+                result = new ForthIntegerLiteral(member);
+                forthStack.push(result);
                 break;
             case CONSOLE:
                 //prints the current value out, using the same syntax as they would be input with
@@ -155,12 +172,21 @@ public class ForthInterpreter {
             case SHOOT:
                 //fires the robot’s weapon at the space at range ir and direction id;
                 //( id ir -- )
-              //TODO: After game controller is set up
+                if(shotAvailable){
+                    //TODO: After game controller is set up   
+                } else {
+                    System.out.println("attempted shot, but shot was already used");
+                }
                 break;
             case MOVE:
               //moves the robot to the space at range ir direction id, provided they have enough movesLeft;
                 //( id ir -- )
-              //TODO: After game controller is set up
+                if(movesAvailable > 0){
+                    movesAvailable--;
+                  //TODO: After game controller is set up
+                } else {
+                    System.out.println("attempted to move, but already moved " + robot.getMovesPerTurn() + " times");
+                }
                 break;
             case SCAN:
                 //scans for the nearest robots, and reports how many targets visible, up to four.
