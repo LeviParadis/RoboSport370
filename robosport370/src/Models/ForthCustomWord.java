@@ -1,10 +1,10 @@
 package Models;
 
-public class CustomForthWord implements ForthWord {
+public class ForthCustomWord implements ForthWord {
 
     private String value;
     
-    public CustomForthWord(String value){
+    public ForthCustomWord(String value){
         this.value = value;
     }
 

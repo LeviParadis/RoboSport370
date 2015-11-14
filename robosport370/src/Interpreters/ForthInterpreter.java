@@ -13,7 +13,7 @@ import org.json.simple.parser.ParseException;
 
 import Controllers.GameController;
 import Enums.SystemCommandType;
-import Models.CustomForthWord;
+import Models.ForthCustomWord;
 import Models.ForthBoolLiteral;
 import Models.ForthIntegerLiteral;
 import Models.ForthPointerLiteral;
@@ -84,8 +84,8 @@ public class ForthInterpreter {
                 forthStack.push(nextItem);
             } else if (nextItem instanceof ForthSystemWord){
                 executeSystemCommand((ForthSystemWord)nextItem, forthStack, robot, controller);
-            } else if (nextItem instanceof CustomForthWord){
-                String wordString = ((CustomForthWord)nextItem).getWordLogic(robot);
+            } else if (nextItem instanceof ForthCustomWord){
+                String wordString = ((ForthCustomWord)nextItem).getWordLogic(robot);
                 Queue<ForthWord> wordLogic = parseForthBodyString(wordString, robot);
                 executeForthCommand(wordLogic, robot, forthStack, controller);
             }
@@ -470,8 +470,8 @@ public class ForthInterpreter {
             newWord = new ForthStringLiteral(item);
         } else if(ForthPointerLiteral.isThisKind(item, robot)){
             newWord = new ForthPointerLiteral(item);
-        } else if (CustomForthWord.isThisKind(item, robot)){
-            newWord = new CustomForthWord(item);
+        } else if (ForthCustomWord.isThisKind(item, robot)){
+            newWord = new ForthCustomWord(item);
         } else {
             System.out.print("Could not find word: " + item);
             //TODO: add exception
