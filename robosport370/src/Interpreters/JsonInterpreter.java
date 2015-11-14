@@ -82,7 +82,7 @@ public class JsonInterpreter {
 	            if(thisObject.get(FORTH_VAR) != null){
 	                //store the variable with an empty assignment
 	                String varName = (String)thisObject.get(FORTH_VAR);
-	                variableList.put(varName, "");
+	                variableList.put(varName, "0");
             
 	                //otherwise, it should be a word
 	            }else if (thisObject.get(FORTH_WORD) != null){
@@ -94,7 +94,7 @@ public class JsonInterpreter {
 	        }
     
 	        //create a robot from the information in the json
-	        Robot newRobot = new Robot( name, team, serial, health, strength, moves, 
+	        Robot newRobot = new Robot( name, serial, health, strength, moves, 
 	                                    variableList, wordList, 
 	                                    wins, losses, matches);
 	        return newRobot;
