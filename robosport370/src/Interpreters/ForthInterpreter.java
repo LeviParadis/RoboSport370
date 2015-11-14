@@ -80,6 +80,15 @@ public class ForthInterpreter {
     private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller){
         while(!commandQueue.isEmpty()){
             ForthWord nextItem = commandQueue.poll();
+            if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
+                forthStack.push(nextItem);
+            } else if (nextItem instanceof ForthSystemWord){
+                executeSystemCommand((ForthSystemWord)nextItem, forthStack, robot, controller);
+            } else if (nextItem instanceof CustomForthWord){
+                String wordString = ((CustomForthWord)nextItem).getWordLogic(robot);
+                Queue<ForthWord> wordLogic = parseForthBodyString(wordString, robot);
+                executeForthCommand(wordLogic, robot, forthStack, controller);
+            }
            
         }
     }

@@ -32,6 +32,11 @@
                                         "comment" : "( -- )",
                                         "body" : "maxRange ? 1 - random 1 + dup hexesPerRange * 1 - random swap shoot!"
                                     }
+                    },
+                    {"word" :       {   "name" : "test",
+                                        "comment" : "( -- )",
+                                        "body" : "maxRange ? 1 .\"a bunch of text\" dup hexesPerRange"
+                                    }
                     }
                 ]
     }

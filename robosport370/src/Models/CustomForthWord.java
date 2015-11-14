@@ -8,8 +8,12 @@ public class CustomForthWord implements ForthWord {
         this.value = value;
     }
 
-    public String getValue(){
+    public String getName(){
         return value;
+    }
+    
+    public String getWordLogic(Robot r){
+        return r.getForthWord(this.value);
     }
 
     
