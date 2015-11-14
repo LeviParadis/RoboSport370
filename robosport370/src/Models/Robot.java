@@ -27,7 +27,7 @@ public class Robot {
     private long simTeamNumber, simMemberNumber;
     private Color teamColor;
     private HashMap<String,String> forthVariables,forthWords;
-    private HashMap<Integer, Queue<String>> mailBox;
+    private HashMap<Integer, Queue<ForthWord>> mailBox;
     
     /**
     this constructor will be called to create a robot. A robot can only be created if you know all of the information
@@ -59,7 +59,7 @@ public class Robot {
         this.wins = winCount;
         this.losses = lossCount;
         this.matches = matchCount;
-        this.mailBox = new HashMap<Integer, Queue<String>>();
+        this.mailBox = new HashMap<Integer, Queue<ForthWord>>();
     }
     
     /**
@@ -275,15 +275,15 @@ public class Robot {
 	     * @param objectToPush the new value to save to the mailbox
 	     * @return whether the action succeeded or failed
 	     */
-	    public boolean addMailFromMember(int sender, String newMail){
+	    public boolean addMailFromMember(int sender, ForthWord newMail){
 	        //TODO: make the mailbox store forth words instead of strings
 	        int totalMail = this.totalMailAmount();
 	        Integer memberNumber = new Integer(sender);
 	        
 	        if(this.isAlive() && totalMail < 6 ){
-	            Queue<String> memberMessages = this.mailBox.get(memberNumber);
+	            Queue<ForthWord> memberMessages = this.mailBox.get(memberNumber);
 	            if(memberMessages == null){
-	                memberMessages = new LinkedList<String>();
+	                memberMessages = new LinkedList<ForthWord>();
 	            }
 	            memberMessages.add(newMail);
 	            this.mailBox.put(memberNumber, memberMessages);
@@ -304,7 +304,7 @@ public class Robot {
 	        Iterator<Integer> boxIterator = allKeys.iterator();
 	        while(boxIterator.hasNext()){
 	            Integer key = boxIterator.next();
-	            Queue<String> thisBox = this.mailBox.get(key);
+	            Queue<ForthWord> thisBox = this.mailBox.get(key);
 	            count = count + thisBox.size();
 	        }
 	        return count;
@@ -314,13 +314,13 @@ public class Robot {
 	     * Pops a value off the robot's mailbox 
 	     * @returns the top value stored in the mailbox stack
 	     */
-	    public String popMessageFromMember(int sender) throws ForthRunTimeException{
+	    public ForthWord popMailFromMember(int sender) throws ForthRunTimeException{
 	        
 	        Integer member = new Integer(sender);
-        Queue<String> memberMessages = this.mailBox.get(new Integer(member));
+        Queue<ForthWord> memberMessages = this.mailBox.get(new Integer(member));
         
         if(memberMessages != null && !memberMessages.isEmpty()){
-            String message = memberMessages.poll();
+            ForthWord message = memberMessages.poll();
             this.mailBox.put(member, memberMessages);
             return message;
         } else {
@@ -338,7 +338,7 @@ public class Robot {
 	     */
 	    public boolean hasMailFromMember(int sender){
 	        Integer memberNumber = new Integer(sender);
-	        Queue<String> memberMessages = this.mailBox.get(memberNumber);
+	        Queue<ForthWord> memberMessages = this.mailBox.get(memberNumber);
 	        return(memberMessages != null && !memberMessages.isEmpty());
 	    }
 	    

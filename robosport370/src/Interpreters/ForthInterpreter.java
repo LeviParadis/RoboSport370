@@ -155,8 +155,8 @@ public class ForthInterpreter {
             case CONSOLE:
                 //prints the current value out, using the same syntax as they would be input with
                 // ( v -- )
-                ForthWord nextValue = forthStack.pop();
-                String consoleString = nextValue.consoleFormat();
+                first = forthStack.pop();
+                String consoleString = first.consoleFormat();
                 System.out.println(consoleString);
                 break;
             case RANDOM:
@@ -205,17 +205,39 @@ public class ForthInterpreter {
             case MAIL_SEND:
                 //send a value v to team-member i; returns a boolean indicating success or failure
                 // ( i v -- b )
-                //TODO: After game controller is set up
+                first = forthStack.pop();
+                second = forthStack.pop();
+                if((first instanceof ForthIntegerLiteral || first instanceof ForthBoolLiteral || first instanceof ForthStringLiteral) && second instanceof ForthIntegerLiteral){
+                    int memberNumber = (int)((ForthIntegerLiteral)second).getValue();
+                  //TODO: After game controller is set up
+                } else {
+                    throw new ForthRunTimeException("attempting to send mailbox without the proper stack format");
+                }
                 break;
             case MAIL_CHECK:
               //indicates whether the robot has a waiting message from team-member i
                 // ( i -- b )
-                //TODO: After game controller is set up
+                first = forthStack.pop();
+                if(first instanceof ForthIntegerLiteral){
+                    int memberNumber = (int)((ForthIntegerLiteral)first).getValue();
+                    boolean hasMail = robot.hasMailFromMember(memberNumber);
+                    result = new ForthBoolLiteral(hasMail);
+                    forthStack.push(result);
+                } else {
+                    throw new ForthRunTimeException("attempting to check mailbox without an int on top of the stack");
+                }
                 break;
             case MAIL_RECIEVE:
                 //pushes the next message value onto the stack.
                 // ( i -- v )
-                //TODO: After game controller is set up
+                first = forthStack.pop();
+                if(first instanceof ForthIntegerLiteral){
+                    int memberNumber = (int)((ForthIntegerLiteral)first).getValue();
+                    ForthWord mail = robot.popMailFromMember(memberNumber);
+                    forthStack.push(mail);
+                } else {
+                    throw new ForthRunTimeException("attempting to get mail without an int on top of the stack");
+                }
                 break;
             case HEX:
                 //returns the population of the given hex
