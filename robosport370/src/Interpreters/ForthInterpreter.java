@@ -37,6 +37,10 @@ public class ForthInterpreter {
             Robot newRobot = JsonInterpreter.robotFromJSON(json);
             String max = newRobot.getForthVariable("maxRange");
             System.out.println(max);
+            System.out.println("init");
+            initRobot(newRobot, null);
+            System.out.println();
+            System.out.println("turn");
             executeTurn(newRobot, null);
             max = newRobot.getForthVariable("maxRange");
             System.out.println(max);
@@ -51,6 +55,8 @@ public class ForthInterpreter {
      * Run's a robot's forth init logic
      * @param robot             the robot we are setting up
      * @param GameController    the controller that controls the game
+     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
+     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */
     public static void initRobot(Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
         shotAvailable = false;
@@ -60,8 +66,6 @@ public class ForthInterpreter {
         Queue<ForthWord> forthBody = parseForthBodyString(logicString, robot);
         Stack<ForthWord> forthStack = new Stack<ForthWord>();
         
-        System.out.println(forthBody);
-        
         executeForthCommand(forthBody, robot, forthStack, controller);
     }
     
@@ -69,6 +73,8 @@ public class ForthInterpreter {
      * Run's a robot's forth turn logic
      * @param robot             the robot we are setting up
      * @param GameController    the controller that controls the game
+     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
+     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */
     public static void executeTurn(Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
         movesAvailable = robot.getMovesPerTurn();
@@ -88,6 +94,8 @@ public class ForthInterpreter {
      * @param robot        the robot that is calling the command
      * @param command      the name of the forth word to execute
      * @param controller   the controller that control's the game 
+     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
+     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */
     private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller) throws ForthRunTimeException, ForthParseException{
         while(!commandQueue.isEmpty()){
@@ -96,6 +104,12 @@ public class ForthInterpreter {
                 return;
             }
             ForthWord nextItem = commandQueue.poll();
+            
+            System.out.println(forthStack);
+            System.out.println(nextItem);
+            System.out.println();
+            
+            
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
                 forthStack.push(nextItem);
             } else if (nextItem instanceof ForthSystemWord){
@@ -109,6 +123,15 @@ public class ForthInterpreter {
         }
     }
     
+    /**
+     * Will run logic for one of the built in forth command used as part of the standard
+     * @param word         the system word we want to run
+     * @param forthStack  the current stack of forth literals
+     * @param robot      the robot that is executing this code
+     * @param controller  the game controller
+     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
+     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     */
     private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
       try{      
         SystemCommandType wordType = word.getType();
@@ -165,6 +188,9 @@ public class ForthInterpreter {
                 first = forthStack.pop();
                 if(first instanceof ForthIntegerLiteral){
                     int i = (int)((ForthIntegerLiteral)first).getValue();
+                    if(i<0){
+                        throw new ForthRunTimeException("random word called with a negative int on top of the stack");
+                    }
                     Random rand = new Random();
                     long r = rand.nextInt(i+1);
                     ForthIntegerLiteral newWord = new ForthIntegerLiteral(r);
@@ -489,7 +515,13 @@ public class ForthInterpreter {
    }
     
 
-    
+    /**
+     * Parses a stiring into a sequence of understood forth words. Will throw an exception if it encounters a word it can't parse
+     * @param logicString the string we want to convert into forth code
+     * @param robot the robot that is executing the program
+     * @return a queue of forth words that can be executed by the interpreter
+     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     */
     private static Queue<ForthWord> parseForthBodyString(String logicString, Robot robot) throws ForthParseException{
         String[] elements = logicString.split(" ");
         Queue<ForthWord> commandQueue = new LinkedList<ForthWord>();
@@ -515,6 +547,13 @@ public class ForthInterpreter {
         return commandQueue;
     }
 
+    /**
+     * Maps a string into the most likely forth word it represents
+     * @param item  the string we are parsing
+     * @param robot the robot that executed this code
+     * @return a new ForthWord from the string
+     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     */
     private static ForthWord wordFromString(String item, Robot robot) throws ForthParseException{
         ForthWord newWord;
         if(ForthSystemWord.isThisKind(item)){
