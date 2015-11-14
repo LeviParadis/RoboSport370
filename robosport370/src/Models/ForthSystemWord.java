@@ -2,7 +2,6 @@ package Models;
 
 public class ForthSystemWord implements ForthWord {
 
-    private ForthWord nextWord;
     private String name;
     private SystemForthWord kind;
     
@@ -15,20 +14,7 @@ public class ForthSystemWord implements ForthWord {
         return this.kind;
     }
 
-    @Override
-    public boolean hasNext() {
-        return nextWord==null;
-    }
 
-    @Override
-    public ForthWord getNext() {
-        return nextWord;
-    }
-    
-    @Override
-    public void setNextWord(ForthWord next){
-        nextWord = next;
-    }
     
     private static SystemForthWord wordType(String wordName){
         if(wordName.equals("health")){
@@ -116,6 +102,11 @@ public class ForthSystemWord implements ForthWord {
     
     public String toString(){
         return "system:" + forthStringEncoding();
+    }
+
+    @Override
+    public String consoleFormat() {
+        return this.forthStringEncoding();
     }
 
 }

@@ -2,30 +2,27 @@ package Models;
 
 public class ForthPointerLiteral implements ForthWord {
 
-    private ForthWord nextWord;
     private String value;
     
     public ForthPointerLiteral(String pointerName){
         this.value = pointerName;
     }
 
-    public String getValue(){
+    public String getPointer(){
         return value;
     }
-
-    @Override
-    public boolean hasNext() {
-        return nextWord==null;
-    }
-
-    @Override
-    public ForthWord getNext() {
-        return nextWord;
+    
+    public String getVariableValue(Robot r){
+        return r.getForthVariable(this.value);
     }
     
-    @Override
-    public void setNextWord(ForthWord next){
-        nextWord = next;
+    public void setVariableValue(Robot r, String newValue){
+        r.setForthVariable(this.value, newValue);
+    }
+    
+    public void setVariableValue(Robot r, ForthWord newValue){
+        String encoded = newValue.forthStringEncoding();
+        r.setForthVariable(this.value, encoded);
     }
 
 
@@ -36,6 +33,11 @@ public class ForthPointerLiteral implements ForthWord {
     @Override
     public String forthStringEncoding(){
         return this.value;
+    }
+    
+    @Override
+    public String consoleFormat() {
+        return this.forthStringEncoding();
     }
     
     public String toString(){

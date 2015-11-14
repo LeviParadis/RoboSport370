@@ -2,7 +2,6 @@ package Models;
 
 public class ForthStringLiteral implements ForthWord {
     
-    private ForthWord nextWord;
     private String value;
     
     public ForthStringLiteral(String value){
@@ -18,20 +17,6 @@ public class ForthStringLiteral implements ForthWord {
         return value;
     }
 
-    @Override
-    public boolean hasNext() {
-        return nextWord==null;
-    }
-
-    @Override
-    public ForthWord getNext() {
-        return nextWord;
-    }
-    
-    @Override
-    public void setNextWord(ForthWord next){
-        nextWord = next;
-    }
 
     public static boolean isThisKind(String item){
         int length = item.length();
@@ -46,5 +31,10 @@ public class ForthStringLiteral implements ForthWord {
 
     public String toString(){
         return "string:" + forthStringEncoding();
+    }
+    
+    @Override
+    public String consoleFormat() {
+        return this.value;
     }
 }
