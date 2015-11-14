@@ -1,98 +1,100 @@
 package Models;
 
+import Enums.SystemCommandType;
+
 public class ForthSystemWord implements ForthWord {
 
     private String name;
-    private SystemForthWord kind;
+    private SystemCommandType kind;
     
     public ForthSystemWord(String wordName) {
         this.kind = wordType(wordName);
         this.name = wordName;
     }
     
-    public SystemForthWord getType(){
+    public SystemCommandType getType(){
         return this.kind;
     }
 
 
     
-    private static SystemForthWord wordType(String wordName){
+    private static SystemCommandType wordType(String wordName){
         if(wordName.equals("health")){
-            return SystemForthWord.HEALTH;
+            return SystemCommandType.HEALTH;
         } else if(wordName.equals("movesLeft")){
-            return SystemForthWord.MOVES_LEFT;
+            return SystemCommandType.MOVES_LEFT;
         }else if(wordName.equals("firepower")){
-            return SystemForthWord.FIRE_POWER;
+            return SystemCommandType.FIRE_POWER;
         }else if(wordName.equals("team")){
-            return SystemForthWord.TEAM;
+            return SystemCommandType.TEAM;
         }else if(wordName.equals("member")){
-            return SystemForthWord.MEMBER;
+            return SystemCommandType.MEMBER;
         }else if(wordName.equals(".")){
-            return SystemForthWord.CONSOLE;
+            return SystemCommandType.CONSOLE;
         }else if(wordName.equals("random")){
-            return SystemForthWord.RANDOM;
+            return SystemCommandType.RANDOM;
         }else if(wordName.equals("shoot!")){
-            return SystemForthWord.SHOOT;
+            return SystemCommandType.SHOOT;
         }else if(wordName.equals("move!")){
-            return SystemForthWord.MOVE;
+            return SystemCommandType.MOVE;
         } else if(wordName.equals("scan!")){
-            return SystemForthWord.SCAN;
+            return SystemCommandType.SCAN;
         } else if(wordName.equals("identify!")){
-            return SystemForthWord.IDENTIFY;
+            return SystemCommandType.IDENTIFY;
         } else if(wordName.equals("send!")){
-            return SystemForthWord.MAIL_SEND;
+            return SystemCommandType.MAIL_SEND;
         } else if(wordName.equals("mesg?")){
-            return SystemForthWord.MAIL_CHECK;
+            return SystemCommandType.MAIL_CHECK;
         } else if(wordName.equals("recv!")){
-            return SystemForthWord.MAIL_RECIEVE;
+            return SystemCommandType.MAIL_RECIEVE;
         } else if(wordName.equals("hex")){
-            return SystemForthWord.HEX;
+            return SystemCommandType.HEX;
         } else if(wordName.equals("?")){
-            return SystemForthWord.VAR_CHECK;
+            return SystemCommandType.VAR_CHECK;
         } else if(wordName.equals("!")){
-            return SystemForthWord.VAR_ASSIGN;
+            return SystemCommandType.VAR_ASSIGN;
         } else if(wordName.equals("and")){
-            return SystemForthWord.AND;
+            return SystemCommandType.AND;
         } else if(wordName.equals("or")){
-            return SystemForthWord.OR;
+            return SystemCommandType.OR;
         } else if(wordName.equals("invert")){
-            return SystemForthWord.INVERT;
+            return SystemCommandType.INVERT;
         } else if(wordName.equals("<")){
-            return SystemForthWord.LESS;
+            return SystemCommandType.LESS;
         } else if(wordName.equals("<=")){
-            return SystemForthWord.LESS_EQUAL;
+            return SystemCommandType.LESS_EQUAL;
         } else if(wordName.equals("=")){
-            return SystemForthWord.EQUAL;
+            return SystemCommandType.EQUAL;
         } else if(wordName.equals("<>")){
-            return SystemForthWord.NOT_EQUAL;
+            return SystemCommandType.NOT_EQUAL;
         } else if(wordName.equals("=>")){
-            return SystemForthWord.GREATER_EQUAL;
+            return SystemCommandType.GREATER_EQUAL;
         } else if(wordName.equals(">")){
-            return SystemForthWord.GREATER;
+            return SystemCommandType.GREATER;
         } else if(wordName.equals("+")){
-            return SystemForthWord.ADD;
+            return SystemCommandType.ADD;
         } else if(wordName.equals("-")){
-            return SystemForthWord.SUBTRACT;
+            return SystemCommandType.SUBTRACT;
         } else if(wordName.equals("*")){
-            return SystemForthWord.MULTIPLY;
+            return SystemCommandType.MULTIPLY;
         } else if(wordName.equals("/mod")){
-            return SystemForthWord.DIVIDE;
+            return SystemCommandType.DIVIDE;
         } else if(wordName.equals("drop")){
-            return SystemForthWord.DROP;
+            return SystemCommandType.DROP;
         } else if(wordName.equals("dup")){
-            return SystemForthWord.DUPLICATE;
+            return SystemCommandType.DUPLICATE;
         } else if(wordName.equals("swap")){
-            return SystemForthWord.SWAP;
+            return SystemCommandType.SWAP;
         } else if(wordName.equals("rot")){
-           return SystemForthWord.ROTATE;
+           return SystemCommandType.ROTATE;
         }
         //command is not one of the built in commands
-        return SystemForthWord.NOT_FORTH_WORD;
+        return SystemCommandType.NOT_FORTH_WORD;
     }
     
     public static boolean isThisKind(String wordName) {
-        SystemForthWord type = wordType(wordName);
-        return (type != SystemForthWord.NOT_FORTH_WORD);
+        SystemCommandType type = wordType(wordName);
+        return (type != SystemCommandType.NOT_FORTH_WORD);
     }
 
     @Override

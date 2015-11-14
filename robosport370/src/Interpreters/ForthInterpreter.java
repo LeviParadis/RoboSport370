@@ -12,6 +12,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import Controllers.GameController;
+import Enums.SystemCommandType;
 import Models.CustomForthWord;
 import Models.ForthBoolLiteral;
 import Models.ForthIntegerLiteral;
@@ -20,7 +21,6 @@ import Models.ForthStringLiteral;
 import Models.ForthSystemWord;
 import Models.ForthWord;
 import Models.Robot;
-import Models.SystemForthWord;
 
 public class ForthInterpreter {
 
@@ -85,7 +85,7 @@ public class ForthInterpreter {
     }
     
     private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot, GameController controller){
-        SystemForthWord wordType = word.getType();
+        SystemCommandType wordType = word.getType();
         ForthWord first;
         ForthWord second;
         ForthWord third;
