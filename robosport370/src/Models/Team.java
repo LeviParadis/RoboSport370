@@ -18,28 +18,6 @@ public class Team {
     //a number assigned to this team by the simulator for id purposes
     private long teamNumber;
     
-    
-    public static void main(String[] args) {
-        Team testTeam1 = new Team(new LinkedList<Robot>(), "test1");
-        Team testTeam2 = new Team(new LinkedList<Robot>(), "test1");
-        Team testTeam3 = new Team(new LinkedList<Robot>(), "test1");
-        Team testTeam4 = new Team(new LinkedList<Robot>(), "test1");
-        Team testTeam5 = new Team(new LinkedList<Robot>(), "test1");
-        
-        System.out.println(testTeam1.getTeamNumber());
-        System.out.println(testTeam2.getTeamNumber());
-        System.out.println(testTeam3.getTeamNumber());
-        System.out.println(testTeam4.getTeamNumber());
-        System.out.println(testTeam5.getTeamNumber());
-    }
-    
-    /**
-     * @return the team's unique number
-     */
-    public long getTeamNumber(){
-        return teamNumber;
-    }
-    
     /**
      * Default Constructor
      * @param robots a list of robots to make up the team
@@ -126,6 +104,18 @@ public class Team {
      */
     public String getName(){
         return this.teamName;
+    }
+    
+    /**
+     * @return the team's unique number
+     */
+    public long getTeamNumber(){
+        return teamNumber;
+    }
+    
+    public Robot getTeamMember(int memberNumber){
+        Robot[] array = (Robot[]) this.robotList.toArray();
+        return array[memberNumber];
     }
     
 }
