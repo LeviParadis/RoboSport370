@@ -82,7 +82,7 @@ public class JsonInterpreter {
 	            if(thisObject.get(FORTH_VAR) != null){
 	                //store the variable with an empty assignment
 	                String varName = (String)thisObject.get(FORTH_VAR);
-	                variableList.put(varName, "");
+	                variableList.put(varName, "0");
             
 	                //otherwise, it should be a word
 	            }else if (thisObject.get(FORTH_WORD) != null){
