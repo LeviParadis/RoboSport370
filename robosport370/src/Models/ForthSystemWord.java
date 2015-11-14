@@ -10,7 +10,7 @@ public class ForthSystemWord implements ForthWord {
         this.name = wordName;
     }
     
-    public SystemForthWord getValue(){
+    public SystemForthWord getType(){
         return this.kind;
     }
 
