@@ -2,6 +2,9 @@ package Models;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -22,7 +25,7 @@ public class Robot {
     private long simTeamNumber, simMemberNumber;
     private Color teamColor;
     private HashMap<String,String> forthVariables,forthWords;
-    private Stack<String> mailBox;
+    private HashMap<Integer, Queue<String>> mailBox;
     
     /**
     this constructor will be called to create a robot. A robot can only be created if you know all of the information
@@ -54,7 +57,7 @@ public class Robot {
         this.wins = winCount;
         this.losses = lossCount;
         this.matches = matchCount;
-        this.mailBox = new Stack<String>();
+        this.mailBox = new HashMap<Integer, Queue<String>>();
     }
     
     /**
@@ -270,26 +273,69 @@ public class Robot {
 	     * @param objectToPush the new value to save to the mailbox
 	     * @return whether the action succeeded or failed
 	     */
-	    public boolean pushMailbox(String objectToPush){
+	    public boolean addMailFromMember(int sender, String newMail){
 	        //TODO: make the mailbox store forth words instead of strings
-	        int count = this.mailBox.size();
-	        if(count < 6 && this.isAlive()){
-	            this.mailBox.push(objectToPush);
+	        int totalMail = this.totalMailAmount();
+	        Integer memberNumber = new Integer(sender);
+	        
+	        if(this.isAlive() && totalMail < 6 ){
+	            Queue<String> memberMessages = this.mailBox.get(memberNumber);
+	            if(memberMessages == null){
+	                memberMessages = new LinkedList<String>();
+	            }
+	            memberMessages.add(newMail);
+	            this.mailBox.put(memberNumber, memberMessages);
 	            return true;
 	        } else {
 	            return false;
 	        }
 	    }
+	    
+	    /**
+	     * tells us the amount of mail this robot has stored
+	     * it should always be a number between 0 and 6
+	     * @return the total amount of mail this robot has saved
+	     */
+	    private int totalMailAmount(){
+	        int count = 0;
+	        Set<Integer> allKeys = this.mailBox.keySet();
+	        Iterator<Integer> boxIterator = allKeys.iterator();
+	        while(boxIterator.hasNext()){
+	            Integer key = boxIterator.next();
+	            Queue<String> thisBox = this.mailBox.get(key);
+	            count = count + thisBox.size();
+	        }
+	        return count;
+	    }
+	    
 	    /**
 	     * Pops a value off the robot's mailbox 
 	     * @returns the top value stored in the mailbox stack
 	     */
-	    public String popMailbox(){
-	        return this.mailBox.pop();
+	    public String popMessageFromMember(int sender){
+	        
+	        Integer member = new Integer(sender);
+        Queue<String> memberMessages = this.mailBox.get(new Integer(member));
+        
+        if(memberMessages != null && !memberMessages.isEmpty()){
+            String message = memberMessages.poll();
+            this.mailBox.put(member, memberMessages);
+            return message;
+        } else {
+          //TODO: throw an exception if there is no mail from the sender  
+            return "";
+        }
 	    }
 	    
-	    public boolean HasMailFromSender(int senderNumber){
-	        return (this.mailBox.size() > 0);
+	    /**
+	     * lets us know whether we have mail waiting from a specific sender
+	     * @param sender the member number of the sender we are checking for
+	     * @return a bool representing whether we have mail waiting
+	     */
+	    public boolean hasMailFromMember(int sender){
+	        Integer memberNumber = new Integer(sender);
+	        Queue<String> memberMessages = this.mailBox.get(memberNumber);
+	        return(memberMessages != null && !memberMessages.isEmpty());
 	    }
 	    
 	    /**
