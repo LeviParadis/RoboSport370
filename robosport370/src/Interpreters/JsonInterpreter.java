@@ -94,7 +94,7 @@ public class JsonInterpreter {
 	        }
     
 	        //create a robot from the information in the json
-	        Robot newRobot = new Robot( name, team, serial, health, strength, moves, 
+	        Robot newRobot = new Robot( name, serial, health, strength, moves, 
 	                                    variableList, wordList, 
 	                                    wins, losses, matches);
 	        return newRobot;

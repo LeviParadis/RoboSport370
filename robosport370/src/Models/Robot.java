@@ -1,5 +1,6 @@
 package Models;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Stack;
@@ -16,8 +17,10 @@ public class Robot {
     
     private long serialNumber;
     private String name, teamName;
-    private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;
+    private long baseHealth, currentHealth, strength, movesPerTurn, movesLeft, hexPosition;
     private long wins,losses, matches; 
+    private long simTeamNumber, simMemberNumber;
+    private Color teamColor;
     private HashMap<String,String> forthVariables,forthWords;
     private Stack<String> mailBox;
     
@@ -26,7 +29,6 @@ public class Robot {
     needed for the robot to run a match
      * 
      * @param robotName   Name of the robot
-     * @param team        Name of the team
      * @param serial      The robot's serial number
      * @param health      The base health the robot starts with
      * @param strength    The amount of damage the robot will do
@@ -37,19 +39,19 @@ public class Robot {
      * @param lossCount  The number of times this robot has lost a match
      * @param matchCount The total number of matches this robot has played
      */
-    public Robot(String robotName, String team, long serial,
+    public Robot(String robotName, long serial,
             long health, long strength, long moves,
             HashMap<String,String> vars, HashMap<String,String> words,
             long winCount, long lossCount, long matchCount) {
         this.name = robotName;
         this.serialNumber = serial;
-        this.teamName = team;
         this.forthVariables = vars;
         this.forthWords = words;
         this.baseHealth = health;
         this.currentHealth = health;
         this.strength = strength;
         this.movesPerTurn = moves;
+        this.movesLeft = moves;
         this.wins = winCount;
         this.losses = lossCount;
         this.matches = matchCount;
@@ -59,7 +61,6 @@ public class Robot {
     /**
      * Another constructor for if you know all of the base information for a robot, but are missing stats
      * @param robotName   Name of the robot
-     * @param team        Name of the team
      * @param serial      The robot's serial number
      * @param health      The base health the robot starts with
      * @param strength    The amount of damage the robot will do
@@ -67,11 +68,26 @@ public class Robot {
      * @param vars        The list of forth variables
      * @param words       The list of forth commands
      */
-    public Robot(String robotName, String team, long serial,
+    public Robot(String robotName, long serial,
             long health, long strength, long moves,
             HashMap<String,String> vars, HashMap<String,String> words) {
-        this(robotName, team, serial, health, strength, moves, vars, words, 0, 0, 0);
+        this(robotName, serial, health, strength, moves, vars, words, 0, 0, 0);
     }
+    
+    /**
+     * The simulator will assign each robot a unique team number and member number.
+     * When a robot is assigned to a team, it will recieve these attributes
+     * @param teamNumber
+     * @param memberNumber
+     * @param teamName
+     */
+    public void setTeamIDs(int teamNumber, int memberNumber, String teamName, Color color){
+        this.simMemberNumber = memberNumber;
+        this.simTeamNumber = teamNumber;
+        this.teamName = teamName;
+        this.teamColor = color;
+    }
+    
     
     /**
      * @return robot's serial number
@@ -85,6 +101,27 @@ public class Robot {
      */
     public String getName(){
         return this.name;
+    }
+    
+    /**
+     * @return robot's member number for this match, assigned by the simulator
+     */
+    public long getMemberNumber(){
+        return this.simMemberNumber;
+    }
+    
+    /**
+    * @return robot's team number for this match, assigned by the simulator
+    */
+    public long getTeamNumber(){
+        return this.simTeamNumber;
+    }
+    
+    /**
+    * @return robot's team color
+    */
+    public Color getTeamColor(){
+        return this.teamColor;
     }
     
     /**
@@ -132,6 +169,21 @@ public class Robot {
 	     */
     public long getMovesPerTurn(){
         return movesPerTurn;
+    }
+    
+    /**
+     * @return the number of moves the robot has left this turn
+     */
+    public long getRemainingMoves(){
+        return movesLeft;
+    }
+    
+    public void setRemainingMoves(int moves){
+        movesLeft = moves;
+    }
+    
+    public void decrementRemainingMoves(){
+        movesLeft = movesLeft - 1;
     }
 
     /**
@@ -228,10 +280,20 @@ public class Robot {
 	
 	    /**
 	     * Saves a new value into this robot's mailbox
+	     * the mailbox has a capacity of 6
+	     *  If the mailbox is full or the robot is destroyed, it will return false
 	     * @param objectToPush the new value to save to the mailbox
+	     * @return whether the action succeeded or failed
 	     */
-	    public void pushMailbox(String objectToPush){
-	        this.mailBox.push(objectToPush);
+	    public boolean pushMailbox(String objectToPush){
+	        //TODO: make the mailbox store forth words instead of strings
+	        int count = this.mailBox.size();
+	        if(count < 6 && this.isAlive()){
+	            this.mailBox.push(objectToPush);
+	            return true;
+	        } else {
+	            return false;
+	        }
 	    }
 	    /**
 	     * Pops a value off the robot's mailbox 
