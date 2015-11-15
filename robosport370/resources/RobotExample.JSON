@@ -35,7 +35,7 @@
                     },
                     {"word" :       {   "name" : "turn",
                                         "comment" : "( -- )",
-                                        "body" : "1 false if dup recv! .\"SHOOT\" = if dup recv! recv! shoot! else drop .\"not shooting\" then else drop .\"no message\" then .\"end\""
+                                        "body" :  "5 0 do I loop"
                                     }
                     }
                 ]
