@@ -17,7 +17,7 @@ public class GameController {
 	/**
 	 * 
 	 */
-	LogContoller logger;
+	LogContoller GameLog;
 	
 	/**
 	 * The size of the hexmap, the size is one side length
@@ -37,7 +37,7 @@ public class GameController {
 	/**
 	 * how long it takes for each animation to complete in ??miliseconds??
 	 */
-	int animationSpeed;
+	int animationSpeed = 100; // hard coded?
 	
 	/**
 	 * initializes the teams and ??sets their position on the map??
@@ -45,8 +45,18 @@ public class GameController {
 	 * @param hexSize the size of the map on one side
 	 * @precond hexSize cannot be null
 	 */
-	public void init(Team allTeams[], int hexSize){
+	public GameController(Team allTeams[], int hexSize){
 	    this.hexSize = hexSize;
+	    mapView newMap = new mapView();
+	    GameLog gameLog = new GameLog();
+	    
+	    if(allTeams == null){
+	        throw new RuntimeException("there must be teams to have a tournement");
+	    }
+	    else{
+	        this.teams = allTeams;	        
+	    }
+	    
 	    
 	}
 	
@@ -59,8 +69,19 @@ public class GameController {
 	    
 	}
 	
+	/**
+	 * ends game stops all game threads from running and calls the endgame controller
+	 */
 	public void endGame(){
 	    
+	}
+	
+	/**
+	 * Changes the animation speed to a new one in milliseconds.
+	 * @param newSpeed
+	 */
+	public void setAnimationSpeed(int newSpeed){
+	    this.animationSpeed = newSpeed;
 	}
 	
 	public void scanSpace(int hexPos){
