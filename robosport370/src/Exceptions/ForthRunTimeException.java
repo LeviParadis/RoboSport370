@@ -1,7 +1,11 @@
 package Exceptions;
 
 public class ForthRunTimeException extends Exception {
-
+    /**
+     * this exception is thrown when the forth interpreter encounters an error when it is trying to run a program
+     */
+    
+    
     private static final long serialVersionUID = -8050699301872910522L;
 
     public ForthRunTimeException() {

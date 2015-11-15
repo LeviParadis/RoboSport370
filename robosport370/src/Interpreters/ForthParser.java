@@ -138,15 +138,15 @@ public class ForthParser {
         } else if(ForthStringLiteral.isThisKind(item)){
             newWord = new ForthStringLiteral(item);
         } else if(ForthElsePlaceholder.isThisKind(item)){
-            newWord = new ForthElsePlaceholder();
+            newWord = new ForthElsePlaceholder(item);
         } else if(ForthLeaveLoop.isThisKind(item)){
-            newWord = new ForthLeaveLoop();
+            newWord = new ForthLeaveLoop(item);
         } else if(ForthLoopNumber.isThisKind(item)){
-            newWord = new ForthLoopNumber();
+            newWord = new ForthLoopNumber(item);
         } else if(ForthPointerLiteral.isThisKind(item, robot)){
-            newWord = new ForthPointerLiteral(item);
+            newWord = new ForthPointerLiteral(item, robot);
         } else if (ForthCustomWord.isThisKind(item, robot)){
-            newWord = new ForthCustomWord(item);
+            newWord = new ForthCustomWord(item, robot);
         } else {
             throw new ForthParseException("Could not find meaning of forth word " + item);
         }

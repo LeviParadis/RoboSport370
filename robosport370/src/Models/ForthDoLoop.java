@@ -11,15 +11,25 @@ public class ForthDoLoop implements ForthWord {
     private Queue<ForthWord> commands;
     
 
-    public ForthDoLoop(Queue<ForthWord> commandList) throws ForthParseException {
+    /**
+     * constructs a do loop
+     * @param commandList the list of commands to be repeated in the loop
+     */
+    public ForthDoLoop(Queue<ForthWord> commandList) {
         commands = commandList; 
     }
     
+    /**
+     * @return the list of commands to be repeated
+     */
     public Queue<ForthWord> getCommands(){
            return new LinkedList<ForthWord>(commands);
     }
 
     @Override
+    /**
+     * @return string encoding that can read by the forth parser
+     */
     public String forthStringEncoding() {
         String formatedString = "do";
         Iterator<ForthWord> it = commands.iterator();
@@ -32,10 +42,16 @@ public class ForthDoLoop implements ForthWord {
     }
 
     @Override
+    /**
+     *  @return the string value that is printed by forth in the  console
+     */
     public String consoleFormat() {
         return "do_loop";
     }
     
+    /**
+     * @return the string value that appears in the developer's console
+     */
     public String toString(){
         return consoleFormat();
     }

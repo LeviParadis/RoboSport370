@@ -8,10 +8,19 @@ import Exceptions.ForthParseException;
 
 public class ForthConditional implements ForthWord {
     
+    //the commands to be executed if it evaluates to true
     private Queue<ForthWord> trueCommands;
+  //the commands to be executed if it evaluates to false
     private Queue<ForthWord> falseCommands;
     
 
+    /**
+     * parses through the input words, placing them into either command list
+     * Commands are placed in the true branch until it encounters an else word,
+     * then commands are placed in the false branch
+     * @param stringList a list of forth words that are contained in the if statement
+     * @throws ForthParseException thrown if it encounters multiple else statements
+     */
     public ForthConditional(Queue<ForthWord> stringList) throws ForthParseException {
         Iterator<ForthWord> it = stringList.iterator();
         trueCommands = new LinkedList<ForthWord>();
@@ -33,6 +42,10 @@ public class ForthConditional implements ForthWord {
         }
     }
     
+    /**
+     * @param result a bool indicating whether to return the true or the false branch
+     * @return the list of words for the appropriate branch
+     */
     public Queue<ForthWord> getCommandsForResult(boolean result){
         if(result){
             return trueCommands;
@@ -42,6 +55,9 @@ public class ForthConditional implements ForthWord {
     }
 
     @Override
+    /**
+     * @return string encoding that can read by the forth parser
+     */
     public String forthStringEncoding() {
         String formatedString = "if";
         Iterator<ForthWord> itTrue = trueCommands.iterator();
@@ -61,10 +77,16 @@ public class ForthConditional implements ForthWord {
     }
 
     @Override
+    /**
+     *  @return the string value that is printed by forth in the  console
+     */
     public String consoleFormat() {
         return "if_statement";
     }
     
+    /**
+     * @return the string value that appears in the developer's console
+     */
     public String toString(){
         return forthStringEncoding();
     }

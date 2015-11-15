@@ -1,23 +1,39 @@
 package Models;
 
 import Enums.SystemCommandType;
+import Exceptions.ForthParseException;
 
 public class ForthSystemWord implements ForthWord {
 
     private String name;
     private SystemCommandType kind;
     
-    public ForthSystemWord(String wordName) {
-        this.kind = wordType(wordName);
+    /**
+     * create a forth system word from a plain text string
+     * @param wordName the plain text version of the word
+     * @throws ForthParseException if the input word does not match a system command
+     */
+    public ForthSystemWord(String wordName) throws ForthParseException {
+        SystemCommandType type = wordType(wordName);
+       if(type == SystemCommandType.NOT_FORTH_WORD){
+           throw new ForthParseException("attempted to instantiate a forth system command with unknown word " + wordName);
+       }
+        this.kind = type;
         this.name = wordName;
     }
     
+    /**
+     * @return which system command this represents
+     */
     public SystemCommandType getType(){
         return this.kind;
     }
-
-
     
+    /**
+     * tells us which command the plain text string represents
+     * @param wordName the plain text string
+     * @return an enum value representing one of the system words
+     */
     private static SystemCommandType wordType(String wordName){
         if(wordName.equals("health")){
             return SystemCommandType.HEALTH;
@@ -92,21 +108,34 @@ public class ForthSystemWord implements ForthWord {
         return SystemCommandType.NOT_FORTH_WORD;
     }
     
+    /**
+     * @param wordName a plain text string
+     * @return whether or not the string represents a system forth command
+     */
     public static boolean isThisKind(String wordName) {
         SystemCommandType type = wordType(wordName);
         return (type != SystemCommandType.NOT_FORTH_WORD);
     }
 
     @Override
+    /**
+     * @return string encoding that can read by the forth parser
+     */
     public String forthStringEncoding() {
         return this.name;
     }
     
+    /**
+     * @return the string value that appears in the developer's console
+     */
     public String toString(){
         return "system:" + forthStringEncoding();
     }
 
     @Override
+    /**
+     *  @return the string value that is printed by forth in the  console
+     */
     public String consoleFormat() {
         return this.forthStringEncoding();
     }

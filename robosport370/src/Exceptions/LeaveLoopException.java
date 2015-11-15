@@ -3,7 +3,8 @@ package Exceptions;
 public class LeaveLoopException extends Exception {
 
     /**
-     * 
+     * this exception is thrown when the forth interpreter encounters the leave word
+     * It should be caught in a loop handler function
      */
     private static final long serialVersionUID = -3088501869185907133L;
 
