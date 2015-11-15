@@ -214,66 +214,29 @@ public class ForthInterpreter {
     private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
       try{      
         SystemCommandType wordType = word.getType();
-        ForthWord first;
-        ForthWord second;
-        ForthWord third;
-        ForthWord result;
         switch(wordType){
             case NOT_FORTH_WORD:
                 break;
             case HEALTH:
-                //returns the robot’s current health (1–3)
-                // ( -- i )
-                 long health = robot.getHealth();
-                 result = new ForthIntegerLiteral(health);
-                 forthStack.push(result);
+                ForthSystemCommands.health(forthStack, robot);
                  break;
             case MOVES_LEFT:
-              //returns the robot’s range of movement (0–3)
-                result = new ForthIntegerLiteral(movesAvailable);
-                forthStack.push(result);
+                ForthSystemCommands.movesLeft(forthStack, movesAvailable);
                 break;
             case FIRE_POWER:
-                //returns the robot’s firepower (1–3)
-                //( -- i )
-                long strength = robot.getStrength();
-                result = new ForthIntegerLiteral(strength);
-                forthStack.push(result);
+                ForthSystemCommands.firePower(forthStack, robot);
                 break;
             case TEAM:
-                //returns the robot’s team number
-                //member ( -- i )
-                long team = robot.getTeamNumber();
-                result = new ForthIntegerLiteral(team);
-                forthStack.push(result);
+                ForthSystemCommands.teamNumber(forthStack, robot);
                 break;
             case MEMBER:
-                //returns the robot’s member number
-                //member ( -- i )
-                long member = robot.getMemberNumber();
-                result = new ForthIntegerLiteral(member);
-                forthStack.push(result);
+                ForthSystemCommands.memberNumber(forthStack, robot);
                 break;
             case CONSOLE:
-                //prints the current value out, using the same syntax as they would be input with
-                // ( v -- )
-                first = forthStack.pop();
-                String consoleString = first.consoleFormat();
-                System.out.println(consoleString);
+                ForthSystemCommands.console(forthStack);
                 break;
             case RANDOM:
-                //generates a random integer between 0 and i inclusive
-                //( i -- )
-                first = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && ((ForthIntegerLiteral)first).getValue() >= 0){
-                    int i = (int)((ForthIntegerLiteral)first).getValue();
-                    Random rand = new Random();
-                    long r = rand.nextInt(i+1);
-                    ForthIntegerLiteral newWord = new ForthIntegerLiteral(r);
-                    forthStack.push(newWord);   
-                } else {
-                    throw new ForthRunTimeException("random word called without a positive int on top of the stack");
-                }
+                ForthSystemCommands.random(forthStack);
                 break;
             case SHOOT:
                 //fires the robot’s weapon at the space at range ir and direction id;
@@ -305,41 +268,13 @@ public class ForthInterpreter {
               //TODO: After game controller is set up
                 break;
             case MAIL_SEND:
-                //send a value v to team-member i; returns a boolean indicating success or failure
-                // ( i v -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if((first instanceof ForthIntegerLiteral || first instanceof ForthBoolLiteral || first instanceof ForthStringLiteral) && second instanceof ForthIntegerLiteral){
-                    int memberNumber = (int)((ForthIntegerLiteral)second).getValue();
-                  //TODO: After game controller is set up
-                } else {
-                    throw new ForthRunTimeException("attempting to send mailbox without the proper stack format");
-                }
+                ForthSystemCommands.sendMail(forthStack);
                 break;
             case MAIL_CHECK:
-              //indicates whether the robot has a waiting message from team-member i
-                // ( i -- b )
-                first = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral){
-                    int memberNumber = (int)((ForthIntegerLiteral)first).getValue();
-                    boolean hasMail = robot.hasMailFromMember(memberNumber);
-                    result = new ForthBoolLiteral(hasMail);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("attempting to check mailbox without an int on top of the stack");
-                }
+                ForthSystemCommands.checkMail(forthStack, robot);
                 break;
             case MAIL_RECIEVE:
-                //pushes the next message value onto the stack.
-                // ( i -- v )
-                first = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral){
-                    int memberNumber = (int)((ForthIntegerLiteral)first).getValue();
-                    ForthWord mail = robot.popMailFromMember(memberNumber);
-                    forthStack.push(mail);
-                } else {
-                    throw new ForthRunTimeException("attempting to get mail without an int on top of the stack");
-                }
+                ForthSystemCommands.recieveMail(forthStack, robot);
                 break;
             case HEX:
                 //returns the population of the given hex
@@ -347,239 +282,61 @@ public class ForthInterpreter {
                 //TODO: After game controller is set up
                 break;
             case VAR_CHECK:
-                //takes a variable and returns the value it’s storing
-                // ( p -- v )
-                first = forthStack.pop();
-                if(first instanceof ForthPointerLiteral){
-                    String value = ((ForthPointerLiteral) first).getVariableValue(robot);
-                    result = ForthParser.wordFromString(value, robot);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("? word called without a variable pointer on top of the stack");
-                }
+                ForthSystemCommands.checkVariable(forthStack, robot);
                 break;
             case VAR_ASSIGN:
-                //stores a new value into a pointer
-                //( v p -- )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                
-                if(first instanceof ForthPointerLiteral){
-                    ((ForthPointerLiteral) first).setVariableValue(robot, second);
-                } else {
-                    throw new ForthRunTimeException("! word called without a variable pointer on top of the stack");
-                }
+                ForthSystemCommands.assignVariable(forthStack, robot);
                 break;
             case AND:
-              //false if either boolean is false, true otherwise
-                // ( b b -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthBoolLiteral && second instanceof ForthBoolLiteral){
-                    boolean firstBool = ((ForthBoolLiteral) first).getValue();
-                    boolean secondBool = ((ForthBoolLiteral) second).getValue();
-                    result = new ForthBoolLiteral(firstBool && secondBool);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("AND word called without two booleans on top of the stack");
-                }
+                ForthSystemCommands.and(forthStack);
                 break;
             case OR:
-                //true if either boolean is true, false otherwise
-                // ( b b -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthBoolLiteral && second instanceof ForthBoolLiteral){
-                    boolean firstBool = ((ForthBoolLiteral) first).getValue();
-                    boolean secondBool = ((ForthBoolLiteral) second).getValue();
-                    result = new ForthBoolLiteral(firstBool || secondBool);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("OR word called without two booleans on top of the stack");
-                }
+                ForthSystemCommands.or(forthStack);
                 break;
             case INVERT:
-              //invert the given boolean
-                // ( b -- b )
-                first = forthStack.pop();
-                if(first instanceof ForthBoolLiteral){
-                    boolean firstBool = ((ForthBoolLiteral) first).getValue();
-                    result = new ForthBoolLiteral(!firstBool);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("invert word called without a boolean on top of the stack");
-                }
+                ForthSystemCommands.invert(forthStack);
                 break;
             case LESS:
-                //i2 is less than i1
-                // ( i2 i1 -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthBoolLiteral(secondInt < firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("< word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.less(forthStack);
                 break;
             case LESS_EQUAL:
-              //i2 is not more than i1
-                // ( i2 i1 -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthBoolLiteral(secondInt <= firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("<= word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.lessOrEqual(forthStack);
                 break;
             case EQUAL:
-                //i2 is equal to i1
-                // ( i2 i1 -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthBoolLiteral(secondInt == firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("= word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.equal(forthStack);
                 break;
             case NOT_EQUAL:
-                //i2 is not equal to i1
-                // ( i2 i1 -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthBoolLiteral(secondInt != firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("<> word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.notEqual(forthStack);
                 break;
             case GREATER_EQUAL:
-              //i2 is at least i1
-                // ( i2 i1 -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthBoolLiteral(secondInt >= firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException(">= word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.greaterOrEqual(forthStack);
                 break;
             case GREATER:
-                //i2 is more than i1
-                // ( i2 i1 -- b )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthBoolLiteral(secondInt > firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("> word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.greater(forthStack);
                 break;
             case ADD:
-              //add the two integers, pushing their sum on the stack
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthIntegerLiteral(secondInt + firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("+ word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.add(forthStack);
                 break;
             case SUBTRACT:
-              //subtract the top integer from the next, pushing their difference on the stack
-                //( i2 i1 -- i )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthIntegerLiteral(secondInt - firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("- word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.subtract(forthStack);
                  break;
             case MULTIPLY:
-                //multiply the two top integers, pushing their product on the stack
-                //( i i -- i )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    result = new ForthIntegerLiteral(secondInt * firstInt);
-                    forthStack.push(result);
-                } else {
-                    throw new ForthRunTimeException("* word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.multiply(forthStack);
                 break;
             case DIVIDE:
-              //divide the top integer into the next, pushing the remainder and quotient
-                // ( iv ie -- iq ir)
-                first = forthStack.pop();
-                second = forthStack.pop();
-                if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                    long firstInt = ((ForthIntegerLiteral) first).getValue();
-                    long secondInt = ((ForthIntegerLiteral) second).getValue();
-                    ForthWord iq = new ForthIntegerLiteral(secondInt / firstInt);
-                    ForthWord ir = new ForthIntegerLiteral(secondInt % firstInt);
-                    forthStack.push(ir);
-                    forthStack.push(iq);
-                } else {
-                    throw new ForthRunTimeException("/mod word called without two ints on top of the stack");
-                }
+                ForthSystemCommands.divide(forthStack);
                 break;
             case DROP:
-                //remove the value at the top of the stack
-                //( v -- )
-                forthStack.pop();
+                ForthSystemCommands.drop(forthStack);
                 break;
             case DUPLICATE:
-                //duplicate the value at the top of the stack
-                //( v -- v v )
-                first = forthStack.pop();
-                forthStack.push(first);
-                forthStack.push(first);
+                ForthSystemCommands.duplicate(forthStack);
                 break;
             case ROTATE:
-                //rotate first three items on stack
-                // ( v3 v2 v1 -- v3 v1 v2 ) 
-               first = forthStack.pop();
-               second = forthStack.pop();
-               third = forthStack.pop();
-               forthStack.push(second);
-               forthStack.push(first);
-               forthStack.push(third);
+                ForthSystemCommands.rotate(forthStack);
                 break;
             case SWAP:
-                //swap the two values at the top of the stack
-                //( v2 v1 -- v2 v1 )
-                first = forthStack.pop();
-                second = forthStack.pop();
-                forthStack.push(first);
-                forthStack.push(second);
+                ForthSystemCommands.swap(forthStack);
                 break;      
         }
         //if the stack ever fails to pop because it's run out of entries, it will throw
@@ -589,7 +346,6 @@ public class ForthInterpreter {
       }
   
    }
-    
     
     
 }
