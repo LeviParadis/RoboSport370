@@ -26,7 +26,7 @@ public class ForthStringLiteral implements ForthWord {
     
     @Override
     public String forthStringEncoding(){
-        return '.' + '"' + this.value + '"';
+        return ".\"" + this.value + "\"";
     }
 
     public String toString(){

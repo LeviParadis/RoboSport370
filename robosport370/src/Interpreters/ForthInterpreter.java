@@ -3,6 +3,7 @@ package Interpreters;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.EmptyStackException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -17,7 +18,9 @@ import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Models.ForthCustomWord;
+import Models.ForthElsePlaceholder;
 import Models.ForthBoolLiteral;
+import Models.ForthConditional;
 import Models.ForthIntegerLiteral;
 import Models.ForthPointerLiteral;
 import Models.ForthStringLiteral;
@@ -35,15 +38,11 @@ public class ForthInterpreter {
         try {
             JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
             Robot newRobot = JsonInterpreter.robotFromJSON(json);
-            String max = newRobot.getForthVariable("maxRange");
-            System.out.println(max);
             System.out.println("init");
             initRobot(newRobot, null);
             System.out.println();
             System.out.println("turn");
             executeTurn(newRobot, null);
-            max = newRobot.getForthVariable("maxRange");
-            System.out.println(max);
             
         } catch (IOException | ParseException | ForthRunTimeException | ForthParseException e1) {
             e1.printStackTrace();
@@ -87,7 +86,16 @@ public class ForthInterpreter {
         System.out.println(forthBody);
         
         executeForthCommand(forthBody, robot, forthStack, controller);
+        System.out.println(forthStack);
     }
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * reads and executes forth commands
@@ -118,6 +126,15 @@ public class ForthInterpreter {
                 String wordString = ((ForthCustomWord)nextItem).getWordLogic(robot);
                 Queue<ForthWord> wordLogic = parseForthBodyString(wordString, robot);
                 executeForthCommand(wordLogic, robot, forthStack, controller);
+            } else if(nextItem instanceof ForthConditional){
+                ForthWord first = forthStack.pop();
+                if(first instanceof ForthBoolLiteral){
+                    boolean result = ((ForthBoolLiteral)first).getValue();
+                    Queue<ForthWord> commands = ((ForthConditional)nextItem).getCommandsForResult(result);
+                    executeForthCommand(commands, robot, forthStack, controller);
+                } else {
+                    throw new ForthRunTimeException("attempting to rn an if statement without a bool on top of the stack");
+                }
             }
            
         }
@@ -520,28 +537,64 @@ public class ForthInterpreter {
      * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */
     private static Queue<ForthWord> parseForthBodyString(String logicString, Robot robot) throws ForthParseException{
-        String[] elements = logicString.split(" ");
-        Queue<ForthWord> commandQueue = new LinkedList<ForthWord>();
-        
-        for(int i=0; i<elements.length; i++){
-            String item = elements[i];
-            //we need to keep strings of text together. If a section starts with .", keep the next sections together
-            //until it reaches the closing ".
-            if(item.length() > 1 && item.charAt(0) == '.' && item.charAt(1) == '"'){
-                boolean stringEnd = false;
-                while(!stringEnd && i<elements.length){
-                    i++;
-                    String nextItem = elements[i];
-                    item = item + " " + nextItem;
-                    stringEnd = nextItem.indexOf('"') > -1;
-                }
+       
+        Queue<String> forthStrings = findForthWords(logicString);
+
+        Iterator<String> wordIterator = forthStrings.iterator();
+        Queue<ForthWord> commandQueue = createWordList(forthStrings, wordIterator, robot, null);
+        return commandQueue;
+    }
+    
+    private static Queue<ForthWord> createWordList(Queue<String> wordString, Iterator<String> iterator, Robot robot, String expectedEnding) throws ForthParseException{
+        Queue<ForthWord> commandQueue = new LinkedList<ForthWord>(); 
+        while(iterator.hasNext()){
+            String item = iterator.next();
+            
+            if(item.equals("if")){
+                Queue<ForthWord> ifStatement = createWordList(wordString, iterator, robot, "then");
+                ForthWord newWord = new ForthConditional(ifStatement);
+                commandQueue.add(newWord);
+            } else if(item.equals(expectedEnding)){
+                return commandQueue;
+            } else {
+                ForthWord newWord = wordFromString(item, robot);
+                commandQueue.add(newWord);
             }
-            //we now have a string value that represents a forth class
-            ForthWord newWord = wordFromString(item, robot);
-           
-            commandQueue.add(newWord);
+        }
+        if(expectedEnding != null){
+            throw new ForthParseException("Could not parse if/loop statements");
         }
         return commandQueue;
+    }
+    
+    /**
+     * takes as input a string of forth values, and breaks it up into an array of potential forth words
+     * keeps forth strings together as a single block, but separates everything out into it's own word
+     * @param forthString  a string of forth commands in text format
+     * @return             a queue of potential forth words ready for parsing, but still in string format
+     * @throws ForthParseException thrown if the parser can't find a closing quote for every opener
+     */
+    private static Queue<String> findForthWords(String forthString) throws ForthParseException{
+        String[] elements = forthString.split(" ");
+        Queue<String> stringList = new LinkedList<String>();
+        for(int i=0; i<elements.length; i++){
+            String item = elements[i];
+            if(item.length() > 1 && item.charAt(0) == '.' && item.charAt(1) == '"' && item.charAt(item.length()-1) != '"'){
+                boolean stringEnd = false;
+                while(!stringEnd){
+                    i++;
+                    if(i >= elements.length){
+                        //we have reached the end of all words without finding the closing "
+                        throw new ForthParseException("could not find closing quote for forth string");
+                    }
+                    String nextItem = elements[i];
+                    item = item + " " + nextItem;
+                    stringEnd = (nextItem.charAt(nextItem.length()-1) == '"');
+                }
+            }
+            stringList.add(item);
+        }
+        return stringList;
     }
 
     /**
@@ -561,6 +614,8 @@ public class ForthInterpreter {
             newWord = new ForthBoolLiteral(item);
         } else if(ForthStringLiteral.isThisKind(item)){
             newWord = new ForthStringLiteral(item);
+        } else if(ForthElsePlaceholder.isThisKind(item)){
+            newWord = new ForthElsePlaceholder();
         } else if(ForthPointerLiteral.isThisKind(item, robot)){
             newWord = new ForthPointerLiteral(item);
         } else if (ForthCustomWord.isThisKind(item, robot)){

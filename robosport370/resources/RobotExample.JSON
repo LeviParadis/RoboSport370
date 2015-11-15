@@ -28,14 +28,14 @@
                                         "body" : "6"
                                     }
                     },
-                    {"word" :       {   "name" : "turn",
+                    {"word" :       {   "name" : "turn2",
                                         "comment" : "( -- )",
-                                        "body" : "maxRange ? 1 - random 1 + dup hexesPerRange * 1 - random swap shoot!"
+                                        "body" : "maxRange ? 1 - random 1 + dup hexesPerRange * 1 - random swap shoot! .\"testing testing \""
                                     }
                     },
-                    {"word" :       {   "name" : "test",
+                    {"word" :       {   "name" : "turn",
                                         "comment" : "( -- )",
-                                        "body" : "maxRange ? 1 .\"a bunch of text\" dup hexesPerRange"
+                                        "body" : "1 false if dup recv! .\"SHOOT\" = if dup recv! recv! shoot! else drop .\"not shooting\" then else drop .\"no message\" then .\"end\""
                                     }
                     }
                 ]
