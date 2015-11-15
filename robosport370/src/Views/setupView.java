@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-public class mapView extends ApplicationAdapter {
+public class setupView extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture robots;
     private Sprite robot;
@@ -55,6 +55,6 @@ public class mapView extends ApplicationAdapter {
 	
 	public static void main(String[] args) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new mapView(), config);
+		new LwjglApplication(new setupView(), config);
 	}
 }
