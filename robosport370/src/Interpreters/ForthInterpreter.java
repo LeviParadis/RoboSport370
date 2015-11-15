@@ -3,8 +3,6 @@ package Interpreters;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.EmptyStackException;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
@@ -17,11 +15,11 @@ import Controllers.GameController;
 import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
-import Models.ForthCustomWord;
-import Models.ForthDoLoop;
-import Models.ForthElsePlaceholder;
+import Exceptions.LeaveLoopException;
 import Models.ForthBoolLiteral;
 import Models.ForthConditional;
+import Models.ForthCustomWord;
+import Models.ForthDoLoop;
 import Models.ForthIntegerLiteral;
 import Models.ForthLeaveLoop;
 import Models.ForthLoopNumber;
@@ -37,6 +35,7 @@ public class ForthInterpreter {
     private static boolean shotAvailable;
     private static long movesAvailable;
 
+    //tester
     public static void main(String[] args) {
         JSONParser parser=new JSONParser(); 
         try {
@@ -51,9 +50,8 @@ public class ForthInterpreter {
         } catch (IOException | ParseException | ForthRunTimeException | ForthParseException e1) {
             e1.printStackTrace();
         }
-        
     }
-    
+
     /**
      * Run's a robot's forth init logic
      * @param robot             the robot we are setting up
@@ -66,10 +64,14 @@ public class ForthInterpreter {
         movesAvailable = 0;
         
         String logicString = robot.getForthWord("init");
-        Queue<ForthWord> forthBody = parseForthBodyString(logicString, robot);
+        Queue<ForthWord> forthBody = ForthParser.parseForthBodyString(logicString, robot);
         Stack<ForthWord> forthStack = new Stack<ForthWord>();
         
-        executeForthCommand(forthBody, robot, forthStack, controller, null);
+        try{
+            executeForthCommand(forthBody, robot, forthStack, controller, null);
+        } catch (LeaveLoopException e){
+            throw new ForthRunTimeException("encountered the word leave ouside of a loop");
+        }
     }
     
     /**
@@ -84,21 +86,15 @@ public class ForthInterpreter {
         shotAvailable = true;
         
         String logicString = robot.getForthWord("turn");
-        Queue<ForthWord> forthBody = parseForthBodyString(logicString, robot);
+        Queue<ForthWord> forthBody = ForthParser.parseForthBodyString(logicString, robot);
         Stack<ForthWord> forthStack = new Stack<ForthWord>();
         
-        System.out.println(forthBody);
-        
-        executeForthCommand(forthBody, robot, forthStack, controller, null);
-        System.out.println(forthStack);
+        try{
+            executeForthCommand(forthBody, robot, forthStack, controller, null);
+        } catch (LeaveLoopException e){
+            throw new ForthRunTimeException("encountered the word leave ouside of a loop");
+        }
     }
-    
-    
-    
-    
-    
-    
-    
     
     
     /**
@@ -109,19 +105,15 @@ public class ForthInterpreter {
      * @param loopNumber  the number of loop counter I if this command was executed as part of a loop
      * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
      * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     * @throws LeaveLoopException if the forth word "leave" comes up when a loop is being run
      */
-    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException{
+    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException, LeaveLoopException{
         while(!commandQueue.isEmpty()){
             //if the robot fired at it's own space and killed itself this turn, don't execute any more commands
             if(!robot.isAlive()){
                 return;
             }
-            ForthWord nextItem = commandQueue.poll();
-            
-            System.out.println(forthStack);
-            System.out.println(nextItem);
-            System.out.println();
-            
+            ForthWord nextItem = commandQueue.poll(); 
             
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
                 forthStack.push(nextItem);
@@ -129,67 +121,19 @@ public class ForthInterpreter {
                 executeSystemCommand((ForthSystemWord)nextItem, forthStack, robot, controller);
             } else if (nextItem instanceof ForthCustomWord){
                 String wordString = ((ForthCustomWord)nextItem).getWordLogic(robot);
-                Queue<ForthWord> wordLogic = parseForthBodyString(wordString, robot);
+                Queue<ForthWord> wordLogic = ForthParser.parseForthBodyString(wordString, robot);
                 executeForthCommand(wordLogic, robot, forthStack, controller, null);
             } else if(nextItem instanceof ForthConditional){
-                try{
-                    ForthWord first = forthStack.pop();
-                if(first instanceof ForthBoolLiteral){
-                        boolean result = ((ForthBoolLiteral)first).getValue();
-                        Queue<ForthWord> commands = ((ForthConditional)nextItem).getCommandsForResult(result);
-                        executeForthCommand(commands, robot, forthStack, controller, null);
-                    } else {
-                        throw new ForthRunTimeException("attempting to run an if statement without a bool on top of the stack");
-                    }
-                } catch (EmptyStackException e){
-                    throw new ForthRunTimeException("attempted to pop off an empty stack");
-                }
+                executeConditional((ForthConditional)nextItem, robot, forthStack, controller, loopNumber);
             } else if(nextItem instanceof ForthDoLoop){
-                try{  
-                    ForthWord first = forthStack.pop();
-                    ForthWord second = forthStack.pop();
-                    if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                        int start = (int)((ForthIntegerLiteral)first).getValue();
-                        int end = (int)((ForthIntegerLiteral)second).getValue();
-                        //if end is smaller than start, the loop should run once
-                        if(end < start){
-                            end = start;
-                        }
-                        
-                        for(int i = start; i<=end; i++){
-                            Queue<ForthWord> commands = ((ForthDoLoop)nextItem).getCommands();
-                            executeForthCommand(commands, robot, forthStack, controller, new Integer(i));
-                        }
-                        
-                    } else {
-                        throw new ForthRunTimeException("attempting to run a do loop without two int values on top of the stack");
-                    }
-                }catch (EmptyStackException e){
-                    throw new ForthRunTimeException("attempted to pop off an empty stack");
-                }
-                
+                executeDoLoop((ForthDoLoop)nextItem, robot, forthStack, controller, loopNumber);
             } else if(nextItem instanceof ForthUntilLoop){
-                boolean result = false;
-                while(!result){
-                Queue<ForthWord> commands = ((ForthUntilLoop)nextItem).getCommands();
-                executeForthCommand(commands, robot, forthStack, controller, null);
-                try{
-                    ForthWord first = forthStack.pop();
-                    if(first instanceof ForthBoolLiteral){
-                        result = ((ForthBoolLiteral) first).getValue();
-                    } else {
-                        throw new ForthRunTimeException("attempting to run an until loop that doesn't end with a bool on top of the stack");  
-                    }
-                }catch (EmptyStackException e){
-                    throw new ForthRunTimeException("attempted to pop off an empty stack");
-                }
-                }
-                
+                executeUntilLoop((ForthUntilLoop)nextItem, robot, forthStack, controller, loopNumber);
             } else if(nextItem instanceof ForthLoopNumber && loopNumber != null){
                 ForthWord runNum = new  ForthIntegerLiteral(loopNumber.intValue());
                 forthStack.push(runNum);
             } else if(nextItem instanceof ForthLeaveLoop){
-                return;
+                throw new LeaveLoopException("encountered the word leave ouside of a loop");
             } else {
                throw new ForthRunTimeException("found unexpected word: " + nextItem); 
             }
@@ -197,6 +141,67 @@ public class ForthInterpreter {
         }
     }
     
+    private static void executeConditional(ForthConditional conditional, Robot robot, Stack<ForthWord> forthStack, GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException, LeaveLoopException{
+        try{
+            ForthWord first = forthStack.pop();
+            if(first instanceof ForthBoolLiteral){
+                boolean result = ((ForthBoolLiteral)first).getValue();
+                Queue<ForthWord> commands = conditional.getCommandsForResult(result);
+                executeForthCommand(commands, robot, forthStack, controller, loopNumber);
+            } else {
+                throw new ForthRunTimeException("attempting to run an if statement without a bool on top of the stack");
+            }
+        } catch (EmptyStackException e){
+            throw new ForthRunTimeException("attempted to pop off an empty stack");
+        }
+    }
+    
+    private static void executeDoLoop(ForthDoLoop loop, Robot robot, Stack<ForthWord> forthStack, GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException{
+        try{  
+            ForthWord first = forthStack.pop();
+            ForthWord second = forthStack.pop();
+            if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
+                int start = (int)((ForthIntegerLiteral)first).getValue();
+                int end = (int)((ForthIntegerLiteral)second).getValue();
+                //if end is smaller than start, the loop should run once
+                if(end < start){
+                    end = start;
+                }
+                
+                for(int i = start; i<=end; i++){
+                    Queue<ForthWord> commands = loop.getCommands();
+                    executeForthCommand(commands, robot, forthStack, controller, new Integer(i));
+                }
+                
+            } else {
+                throw new ForthRunTimeException("attempting to run a do loop without two int values on top of the stack");
+            }
+        }catch (EmptyStackException e){
+            throw new ForthRunTimeException("attempted to pop off an empty stack");
+        } catch (LeaveLoopException l){
+            return;
+        }
+    }
+    
+    private static void executeUntilLoop(ForthUntilLoop loop, Robot robot, Stack<ForthWord> forthStack, GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException{
+        boolean result = false;
+        while(!result){
+            try{
+                Queue<ForthWord> commands = loop.getCommands();
+                executeForthCommand(commands, robot, forthStack, controller, loopNumber);
+                ForthWord first = forthStack.pop();
+                if(first instanceof ForthBoolLiteral){
+                    result = ((ForthBoolLiteral) first).getValue();
+                } else {
+                    throw new ForthRunTimeException("attempting to run an until loop that doesn't end with a bool on top of the stack");  
+                }
+            }catch (EmptyStackException e){
+                throw new ForthRunTimeException("attempted to pop off an empty stack");
+            } catch (LeaveLoopException l){
+                return;
+            } 
+        }
+    }
     /**
      * Will run logic for one of the built in forth command used as part of the standard
      * @param word         the system word we want to run
@@ -347,7 +352,7 @@ public class ForthInterpreter {
                 first = forthStack.pop();
                 if(first instanceof ForthPointerLiteral){
                     String value = ((ForthPointerLiteral) first).getVariableValue(robot);
-                    result = wordFromString(value, robot);
+                    result = ForthParser.wordFromString(value, robot);
                     forthStack.push(result);
                 } else {
                     throw new ForthRunTimeException("? word called without a variable pointer on top of the stack");
@@ -585,106 +590,6 @@ public class ForthInterpreter {
   
    }
     
-
-    /**
-     * Parses a stiring into a sequence of understood forth words. Will throw an exception if it encounters a word it can't parse
-     * @param logicString the string we want to convert into forth code
-     * @param robot the robot that is executing the program
-     * @return a queue of forth words that can be executed by the interpreter
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
-     */
-    private static Queue<ForthWord> parseForthBodyString(String logicString, Robot robot) throws ForthParseException{
-       
-        String[] elements = logicString.split(" ");
-        Queue<String> forthStrings = new LinkedList<String>();
-        for(int i=0; i<elements.length; i++){
-            String item = elements[i];
-            //we need to combine forth strings into a single word, even when there are spaces
-            if(item.length() > 1 && item.charAt(0) == '.' && item.charAt(1) == '"' && item.charAt(item.length()-1) != '"'){
-                boolean stringEnd = false;
-                while(!stringEnd){
-                    i++;
-                    if(i >= elements.length){
-                        //we have reached the end of all words without finding the closing "
-                        throw new ForthParseException("could not find closing quote for forth string");
-                    }
-                    String nextItem = elements[i];
-                    item = item + " " + nextItem;
-                    stringEnd = (nextItem.charAt(nextItem.length()-1) == '"');
-                }
-            }
-            forthStrings.add(item);
-        }
-
-        Iterator<String> wordIterator = forthStrings.iterator();
-        Queue<ForthWord> commandQueue = createWordList(forthStrings, wordIterator, robot, null);
-        return commandQueue;
-    }
     
-    private static Queue<ForthWord> createWordList(Queue<String> wordString, Iterator<String> iterator, Robot robot, String expectedEnding) throws ForthParseException{
-        Queue<ForthWord> commandQueue = new LinkedList<ForthWord>(); 
-        while(iterator.hasNext()){
-            String item = iterator.next();
-            
-            if(item.equals("if")){
-                Queue<ForthWord> ifStatement = createWordList(wordString, iterator, robot, "then");
-                ForthWord newWord = new ForthConditional(ifStatement);
-                commandQueue.add(newWord);
-            } else if(item.equals("do")){
-                Queue<ForthWord> doLoop = createWordList(wordString, iterator, robot, "loop");
-                ForthWord newWord = new ForthDoLoop(doLoop);
-                commandQueue.add(newWord);
-            } else if(item.equals("begin")){
-                Queue<ForthWord> untilLoop = createWordList(wordString, iterator, robot, "until");
-                ForthWord newWord = new ForthUntilLoop(untilLoop);
-                commandQueue.add(newWord);
-            } else if(item.equals(expectedEnding)){
-                return commandQueue;
-            } else {
-                ForthWord newWord = wordFromString(item, robot);
-               
-                
-                commandQueue.add(newWord);
-            }
-        }
-        if(expectedEnding != null){
-            throw new ForthParseException("Could not parse if/loop statements");
-        }
-        return commandQueue;
-    }
     
-
-
-    /**
-     * Maps a string into the most likely forth word it represents
-     * @param item  the string we are parsing
-     * @param robot the robot that executed this code
-     * @return a new ForthWord from the string
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
-     */
-    private static ForthWord wordFromString(String item, Robot robot) throws ForthParseException{
-        ForthWord newWord;
-        if(ForthSystemWord.isThisKind(item)){
-            newWord = new ForthSystemWord(item);
-        } else if(ForthIntegerLiteral.isThisKind(item)){
-            newWord = new ForthIntegerLiteral(item);
-        } else if(ForthBoolLiteral.isThisKind(item)){
-            newWord = new ForthBoolLiteral(item);
-        } else if(ForthStringLiteral.isThisKind(item)){
-            newWord = new ForthStringLiteral(item);
-        } else if(ForthElsePlaceholder.isThisKind(item)){
-            newWord = new ForthElsePlaceholder();
-        } else if(ForthLeaveLoop.isThisKind(item)){
-            newWord = new ForthLeaveLoop();
-        } else if(ForthLoopNumber.isThisKind(item)){
-            newWord = new ForthLoopNumber();
-        } else if(ForthPointerLiteral.isThisKind(item, robot)){
-            newWord = new ForthPointerLiteral(item);
-        } else if (ForthCustomWord.isThisKind(item, robot)){
-            newWord = new ForthCustomWord(item);
-        } else {
-            throw new ForthParseException("Could not find meaning of forth word " + item);
-        }
-        return newWord;
-    }
 }
