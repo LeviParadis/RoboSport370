@@ -30,8 +30,13 @@ import Models.ForthWord;
 import Models.Robot;
 
 public class ForthInterpreter {
+    /**
+     * This class is used to run valid forth logic that has been parsed into the appropriate objects
+     */
     
+    //indicates whether the current robot has used it's shot. Reset on every execution
     private static boolean shotAvailable;
+    //indicates how many moves the current robot has left. Reset on every execution
     private static long movesAvailable;
 
     //tester
