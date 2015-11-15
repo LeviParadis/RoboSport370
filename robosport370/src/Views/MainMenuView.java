@@ -10,8 +10,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import Controllers.setupController;
+import Models.MainMenu;
 
-public class setupView extends ScreenAdapter {
+public class MainMenuView extends ScreenAdapter {
 	private SpriteBatch batch;
     
     private Texture menuArtTexture;
@@ -24,8 +25,6 @@ public class setupView extends ScreenAdapter {
     private Sprite menuOptionsTournament;
     private Sprite menuOptionsSimulation;
     private Sprite menuOptionsExit;
-    
-    private setupMenu setupMenu;
     
     private Music introMusic;
     private Sound beep;
@@ -40,7 +39,11 @@ public class setupView extends ScreenAdapter {
     
     final setupController controller;
     
-    public setupView(final setupController cont) {
+    /**
+     * Constructor for MainMenuView
+     * @param cont the controller creating this view
+     */
+    public MainMenuView(final setupController cont) {
     	controller = cont;
     	
         batch = new SpriteBatch();
@@ -56,8 +59,6 @@ public class setupView extends ScreenAdapter {
         menuOptionsSimulation = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
         menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
         
-        setupMenu = new setupMenu();
-        
         introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
         introMusic.setLooping(true);
         introMusic.setVolume(0.6f);
@@ -68,6 +69,9 @@ public class setupView extends ScreenAdapter {
         SCREEN_HEIGHT = Gdx.graphics.getHeight();
     }
 
+    /**
+     * Called to destroy the screen
+     */
     @Override
     public void dispose() {
         batch.dispose();
@@ -78,6 +82,9 @@ public class setupView extends ScreenAdapter {
         beep.dispose();
     }
 
+    /**
+     * Called every frame
+     */
     @Override
     public void render(float delta) {   
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -85,13 +92,17 @@ public class setupView extends ScreenAdapter {
         
         batch.begin();
         
+        if(Gdx.input.isKeyJustPressed(Keys.ENTER)) {
+        	controller.submitOption();
+        }
+        
         if(Gdx.input.isKeyJustPressed(Keys.DOWN)) {
-        	setupMenu.down();
+        	controller.menuDown();
         	beep.setVolume(beep.play(),0.3f);
         }
         
         if(Gdx.input.isKeyJustPressed(Keys.UP)) {
-        	setupMenu.up();
+        	controller.menuUp();
         	beep.setVolume(beep.play(),0.3f);
         }
         
@@ -107,6 +118,9 @@ public class setupView extends ScreenAdapter {
         batch.end();
     }
     
+    /**
+     * renders the main menu with the appropriate sprites based on the current option
+     */
     private void renderMenu() {
         menuOptionsTournament = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*0, menOpWidth, menOpHeight);
         menuOptionsSimulation = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
@@ -116,7 +130,7 @@ public class setupView extends ScreenAdapter {
     	menuOptionsSimulation.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*2f);
     	menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*3f);
     	
-    	switch(setupMenu.getCurrentOption()) {
+    	switch(controller.currentMenuOption()) {
     		case "New Tournament":
     			menuOptionsTournament = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*1, menOpWidth, menOpHeight);
     			menuOptionsTournament.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()*0.5f, SCREEN_HEIGHT*0.45f-30*1f);

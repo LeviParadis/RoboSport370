@@ -1,15 +1,21 @@
-package Views;
+package Models;
 
 import java.util.HashMap;
 
-public class setupMenu {
+/**
+ * MainMenu stores the current menu option for the startup screen
+ */
+public class MainMenu {
 	private HashMap<Integer, String> optionMap;
 	private Integer currentOption;
 	public static Integer NEW_TOURNAMENT = 1;
 	public static Integer NEW_SIMULATION = 2;
 	public static Integer EXIT = 3;
 	
-	public setupMenu() {
+	/**
+	 * Constructor for MainMenu, setting the default option to "New Tournament".
+	 */
+	public MainMenu() {
 		optionMap = new HashMap<Integer, String>();
 
 		optionMap.put(1, "New Tournament");
@@ -19,24 +25,33 @@ public class setupMenu {
 		currentOption = 1;
 	}
 	
-	public String getCurrentOption() {
+	/**
+	 * 
+	 * @return current menu option
+	 */
+	public String currentMenuOption() {
 		return optionMap.get(currentOption);
 	}
 	
-	public void up() {
+	/**
+	 * Move the current option up
+	 */
+	public void menuUp() {
 		if(currentOption > 1) {
 			currentOption--;
 		}
 	}
 	
-	public void down() {
+	/**
+	 * Move the current option down
+	 */
+	public void menuDown() {
 		if(currentOption < 3) {
 			currentOption++;
 		}
 	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 
