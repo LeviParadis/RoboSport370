@@ -28,6 +28,7 @@ import Models.ForthLoopNumber;
 import Models.ForthPointerLiteral;
 import Models.ForthStringLiteral;
 import Models.ForthSystemWord;
+import Models.ForthUntilLoop;
 import Models.ForthWord;
 import Models.Robot;
 
@@ -165,6 +166,23 @@ public class ForthInterpreter {
                     }
                 }catch (EmptyStackException e){
                     throw new ForthRunTimeException("attempted to pop off an empty stack");
+                }
+                
+            } else if(nextItem instanceof ForthUntilLoop){
+                boolean result = false;
+                while(!result){
+                Queue<ForthWord> commands = ((ForthUntilLoop)nextItem).getCommands();
+                executeForthCommand(commands, robot, forthStack, controller, null);
+                try{
+                    ForthWord first = forthStack.pop();
+                    if(first instanceof ForthBoolLiteral){
+                        result = ((ForthBoolLiteral) first).getValue();
+                    } else {
+                        throw new ForthRunTimeException("attempting to run an until loop that doesn't end with a bool on top of the stack");  
+                    }
+                }catch (EmptyStackException e){
+                    throw new ForthRunTimeException("attempted to pop off an empty stack");
+                }
                 }
                 
             } else if(nextItem instanceof ForthLoopNumber && loopNumber != null){
@@ -615,6 +633,10 @@ public class ForthInterpreter {
             } else if(item.equals("do")){
                 Queue<ForthWord> doLoop = createWordList(wordString, iterator, robot, "loop");
                 ForthWord newWord = new ForthDoLoop(doLoop);
+                commandQueue.add(newWord);
+            } else if(item.equals("begin")){
+                Queue<ForthWord> untilLoop = createWordList(wordString, iterator, robot, "until");
+                ForthWord newWord = new ForthUntilLoop(untilLoop);
                 commandQueue.add(newWord);
             } else if(item.equals(expectedEnding)){
                 return commandQueue;

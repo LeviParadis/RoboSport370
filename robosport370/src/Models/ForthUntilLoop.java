@@ -6,12 +6,12 @@ import java.util.Queue;
 
 import Exceptions.ForthParseException;
 
-public class ForthDoLoop implements ForthWord {
+public class ForthUntilLoop implements ForthWord {
 
     private Queue<ForthWord> commands;
     
 
-    public ForthDoLoop(Queue<ForthWord> commandList) throws ForthParseException {
+    public ForthUntilLoop(Queue<ForthWord> commandList) throws ForthParseException {
         commands = commandList; 
     }
     
@@ -21,22 +21,23 @@ public class ForthDoLoop implements ForthWord {
 
     @Override
     public String forthStringEncoding() {
-        String formatedString = "do";
+        String formatedString = "begin";
         Iterator<ForthWord> it = commands.iterator();
         while(it.hasNext()){
             ForthWord next = it.next();
             formatedString = formatedString + " " +next.forthStringEncoding();
         }
         
-        return formatedString + " loop";
+        return formatedString + " until";
     }
 
     @Override
     public String consoleFormat() {
-        return "do_loop";
+        return "until_loop";
     }
     
     public String toString(){
         return consoleFormat();
     }
+
 }

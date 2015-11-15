@@ -35,7 +35,7 @@
                     },
                     {"word" :       {   "name" : "turn",
                                         "comment" : "( -- )",
-                                        "body" :  "5 0 do I loop"
+                                        "body" :  "0 begin dup 1 swap 1 + dup 5 > until drop"
                                     }
                     }
                 ]
