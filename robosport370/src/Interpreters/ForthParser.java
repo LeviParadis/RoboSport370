@@ -28,6 +28,12 @@ public class ForthParser {
      */
     
 
+    public static final String IF_START_WORD = "if";
+    public static final String IF_END_WORD = "then";
+    public static final String DO_LOOP_START_WORD = "do";
+    public static final String DO_LOOP_END_WORD = "loop";
+    public static final String UNTIL_LOOP_START_WORD = "begin";
+    public static final String UNTIL_LOOP_END_WORD = "until";
 
     /**
      * Parses text into a sequence of forth word objects. Will throw an exception if it encounters a word it can't parse
@@ -83,21 +89,21 @@ public class ForthParser {
         //go through each word once
         while(iterator.hasNext()){
             String item = iterator.next();
-            if(item.equals("if")){
+            if(item.equals(IF_START_WORD)){
                 //if we encounter an if statement, call the function recursively, and stop when we reach then
                 //everything in between if and then will be collapsed into an if object
-                Queue<ForthWord> ifStatement = createWordList(wordString, iterator, robot, "then");
+                Queue<ForthWord> ifStatement = createWordList(wordString, iterator, robot, IF_END_WORD);
                 //create a new word containing all words in between if and then
                 ForthWord newWord = new ForthConditional(ifStatement);
                 commandQueue.add(newWord);
-            } else if(item.equals("do")){
+            } else if(item.equals(DO_LOOP_START_WORD)){
                 //we do the same thing with the words between do and loop
-                Queue<ForthWord> doLoop = createWordList(wordString, iterator, robot, "loop");
+                Queue<ForthWord> doLoop = createWordList(wordString, iterator, robot, DO_LOOP_END_WORD);
                 ForthWord newWord = new ForthDoLoop(doLoop);
                 commandQueue.add(newWord);
-            } else if(item.equals("begin")){
+            } else if(item.equals(UNTIL_LOOP_START_WORD)){
               //we do the same thing with the words between begin and until
-                Queue<ForthWord> untilLoop = createWordList(wordString, iterator, robot, "until");
+                Queue<ForthWord> untilLoop = createWordList(wordString, iterator, robot, UNTIL_LOOP_END_WORD);
                 ForthWord newWord = new ForthUntilLoop(untilLoop);
                 commandQueue.add(newWord);
             } else if(item.equals(expectedEnding)){

@@ -34,6 +34,10 @@ public class ForthInterpreter {
      * This class is used to run valid forth logic that has been parsed into the appropriate objects
      */
     
+    public static final String INIT_WORD = "init";
+    public static final String TURN_WORD = "turn";
+    public static final String STACK_EXCEPTION_ERROR = "attempted to pop off an empty stack";
+    
     //indicates whether the current robot has used it's shot. Reset on every execution
     private static boolean shotAvailable;
     //indicates how many moves the current robot has left. Reset on every execution
@@ -45,10 +49,10 @@ public class ForthInterpreter {
         try {
             JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
             Robot newRobot = JsonInterpreter.robotFromJSON(json);
-            System.out.println("init");
+            System.out.println(INIT_WORD);
             initRobot(newRobot, null);
             System.out.println();
-            System.out.println("turn");
+            System.out.println(TURN_WORD);
             executeTurn(newRobot, null);
             
         } catch (IOException | ParseException | ForthRunTimeException | ForthParseException e1) {
@@ -69,7 +73,7 @@ public class ForthInterpreter {
         movesAvailable = 0;
         
         //find logic string
-        String logicString = robot.getForthWord("init");
+        String logicString = robot.getForthWord(INIT_WORD);
         //parse into forth words
         Queue<ForthWord> forthBody = ForthParser.parseForthBodyString(logicString, robot);
         //create empty stack for the program to use
@@ -97,7 +101,7 @@ public class ForthInterpreter {
         shotAvailable = true;
         
       //find logic string
-        String logicString = robot.getForthWord("turn");
+        String logicString = robot.getForthWord(TURN_WORD);
       //parse into forth words
         Queue<ForthWord> forthBody = ForthParser.parseForthBodyString(logicString, robot);
         //create empty stack for the program to use
@@ -192,7 +196,7 @@ public class ForthInterpreter {
             }
         } catch (EmptyStackException e){
             //if the stack can't be popped, throw a runtime exception
-            throw new ForthRunTimeException("attempted to pop off an empty stack");
+            throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
         }
     }
     
@@ -227,7 +231,7 @@ public class ForthInterpreter {
             }
         }catch (EmptyStackException e){
           //if the stack can't be popped, throw a runtime exception
-            throw new ForthRunTimeException("attempted to pop off an empty stack");
+            throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
         } catch (LeaveLoopException l){
             //if a lower level encountered the leave word, cancel the rest of the loop
             return;
@@ -260,7 +264,7 @@ public class ForthInterpreter {
                 }
             }catch (EmptyStackException e){
               //if the stack can't be popped, throw a runtime exception
-                throw new ForthRunTimeException("attempted to pop off an empty stack");
+                throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
             } catch (LeaveLoopException l){
               //if a lower level encountered the leave word, cancel the rest of the loop
                 return;
@@ -407,7 +411,7 @@ public class ForthInterpreter {
         //if the stack ever fails to pop because it's run out of entries, it will throw
         //an empty stack exception. We can change it into our ForthRunTimeException
       } catch (EmptyStackException e){
-          throw new ForthRunTimeException("attempted to pop off an empty stack");
+          throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
       }
   
    }
