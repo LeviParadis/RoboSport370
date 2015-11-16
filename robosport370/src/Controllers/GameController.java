@@ -2,7 +2,7 @@ package Controllers;
 
 import Views.mapView;
 
-public class GameController {
+public class GameController extends  { //Extend class Corey mentioned for pause and play
 	
     /**
      * All of the teams to be run in the simulation.
@@ -117,6 +117,7 @@ public class GameController {
 	public void shootAtSpace(Robot shooter, int hexPos){
 	    
 	}
+	
 	public static void main(){
 		
 	}
