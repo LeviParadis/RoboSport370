@@ -3,14 +3,13 @@ package Views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import Controllers.setupController;
-import Models.MainMenu;
 
 public class MainMenuView extends ScreenAdapter {
 	private SpriteBatch batch;
@@ -25,9 +24,6 @@ public class MainMenuView extends ScreenAdapter {
     private Sprite menuOptionsTournament;
     private Sprite menuOptionsSimulation;
     private Sprite menuOptionsExit;
-    
-    private Music introMusic;
-    private Sound beep;
     
     private Integer SCREEN_WIDTH;
     private Integer SCREEN_HEIGHT;
@@ -59,18 +55,12 @@ public class MainMenuView extends ScreenAdapter {
         menuOptionsSimulation = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
         menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
         
-        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
-        introMusic.setLooping(true);
-        introMusic.setVolume(0.6f);
-        introMusic.play();
-        beep = Gdx.audio.newSound(Gdx.files.internal("assets/sound/Beep.mp3"));
-        
         SCREEN_WIDTH = Gdx.graphics.getWidth();
         SCREEN_HEIGHT = Gdx.graphics.getHeight();
     }
 
     /**
-     * Called to destroy the screen
+     * Called to do garbage collection
      */
     @Override
     public void dispose() {
@@ -78,8 +68,6 @@ public class MainMenuView extends ScreenAdapter {
         menuArtTexture.dispose();
         menuCreditTexture.dispose();
         menuOptionsTexture.dispose();
-        introMusic.dispose();
-        beep.dispose();
     }
 
     /**
@@ -93,17 +81,15 @@ public class MainMenuView extends ScreenAdapter {
         batch.begin();
         
         if(Gdx.input.isKeyJustPressed(Keys.ENTER)) {
-        	controller.submitOption();
+        	controller.submitMenuOption();
         }
         
         if(Gdx.input.isKeyJustPressed(Keys.DOWN)) {
         	controller.menuDown();
-        	beep.setVolume(beep.play(),0.3f);
         }
         
         if(Gdx.input.isKeyJustPressed(Keys.UP)) {
         	controller.menuUp();
-        	beep.setVolume(beep.play(),0.3f);
         }
         
         // Draw the title screen at the middle of the screen, centered
@@ -151,6 +137,10 @@ public class MainMenuView extends ScreenAdapter {
     }
 	
 	public static void main(String[] args) {
-
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = "RobotSport370";
+		config.height = 800;
+		config.width = 1280;
+		new LwjglApplication(new setupController(), config);
 	}
 }
