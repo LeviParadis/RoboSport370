@@ -21,7 +21,6 @@ public class RobotGameStats {
      * @param distanceMoved the total distance the robot has moved in it's history
      */
     public RobotGameStats(long wins, long losses, long executions, long gamesDied, long gamesSurvived, long damageGiven, long damageRecieved, long kills, long distanceMoved){
-        // TODO Auto-generated constructor stub
         this.wins = wins;
         this.losses = losses;
         this.executions = executions;
@@ -56,6 +55,7 @@ public class RobotGameStats {
      * @param numLosses the amount of instances of this robot that was on losing teams
      */
     public void finishMatch(long numWins, long numLosses){
+      //TODO: this needs to be set up
         long totalNumInMatch = numWins + numLosses;
         this.executions = this.executions + totalNumInMatch;
         this.gamesDied = this.gamesDied + numDiedThisGame;
@@ -75,6 +75,7 @@ public class RobotGameStats {
      * mark that this robot has caused some damage
      */
     protected void incrementDamageGiven(long amountDamage){
+        //TODO: this needs to be set up
         this.damageGiven = this.damageGiven + amountDamage;
     }
     
@@ -89,6 +90,7 @@ public class RobotGameStats {
      * mark that this robot has killed another
      */
     protected void incrementKills(){
+      //TODO: this needs to be set up
         this.kills = this.kills + 1;
     }
     
@@ -96,6 +98,7 @@ public class RobotGameStats {
      * mark the distance that this robot has moved
      */
     protected void incrementDistanceMoved(){
+      //TODO: this needs to be set up
         this.distanceMoved = this.distanceMoved + 1;
     }
     

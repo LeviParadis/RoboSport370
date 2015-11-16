@@ -149,6 +149,7 @@ public class Robot {
      * @param damage the amount to subtract from the robot's health
      */
     public void inflictDamage(int damage) {
+        this.stats.incrementDamageReceived(damage);
         this.currentHealth = this.currentHealth - damage;
         if(this.currentHealth <= 0){
             this.destroy();
@@ -231,6 +232,7 @@ public class Robot {
      */
     public void destroy(){
         this.currentHealth = 0;
+        this.stats.markAsDied();
         //TODO: should also animate destruction, and remove the robot from the game
     }
 
@@ -249,7 +251,6 @@ public class Robot {
      * @return whether the action succeeded or failed
      */
     public boolean addMailFromMember(int sender, ForthWord newMail){
-        //TODO: make the mailbox store forth words instead of strings
         int totalMail = this.totalMailAmount();
         Integer memberNumber = new Integer(sender);
         
