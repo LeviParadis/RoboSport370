@@ -39,6 +39,7 @@ public class Robot {
      * @param moves       The number of moves the robot can move in one turn
      * @param vars        The list of forth variables
      * @param words       The list of forth commands
+     * @param stats       An object that holds the stats for this robot. If it w
      */
     public Robot(String robotName, long serial,
             long health, long strength, long moves,
