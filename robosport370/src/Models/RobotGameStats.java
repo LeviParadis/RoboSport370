@@ -1,6 +1,5 @@
 package Models;
 
-import org.json.simple.JSONObject;
 import Enums.JSONConstants;
 
 public class RobotGameStats {
@@ -102,24 +101,41 @@ public class RobotGameStats {
         this.distanceMoved = this.distanceMoved + 1;
     }
     
-    //the json library we use creates warnings when we try to write to JSON files, so we will
-    //have to suppress warnings in this function where it writes to JSON
-    @SuppressWarnings("unchecked")
-    /**
-     * creates a formated JSON object from all the stats. This can be sent to the server
-     * @return a formated JSON object with all the stats information
-     */
-    public JSONObject getJsonRepresentation(){
-        JSONObject root = new JSONObject();
-        root.put(JSONConstants.LOSSES, this.losses);
-        root.put(JSONConstants.WINS, this.wins);
-        root.put(JSONConstants.EXECUTIONS, this.executions);
-        root.put(JSONConstants.GAMES_LIVED, this.gamesSurvived);
-        root.put(JSONConstants.GAMES_DIED, this.gamesSurvived);
-        root.put(JSONConstants.DAMAGE_TAKEN, this.damageAbsorbed);
-        root.put(JSONConstants.DAMAGE_GIVEN, this.damageGiven);
-        root.put(JSONConstants.KILLS, this.kills);
-        root.put(JSONConstants.DISTANCE_MOVED, this.distanceMoved);
-        return root;
+    
+    public long getWins() {
+        return wins;
     }
+
+    public long getLosses() {
+        return losses;
+    }
+
+    public long getExecutions() {
+        return executions;
+    }
+
+    public long getGamesSurvived() {
+        return gamesSurvived;
+    }
+
+    public long getGamesDied() {
+        return gamesDied;
+    }
+
+    public long getDamageGiven() {
+        return damageGiven;
+    }
+
+    public long getDamageAbsorbed() {
+        return damageAbsorbed;
+    }
+
+    public long getKills() {
+        return kills;
+    }
+
+    public long getDistanceMoved() {
+        return distanceMoved;
+    }
+
 }
