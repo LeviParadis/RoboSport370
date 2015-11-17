@@ -1,8 +1,12 @@
 package Controllers;
 
+
+
+import com.badlogic.gdx.Game;
+
 import Views.mapView;
 
-public class GameController extends  { //Extend class Corey mentioned for pause and play
+public class GameController extends Game { //Extend class Corey mentioned for pause and play
 	
     /**
      * All of the teams to be run in the simulation.
@@ -60,20 +64,25 @@ public class GameController extends  { //Extend class Corey mentioned for pause 
 	    
 	}
 	
-	
+	/**
+	 * puts the game into a paused state
+	 */
 	public void pause(){
-	    
+	    this.pause();
 	}
 	
+	/**
+	 * resumes the game from the paused state
+	 */
 	public void resume(){
-	    
+	    this.resume();
 	}
 	
 	/**
 	 * ends game stops all game threads from running and calls the endgame controller
 	 */
 	public void endGame(){
-	    
+	    new EndController();
 	}
 	
 	/**
@@ -85,7 +94,13 @@ public class GameController extends  { //Extend class Corey mentioned for pause 
 	}
 	
 	public void scanSpace(int hexPos){
-	    
+	    for(int i = 0; i < teams.length; i++){
+	        for(int j = 0; j < 5[; j++){
+	            if(team[i].robotlist[j].hexPosition){
+	                
+	            }
+	        }
+	    }
 	}
 	
 	/**
@@ -121,4 +136,11 @@ public class GameController extends  { //Extend class Corey mentioned for pause 
 	public static void main(){
 		
 	}
+
+
+    @Override
+    public void create() {
+        // TODO Auto-generated method stub
+        
+    }
 }
