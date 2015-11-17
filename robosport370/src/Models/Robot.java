@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 
 import Exceptions.ForthRunTimeException;
 
@@ -22,9 +21,9 @@ public class Robot {
     
     private long serialNumber;
     private String name, teamName;
-    private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;
-    private long wins,losses, matches; 
+    private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;;
     private long simTeamNumber, simMemberNumber;
+    private RobotGameStats stats;
     private Color teamColor;
     private HashMap<String,String> forthVariables,forthWords;
     private HashMap<Integer, Queue<ForthWord>> mailBox;
@@ -40,14 +39,11 @@ public class Robot {
      * @param moves       The number of moves the robot can move in one turn
      * @param vars        The list of forth variables
      * @param words       The list of forth commands
-     * @param winCount   The number of times this robot has won a match
-     * @param lossCount  The number of times this robot has lost a match
-     * @param matchCount The total number of matches this robot has played
+     * @param stats       An object that holds the stats for this robot. If it w
      */
     public Robot(String robotName, long serial,
             long health, long strength, long moves,
-            HashMap<String,String> vars, HashMap<String,String> words,
-            long winCount, long lossCount, long matchCount) {
+            HashMap<String,String> vars, HashMap<String,String> words, RobotGameStats stats) {
         this.name = robotName;
         this.serialNumber = serial;
         this.forthVariables = vars;
@@ -56,10 +52,8 @@ public class Robot {
         this.currentHealth = health;
         this.strength = strength;
         this.movesPerTurn = moves;
-        this.wins = winCount;
-        this.losses = lossCount;
-        this.matches = matchCount;
         this.mailBox = new HashMap<Integer, Queue<ForthWord>>();
+        this.stats = stats;
     }
     
     /**
@@ -75,7 +69,7 @@ public class Robot {
     public Robot(String robotName, long serial,
             long health, long strength, long moves,
             HashMap<String,String> vars, HashMap<String,String> words) {
-        this(robotName, serial, health, strength, moves, vars, words, 0, 0, 0);
+        this(robotName, serial, health, strength, moves, vars, words, new RobotGameStats());
     }
     
     /**
@@ -141,7 +135,7 @@ public class Robot {
      */
     public long getHealth() {
         return this.currentHealth;
-	    }
+    }
     
     /**
      * @return the health the robot starts a match with
@@ -154,23 +148,24 @@ public class Robot {
      * causes damage to the robot
      * @param damage the amount to subtract from the robot's health
      */
-	    public void inflictDamage(int damage) {
-	        this.currentHealth = this.currentHealth - damage;
-	        if(this.currentHealth <= 0){
-	            this.destroy();
-	        }
-	    }
-	
-	    /**
-	     * @return the amount of damage the robot can cause to others
-	     */
-	    public long getStrength() {
-	        return strength;
-	    }
-	    
-	    /**
-	     * @return the number of moves the robot can do each turn
-	     */
+    public void inflictDamage(int damage) {
+        this.stats.incrementDamageReceived(damage);
+        this.currentHealth = this.currentHealth - damage;
+        if(this.currentHealth <= 0){
+            this.destroy();
+        }
+    }
+
+    /**
+     * @return the amount of damage the robot can cause to others
+     */
+    public long getStrength() {
+        return strength;
+    }
+    
+    /**
+     * @return the number of moves the robot can do each turn
+     */
     public long getMovesPerTurn(){
         return movesPerTurn;
     }
@@ -179,38 +174,17 @@ public class Robot {
     /**
      * @return a number representing the robot's position on the board
      */
-	    public long getPosition() {
-	        return hexPosition;
-	    }
-
-	    /**
-	     * @param newHexPosition the hex number to move this robot to
-	     */
-	    public void setPosition(long newHexPosition) {
-	        this.hexPosition = newHexPosition;
-	    }
-
-	    /**
-	     * @return the number of games this robot has won
-	     */
-	    public long getWins() {
-	       return wins;
-	    }
-	    
-	    /**
-	     * @return the number of games this robot has lost
-	     */
-	    public long getLosses() {
-	        return losses;
-	    }
-	    
-	    /**
-     * @return the total number of games this robot has played
-     */
-    public long getTotalNumberOfMatches() {
-        return this.matches;
+    public long getPosition() {
+        return hexPosition;
     }
-    
+
+    /**
+     * @param newHexPosition the hex number to move this robot to
+     */
+    public void setPosition(long newHexPosition) {
+        this.hexPosition = newHexPosition;
+    }
+
     /**
      * @return the value stored in the forth variable "variableName"
      * @param variableName the name of the variable we are checking
@@ -252,71 +226,71 @@ public class Robot {
     }
     
   
-	    /**
-	     * Destroys this robot
-	     * Removes it's health, and animates it's destruction
-	     */
-	    public void destroy(){
-	        this.currentHealth = 0;
-	        //TODO: should also animate destruction, and remove the robot from the game
-	    }
-	
-	    /**
-	     * @returns true if robot's health is above 0
-	     */
-	    public boolean isAlive()	{
-	        return (this.currentHealth >= 0);
-	    }
-	
-	    /**
-	     * Saves a new value into this robot's mailbox
-	     * the mailbox has a capacity of 6
-	     *  If the mailbox is full or the robot is destroyed, it will return false
-	     * @param objectToPush the new value to save to the mailbox
-	     * @return whether the action succeeded or failed
-	     */
-	    public boolean addMailFromMember(int sender, ForthWord newMail){
-	        //TODO: make the mailbox store forth words instead of strings
-	        int totalMail = this.totalMailAmount();
-	        Integer memberNumber = new Integer(sender);
-	        
-	        if(this.isAlive() && totalMail < 6 ){
-	            Queue<ForthWord> memberMessages = this.mailBox.get(memberNumber);
-	            if(memberMessages == null){
-	                memberMessages = new LinkedList<ForthWord>();
-	            }
-	            memberMessages.add(newMail);
-	            this.mailBox.put(memberNumber, memberMessages);
-	            return true;
-	        } else {
-	            return false;
-	        }
-	    }
-	    
-	    /**
-	     * tells us the amount of mail this robot has stored
-	     * it should always be a number between 0 and 6
-	     * @return the total amount of mail this robot has saved
-	     */
-	    private int totalMailAmount(){
-	        int count = 0;
-	        Set<Integer> allKeys = this.mailBox.keySet();
-	        Iterator<Integer> boxIterator = allKeys.iterator();
-	        while(boxIterator.hasNext()){
-	            Integer key = boxIterator.next();
-	            Queue<ForthWord> thisBox = this.mailBox.get(key);
-	            count = count + thisBox.size();
-	        }
-	        return count;
-	    }
-	    
-	    /**
-	     * Pops a value off the robot's mailbox 
-	     * @returns the top value stored in the mailbox stack
-	     */
-	    public ForthWord popMailFromMember(int sender) throws ForthRunTimeException{
-	        
-	        Integer member = new Integer(sender);
+    /**
+     * Destroys this robot
+     * Removes it's health, and animates it's destruction
+     */
+    public void destroy(){
+        this.currentHealth = 0;
+        this.stats.markAsDied();
+        //TODO: should also animate destruction, and remove the robot from the game
+    }
+
+    /**
+     * @returns true if robot's health is above 0
+     */
+    public boolean isAlive(){
+        return (this.currentHealth >= 0);
+    }
+
+    /**
+     * Saves a new value into this robot's mailbox
+     * the mailbox has a capacity of 6
+     *  If the mailbox is full or the robot is destroyed, it will return false
+     * @param objectToPush the new value to save to the mailbox
+     * @return whether the action succeeded or failed
+     */
+    public boolean addMailFromMember(int sender, ForthWord newMail){
+        int totalMail = this.totalMailAmount();
+        Integer memberNumber = new Integer(sender);
+        
+        if(this.isAlive() && totalMail < 6 ){
+            Queue<ForthWord> memberMessages = this.mailBox.get(memberNumber);
+            if(memberMessages == null){
+                memberMessages = new LinkedList<ForthWord>();
+            }
+            memberMessages.add(newMail);
+            this.mailBox.put(memberNumber, memberMessages);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * tells us the amount of mail this robot has stored
+     * it should always be a number between 0 and 6
+     * @return the total amount of mail this robot has saved
+     */
+    private int totalMailAmount(){
+        int count = 0;
+        Set<Integer> allKeys = this.mailBox.keySet();
+        Iterator<Integer> boxIterator = allKeys.iterator();
+        while(boxIterator.hasNext()){
+            Integer key = boxIterator.next();
+            Queue<ForthWord> thisBox = this.mailBox.get(key);
+            count = count + thisBox.size();
+        }
+        return count;
+    }
+    
+    /**
+     * Pops a value off the robot's mailbox 
+     * @returns the top value stored in the mailbox stack
+     */
+    public ForthWord popMailFromMember(int sender) throws ForthRunTimeException{
+        
+        Integer member = new Integer(sender);
         Queue<ForthWord> memberMessages = this.mailBox.get(new Integer(member));
         
         if(memberMessages != null && !memberMessages.isEmpty()){
@@ -329,24 +303,24 @@ public class Robot {
                                   + ", but there were no messages in the mailbox";
           throw new ForthRunTimeException(errorMessage);
         }
-	    }
-	    
-	    /**
-	     * lets us know whether we have mail waiting from a specific sender
-	     * @param sender the member number of the sender we are checking for
-	     * @return a bool representing whether we have mail waiting
-	     */
-	    public boolean hasMailFromMember(int sender){
-	        Integer memberNumber = new Integer(sender);
-	        Queue<ForthWord> memberMessages = this.mailBox.get(memberNumber);
-	        return(memberMessages != null && !memberMessages.isEmpty());
-	    }
-	    
-	    /**
-	     * @return a string representation of the robot
-	     */
-	    public String toString(){
+    }
+    
+    /**
+     * lets us know whether we have mail waiting from a specific sender
+     * @param sender the member number of the sender we are checking for
+     * @return a bool representing whether we have mail waiting
+     */
+    public boolean hasMailFromMember(int sender){
+        Integer memberNumber = new Integer(sender);
+        Queue<ForthWord> memberMessages = this.mailBox.get(memberNumber);
+        return(memberMessages != null && !memberMessages.isEmpty());
+    }
+    
+    /**
+     * @return a string representation of the robot
+     */
+    public String toString(){
         return name + " - " + teamName + " - " + serialNumber; 
-	    }
+    }
 
 }
