@@ -59,6 +59,7 @@ public class JsonInterpreter {
             long kills = (long)root.get(JSONConstants.KILLS);
             long distanceMoved = (long)root.get(JSONConstants.DISTANCE_MOVED);
             stats = new RobotGameStats(wins, losses, executions, gamesDied, gamesSurvived, damageGiven, damageRecieved, kills, distanceMoved);
+            statsCache.put(new Integer((int) serial), stats);
         }
         
         //get the robot's attributes
