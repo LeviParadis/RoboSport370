@@ -48,7 +48,7 @@ public class ForthInterpreter {
         JSONParser parser=new JSONParser(); 
         try {
             JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
-            Robot newRobot = JsonInterpreter.robotFromJSON(json);
+            Robot newRobot = JsonInterpreter.robotFromJSON(json, null);
             System.out.println(INIT_WORD);
             initRobot(newRobot, null);
             System.out.println();
