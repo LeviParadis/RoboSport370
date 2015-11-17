@@ -18,5 +18,6 @@
 	<classpathentry kind="lib" path="libs/lwjgl-platform-2.9.2-natives-linux.jar"/>
 	<classpathentry kind="lib" path="libs/lwjgl-platform-2.9.2-natives-osx.jar"/>
 	<classpathentry kind="lib" path="libs/lwjgl-platform-2.9.2-natives-windows.jar"/>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
