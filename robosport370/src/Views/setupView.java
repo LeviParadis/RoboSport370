@@ -259,8 +259,6 @@ public class setupView extends ScreenAdapter {
     }
     
     public void toggleMapSize() {
-    	// TODO When do we want to call the controller? Each time? Or just once?
-    	// TODO May want to add in controller calls and remove the mapSizeIndex here
         controller.notifyMapSize();
     	if(mapSizeIndex < 11) {
     		mapSize.scroll(0, mapSize.getHeight()/(float)mapSize.getTexture().getHeight());
