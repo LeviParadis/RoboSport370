@@ -2,7 +2,7 @@ package Views;
 
 import com.badlogic.gdx.Input.TextInputListener;
 
-public class MyTextInputListener implements TextInputListener {
+public class myTextInputListener implements TextInputListener {
 		private String input;
 	
 		@Override
@@ -12,6 +12,7 @@ public class MyTextInputListener implements TextInputListener {
 
 	    @Override
 	    public void canceled () {
+	    	input = "";
 	    }
 	    
 	    public String getInput() {
