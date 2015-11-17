@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter.Particle;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -200,7 +202,7 @@ public class setupView extends ScreenAdapter {
         renderConfigOptions();
         renderSetupOptions();
         renderTeamOptions();
-        
+	        
         font.draw(batch, "Teams", SCREEN_WIDTH*0.65f, SCREEN_HEIGHT*0.9f);
 
         batch.end();
