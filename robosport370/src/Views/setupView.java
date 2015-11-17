@@ -10,6 +10,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -85,6 +86,8 @@ public class setupView extends ScreenAdapter {
 	private Sprite yellowPanel;
 	private Sprite greenPanel;
 	
+	private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
+
 	/**
      * Constructor for SetupView
      * @param cont the controller creating this view
@@ -157,8 +160,8 @@ public class setupView extends ScreenAdapter {
 		
 		
 		configuration.setPosition(SCREEN_WIDTH*0.64f, SCREEN_HEIGHT*0.33f);
-		debugMode.setPosition(SCREEN_WIDTH*0.64f, SCREEN_HEIGHT*0.29f);
-		mapSize.setPosition(SCREEN_WIDTH*0.64f, SCREEN_HEIGHT*0.25f);
+		debugMode.setPosition(SCREEN_WIDTH*0.64f, SCREEN_HEIGHT*0.25f);
+		mapSize.setPosition(SCREEN_WIDTH*0.64f, SCREEN_HEIGHT*0.29f);
 		
 		// Creating the decor texture
 		setupdecor = new Texture("assets/setupMenu/setupdecor.png");
@@ -197,6 +200,8 @@ public class setupView extends ScreenAdapter {
         renderConfigOptions();
         renderSetupOptions();
         renderTeamOptions();
+        
+        font.draw(batch, "Teams", SCREEN_WIDTH*0.65f, SCREEN_HEIGHT*0.9f);
 
         batch.end();
     }   
