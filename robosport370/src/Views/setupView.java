@@ -289,7 +289,7 @@ public class setupView extends ScreenAdapter {
     }
     
     public void returnSetup() {
-    	// TODO Call a controller function here for sure
+        controller.notifyReturn();
     }
     
     /**

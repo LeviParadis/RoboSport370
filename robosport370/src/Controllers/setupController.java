@@ -2,6 +2,7 @@ package Controllers;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -10,12 +11,15 @@ import Views.mainMenuView;
 import Views.setupView;
 
 /**
- * 
+ * @author Corey
+ * @author Levi
  * setupController handles the main menu and setup screens while interfacing with the models
  *
  */
 public class setupController extends Game {
 	private Music introMusic;
+	
+	public boolean isTournament,isSimulation;
 	
 	/**
 	 * Called on initilization
@@ -26,14 +30,44 @@ public class setupController extends Game {
         introMusic.setLooping(true);
         introMusic.setVolume(0.6f);
         introMusic.play();
+        isTournament = false;
+        isSimulation = false;
 		
-		//This is for testing my first screen
-//        this.setScreen(new mainMenuView(this));
+        //This is for testing my first screen
+        this.setScreen(new mainMenuView(this));
 		
 		//This is for testing my second screen
-		this.setScreen(new setupView(this));
+		//this.setScreen(new setupView(this));
     }
+	/**
+	 * Gets called when the Main Menu view selects tournament
+	 * 
+	 */
+	public void notifyTournament(){
+	    this.setScreen(new setupView(this));
+	    this.isTournament = true;
+	}
 	
+	/**
+	 * Gets called when the Main Menu view selects a simulation
+	 */
+	public void notifySim(){
+	      this.setScreen(new setupView(this));
+	      
+	      this.isSimulation = true;
+	}
+	/**
+	 * gets called when the Main Menu view selects exit
+	 */
+	public void notifyExit(){
+	    System.exit(0);
+	}
+	/**
+	 * gets called when Setup view selects return
+	 */
+	public void notifyReturn(){
+	    this.setScreen(new mainMenuView(this));
+	}
 	/**
 	 * Called every frame
 	 */

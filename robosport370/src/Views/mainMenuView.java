@@ -131,13 +131,13 @@ public class mainMenuView extends ScreenAdapter {
     	if(Gdx.input.isKeyJustPressed(Keys.ENTER)) {
         	switch(menu.getIndex()) {
         	case NEW_TOURNAMENT:
-        		// TODO Figure out how we're going to pass this option to the setupController
+        	    controller.notifyTournament();
         		break;
         	case NEW_SIMULATION:
-        		// TODO Figure out how we're going to pass this option to the setupController
-        		break;
+        	    controller.notifySim();
+        	    break;
         	case EXIT:
-        		// TODO Figure out how we're going to pass this option to the setupController
+        	    controller.notifyExit();
         		break;
         	}
         }
@@ -161,5 +161,7 @@ public class mainMenuView extends ScreenAdapter {
 		config.height = 800;
 		config.width = 1280;
 		new LwjglApplication(new setupController(), config);
+		
+		
 	}
 }
