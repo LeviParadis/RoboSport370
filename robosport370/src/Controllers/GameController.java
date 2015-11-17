@@ -1,52 +1,34 @@
 package Controllers;
 
-
-
 import java.util.HashMap;
 
 import com.badlogic.gdx.Game;
 
 import Models.Robot;
 import Models.Team;
+import Models.Map.DIRECTION;
+import Models.Map;
 import Views.mapView;
 
-public class GameController extends Game { //Extend class Corey mentioned for pause and play
+public class GameController extends Game{
     
-    /**
-     * All of the teams to be run in the simulation.
-     */
-    //Team teams[];
-    HashMap<Integer, Team> teams;
+    /** All of the teams to be run in the simulation.*/
+    private HashMap<Integer, Team> teams;
+    
+    /** The map that holds the information for calculations and the size*/
+    private Map gameMap;
     
     
-    /**
-     * holds the value to which team goes next
-     */
-    long nextTeamIdx;
-
-    /**
-     * 
-     */
-    //LogContoller GameLog;
+    /** holds the value to which team goes next*/
+    private long nextTeamIdx;
     
-    /**
-     * The size of the hexmap, the size is one side length
-     */
-    int hexSize;
-    
-    /**
-     * CHANGE
-     */
+    /** CHANGE*/
     boolean isHeadless;
     
-    /**
-     * Stores the type of map view
-     */
+    /** Stores the type of map view */
     mapView view;
     
-    /**
-     * how long it takes for each animation to complete in milliseconds
-     */
+    /** how long it takes for each animation to complete in milliseconds */
     int animationSpeed = 100;
     
     /**
@@ -56,11 +38,13 @@ public class GameController extends Game { //Extend class Corey mentioned for pa
      */
     public GameController(Team allTeams[], int hexSize){
         teams = new HashMap<Integer, Team>();
+        gameMap = new Map(hexSize);
         
+        //adds the teams into the game controller
         for(int i = 0; i < allTeams.length; i++){
             teams.put((int) allTeams[i].getTeamNumber(), allTeams[i]);
         }
-        this.hexSize = hexSize;
+        
         mapView newMap = new mapView();
         //TODO // GameLog gameLog = new GameLog();
     }
@@ -94,19 +78,24 @@ public class GameController extends Game { //Extend class Corey mentioned for pa
         this.animationSpeed = newSpeed;
     }
     
-    public float getAnimationSpeed(int newSpeed){
-        this.animationSpeed = newSpeed;
+    public int getAnimationSpeed(){
+        return this.animationSpeed;
     }
     
-    public void scanSpace(int hexPos){
-        
+    public int scan(){
+       int count =0;
+       
+       for(int i = 0; i < teams.size(); i++){
+    	   if
+       }
     }
     
     /**
      * 
      */
-    public void identifyRobot(int teamNumber, int range, Direction direction, int health ){
-        
+    public void identifyRobot(int teamNumber, int range, DIRECTION direction, int health ){
+    	teams.get(teamNumber);//TODO
+    	
     }
     
     
@@ -127,7 +116,6 @@ public class GameController extends Game { //Extend class Corey mentioned for pa
         
     }
     
-    
     public void moveRobot(Robot robotToMove, long newPosition, int TeamNumber){
        Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
        temp.setPosition(newPosition);
@@ -141,7 +129,9 @@ public class GameController extends Game { //Extend class Corey mentioned for pa
      * @precond the hexPos must be on the map
      */
     public void shootAtSpace(Robot shooter, int hexPos){
-        
+        for(int i = 0; i < teams.size(); i++){
+        	if 
+        }
     }
     
     public static void main(){
