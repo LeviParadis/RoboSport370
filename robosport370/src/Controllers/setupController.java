@@ -9,6 +9,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import Views.mainMenuView;
 import Views.setupView;
+import Views.endView;
 
 /**
  * @author Corey
