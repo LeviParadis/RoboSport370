@@ -1,6 +1,7 @@
 package Controllers;
 
 import java.util.HashMap;
+import java.util.Queue;
 
 import com.badlogic.gdx.Game;
 
@@ -20,7 +21,8 @@ public class GameController extends Game{
     
     
     /** holds the value to which team goes next*/
-    private long nextTeamIdx;
+    private Queue<Team> nextTeamIdx;
+    //TODO how do we choose which team goes first?
     
     /** CHANGE*/
     boolean isHeadless;
@@ -45,7 +47,11 @@ public class GameController extends Game{
             teams.put((int) allTeams[i].getTeamNumber(), allTeams[i]);
         }
         
-        mapView newMap = new mapView();
+        for(int i = 0; i < allTeams.length; i++){
+            this.nextTeamIdx.add(allTeams[i]);            
+        }
+        
+        
         //TODO // GameLog gameLog = new GameLog();
     }
     
@@ -110,14 +116,27 @@ public class GameController extends Game{
     }
     
     /**
-     * 
+     * figures out which team gets to move next based off of the queue
      */
-    public void nextTurn(){
-        
+    public Team nextTurn(){
+        while(this.nextTeamIdx.peek().numberOfLivingRobots() == 0){
+            this.nextTeamIdx.remove();
+        }
+        Team temp = this.nextTeamIdx.remove();
+        if(temp.numberOfLivingRobots() != 0){
+            this.nextTeamIdx.add(temp);            
+        }
+        return temp;
     }
     
     public void moveRobot(Robot robotToMove, long newPosition, int TeamNumber){
        Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
+       if(temp.getMovesPerTurn() == 0){
+           
+       }
+       if(){ //distance to new position is greater then turns remaining, then fail.
+       
+       }
        temp.setPosition(newPosition);
     }
     
