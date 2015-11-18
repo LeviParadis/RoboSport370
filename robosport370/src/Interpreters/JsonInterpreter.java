@@ -10,6 +10,7 @@ import Models.RobotGameStats;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class JsonInterpreter {
@@ -43,7 +44,20 @@ public class JsonInterpreter {
     public static Queue<Robot> listRobots(String name, String team, 
             Integer minWins, Integer maxWins, Integer minLosses, Integer maxLosses, 
             Integer minMatches, Integer maxMatches, boolean currentVersionOnly){
-            return null;
+        
+        
+        //TODO: implement
+            JSONParser parser=new JSONParser(); 
+            try {
+                JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
+                Robot newRobot = robotFromJSON(json);
+                Queue<Robot> list = new LinkedList<Robot>();
+                list.add(newRobot);
+                return list;
+            } catch (IOException | ParseException e) {
+                return null;
+            }
+
     }
     
     
@@ -53,7 +67,15 @@ public class JsonInterpreter {
      * @return the robot object
      */
     public static Robot getRobot(long serial) {
-        return null;
+      //TODO: implement
+        JSONParser parser=new JSONParser(); 
+        try {
+            JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
+            Robot newRobot = robotFromJSON(json);
+            return newRobot;
+        } catch (IOException | ParseException e) {
+            return null;
+        }
     }
     
     /**
@@ -68,6 +90,7 @@ public class JsonInterpreter {
      */
     public static boolean registerRobot(String name, String team, 
             long firepower, long health, long movement, String forthCode){
+      //TODO: implement
         return true;
     }
     
@@ -82,6 +105,7 @@ public class JsonInterpreter {
      */
     public static boolean reviseRobot(long serialNumber, 
             long newFirepower, long newHealth, long newMovement, String newForthCode){
+      //TODO: implement
         return true;
     }
     
@@ -91,6 +115,7 @@ public class JsonInterpreter {
      * @return a bool indicating whether the retire action was a success
      */
     public static boolean retireRobot(long serialNumber){
+      //TODO: implement
         return true;
     }
     
@@ -102,6 +127,7 @@ public class JsonInterpreter {
      * @return
      */
     public static boolean updateStats(long serialNumber, RobotGameStats currentStats){
+      //TODO: implement
         return true;
     }
     
