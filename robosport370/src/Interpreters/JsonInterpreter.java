@@ -45,6 +45,41 @@ public class JsonInterpreter {
             Integer minWins, Integer maxWins, Integer minLosses, Integer maxLosses, 
             Integer minMatches, Integer maxMatches, boolean currentVersionOnly){
         
+        //create the json object
+        JSONObject root = new JSONObject();
+        
+        if(name != null){
+            root.put(JSONConstants.NAME, name);   
+        }
+        
+        if(team != null){
+            root.put(JSONConstants.TEAM, team);   
+        }
+        
+        if(minWins != null || maxWins != null){
+            JSONArray wins = createComparisonJSON(minWins, maxWins);
+            root.put(JSONConstants.WINS, wins);
+        }
+        
+        if(minLosses != null || maxLosses != null){
+            JSONArray losses = createComparisonJSON(minLosses, maxLosses);
+            root.put(JSONConstants.LOSSES, losses);
+        }
+        
+        if(minMatches != null || maxMatches != null){
+            JSONArray matches = createComparisonJSON(minMatches, maxMatches);
+            root.put(JSONConstants.MATCHES, matches);
+        }
+        
+        if(currentVersionOnly){
+            root.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_LATEST);
+        } else {
+            root.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_ALL);
+        }
+        
+        root.put(JSONConstants.LIST_TYPE_TAG, JSONConstants.LIST_TYPE_FULL);
+        
+        
         
         //TODO: implement
             JSONParser parser=new JSONParser(); 
@@ -60,6 +95,21 @@ public class JsonInterpreter {
 
     }
     
+    public static JSONArray createComparisonJSON(Integer minValueOrNull, Integer maxValueOrNull){
+        JSONArray result = new JSONArray();
+        if(minValueOrNull != null){
+            JSONObject minJSON = new JSONObject();
+            minJSON.put(JSONConstants.COMPARISON_MIN, minValueOrNull);
+            result.add(minJSON);
+        }
+        if(maxValueOrNull != null){
+            JSONObject maxJSON = new JSONObject();
+            maxJSON.put(JSONConstants.COMPARISON_MAX, maxValueOrNull);
+            result.add(maxJSON);
+        }
+        return result;
+    }
+    
     
     /**
      * returns a specific robot
@@ -67,6 +117,12 @@ public class JsonInterpreter {
      * @return the robot object
      */
     public static Robot getRobot(long serial) {
+      //create the json object
+        JSONObject root = new JSONObject();
+        root.put(JSONConstants.SERIAL, new Integer((int)serial));
+        root.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_ALL);
+        root.put(JSONConstants.LIST_TYPE_TAG, JSONConstants.LIST_TYPE_FULL);
+        
       //TODO: implement
         JSONParser parser=new JSONParser(); 
         try {
