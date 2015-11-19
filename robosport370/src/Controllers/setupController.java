@@ -19,7 +19,7 @@ import Views.endView;
  */
 public class setupController extends Game {
 	private Music introMusic;
-	
+	public int mapSize;
 	public boolean isTournament,isSimulation;
 	
 	/**
@@ -31,6 +31,7 @@ public class setupController extends Game {
         introMusic.setLooping(true);
         introMusic.setVolume(0.6f);
         introMusic.play();
+        mapSize = 5;
         isTournament = false;
         isSimulation = false;
 		
@@ -70,6 +71,17 @@ public class setupController extends Game {
 	    this.setScreen(new mainMenuView(this));
 	}
 	/**
+	 * Handles storing the mapsize data
+	 */
+	public void notifyMapSize(){
+	    if(this.mapSize < 11) {
+            this.mapSize = this.mapSize + 2;
+        }
+        else if (this.mapSize >= 11) {
+            this.mapSize = this.mapSize - 6;
+        }   
+	}
+	/**
 	 * Called every frame
 	 */
 	public void render() {
@@ -82,5 +94,7 @@ public class setupController extends Game {
 		config.height = 800;
 		config.width = 1280;
 		new LwjglApplication(new setupController(), config);
+		
+
 	}
 }
