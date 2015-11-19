@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 
+import Controllers.gameVariables;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -83,8 +84,7 @@ public class mapView extends ScreenAdapter {
     	robotSprites = atlas.createSprites("robot");
     	
     	// Setting up the camera based on map size
-    	// TODO Add a function from the controller here 
-    	mapSize = 7; // mapSize = controller.getMapSize();
+    	mapSize = gameVariables.mapSize; 
     	mapDiameter = mapSize * 2 - 1;
     	
     	cameraWidth = (int) (mapDiameter * sizeY * WINDOW_WIDTH/WINDOW_HEIGHT);

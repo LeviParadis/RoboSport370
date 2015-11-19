@@ -43,6 +43,7 @@ public class GameController extends Game{
         teams = new HashMap<Integer, Team>();
         gameMap = new Map(hexSize);
         
+        
         //adds the teams into the game controller
         for(int i = 0; i < allTeams.length; i++){
             teams.put((int) allTeams[i].getTeamNumber(), allTeams[i]);
@@ -55,6 +56,7 @@ public class GameController extends Game{
         
         //TODO // GameLog gameLog = new GameLog();
     }
+    
     
     /**
      * puts the game into a paused state
@@ -89,6 +91,10 @@ public class GameController extends Game{
         return this.animationSpeed;
     }
     
+    public int getMapSize(){
+        
+        return 0;
+    }
     public int scan(){
        int count =0;
        

@@ -79,6 +79,7 @@ public class setupController extends Game {
         else if (this.mapSize >= 11) {
             this.mapSize = this.mapSize - 6;
         }   
+	    gameVariables.mapSize = this.mapSize;
 	}
 	/**
 	 * Called every frame
