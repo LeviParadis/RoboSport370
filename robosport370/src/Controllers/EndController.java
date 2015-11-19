@@ -18,17 +18,28 @@ public class EndController extends Game {
     //loggerController controller;
     endView view;
   
-    public EndController(){
-        /**
-         * Called on initilization
-         */
-        // Getting the music initalized
+    public void create() {
+        // Getting the music intialized
         introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
         introMusic.setLooping(true);
         introMusic.setVolume(0.6f);
         introMusic.play();
+        
+        //This is for testing my first screen
+        this.setScreen(new endView(this));
     }
     
-    
+    /**
+     * gets called when the Main Menu view selects exit
+     */
+    public void notifyExit(){
+        System.exit(0);
+    }
+    /**
+     * gets called when Setup view selects return
+     */
+    public void notifyMainMenu(){
+        this.setScreen(new mainMenuView(new setupController()));
+    }   
     
 }

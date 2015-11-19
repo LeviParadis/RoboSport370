@@ -7,57 +7,60 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import Controllers.setupController;
+import Controllers.EndController;
 
 /**
  * A view for end screen
- * @author Matt, Based off of Corey's Main Menu View
+ * @author Matt
  *
  */
 public class endView extends ScreenAdapter {
     //controller that called end view
-    final setupController controller;
+    final EndController controller;
     
     // Constant variables for determining menu option coordinates and dimensions
-    private static final Integer menOpSrcX = 45;
-    private static final Integer menOpSrcY = 30;
-    private static final Integer menOpWidth = 170;
-    private static final Integer menOpHeight = 30;
+    private static final Integer menOpSrcX = 0; //45
+    private static final Integer menOpSrcY = 36;
+    private static final Integer menOpWidth = 150;
+    private static final Integer menOpHeight = 45;
     
     // To store the screen dimensions
     private Integer SCREEN_WIDTH;
     private Integer SCREEN_HEIGHT;
     
     // For ease of use when passing to the controller
-    private static final int REMATCH = 1;
-    private static final int MAIN_MENU = 2;
-    private static final int DISPLAY_RESULTS = 3;
-    private static final int EXIT = 4;
+    //private static final int REMATCH = 1;
+    private static final int MAIN_MENU = 1;
+    //private static final int DISPLAY_RESULTS = 3;
+    private static final int EXIT = 2;
     
     // For rendering sprites
     private SpriteBatch batch;
     
     // Art for the main menu
-    private Texture menuArtTexture;
-    private Sprite menuArtSprite;
+    //private Texture menuArtTexture;
+    //private Sprite menuArtSprite;
     
     // Art for the menu options
     private Texture menuOptionsTexture;
-    private Sprite menuOptionsRematch;
+    //private Sprite menuOptionsRematch;
     private Sprite menuOptionsMainMenu;
-    private Sprite menuOptionsDisplayResults;
+    //private Sprite menuOptionsDisplayResults;
     private Sprite menuOptionsExit;
     
     // For tracking the active option
     private spriteMenuHandler menu;
     
+    private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
+    
     /**
      * Constructor for EndView
      * @param cont the controller creating this view
      */
-    public endView(final setupController cont) {
+    public endView(final EndController cont) {
         controller = cont;
 
         SCREEN_WIDTH = Gdx.graphics.getWidth();
@@ -65,57 +68,28 @@ public class endView extends ScreenAdapter {
         
         batch = new SpriteBatch();
         
-        menuArtTexture = new Texture("assets/mainMenu/menu_title.png");
-        menuArtSprite = new Sprite(menuArtTexture, 280, 126);
+        //menuArtTexture = new Texture("assets/mainMenu/menu_title.png");
+        //menuArtSprite = new Sprite(menuArtTexture, 280, 126);
         
         //menuCreditTexture = new Texture("assets/mainMenu/menu_credits.png");
         //menuCreditSprite = new Sprite(menuCreditTexture, 295, 75);
         
-        menuOptionsTexture = new Texture("assets/mainMenu/menu_options.png");
-        menuOptionsRematch = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*0, menOpWidth, menOpHeight);
-        menuOptionsMainMenu = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
-        menuOptionsDisplayResults = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
-        menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*6, menOpWidth, menOpHeight);
+        menuOptionsTexture = new Texture("assets/endMenu/endMenuOptions.png");
+        menuOptionsMainMenu = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*0, menOpWidth, menOpHeight);
+        menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
+        //menuOptionsDisplayResults = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
+        //menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*6, menOpWidth, menOpHeight);
         
-        menuOptionsRematch.setPosition(SCREEN_WIDTH*0.5f-menuOptionsRematch.getWidth()/2, SCREEN_HEIGHT*0.45f-30*1f);
-        menuOptionsMainMenu.setPosition(SCREEN_WIDTH*0.5f-menuOptionsRematch.getWidth()/2, SCREEN_HEIGHT*0.45f-30*2f);
-        menuOptionsDisplayResults.setPosition(SCREEN_WIDTH*0.5f-menuOptionsRematch.getWidth()/2, SCREEN_HEIGHT*0.45f-30*3f);
-        menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsRematch.getWidth()/2, SCREEN_HEIGHT*0.45f-30*4f);
+        menuOptionsMainMenu.setPosition(SCREEN_WIDTH*0.5f-menuOptionsMainMenu.getWidth()/2, SCREEN_HEIGHT*0.45f-30*1f);
+        menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsMainMenu.getWidth()/2, SCREEN_HEIGHT*0.45f-30*2f);
+        //menuOptionsDisplayResults.setPosition(SCREEN_WIDTH*0.5f-menuOptionsRematch.getWidth()/2, SCREEN_HEIGHT*0.45f-30*3f);
+        //menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsRematch.getWidth()/2, SCREEN_HEIGHT*0.45f-30*4f);
         
         // Add in the order for the associated constant variables
-        menu = new spriteMenuHandler(menuOptionsRematch);
-        menu.addSprite(menuOptionsMainMenu);
-        menu.addSprite(menuOptionsDisplayResults);
+        menu = new spriteMenuHandler(menuOptionsMainMenu);
         menu.addSprite(menuOptionsExit);
-    }
-    
-    /**
-     * Called every frame
-     */
-    @Override
-    public void render(float delta) {   
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        batch.begin();
-        
-        handleKeyPresses();
-
-        // Draw the title screen at the middle of the screen, centered
-        menuArtSprite.setPosition(SCREEN_WIDTH*0.5f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.5f);
-        menuArtSprite.draw(batch);
-        
-        // Draw the credits at the bottom right of the screen
-        //menuCreditSprite.setPosition(SCREEN_WIDTH-menuCreditSprite.getWidth(), 0f);
-        //menuCreditSprite.draw(batch);
-        
-        // Draw the options
-        menuOptionsRematch.draw(batch);
-        menuOptionsMainMenu.draw(batch);
-        menuOptionsDisplayResults.draw(batch);
-        menuOptionsExit.draw(batch);
-        
-        batch.end();
+        //menu.addSprite(menuOptionsDisplayResults);
+        //menu.addSprite(menuOptionsExit);
     }
     
     /**
@@ -132,15 +106,15 @@ public class endView extends ScreenAdapter {
         }
         if(Gdx.input.isKeyJustPressed(Keys.ENTER)) {
             switch(menu.getIndex()) {
-            case REMATCH:
-                controller.notifyTournament();
-                break;
+            //case REMATCH:
+                //controller.notifyTournament();
+              //  break;
             case MAIN_MENU:
-                controller.notifySim();
+                controller.notifyMainMenu();
                 break;
-            case DISPLAY_RESULTS:
+            //case DISPLAY_RESULTS:
                 //controller.notifyRes();
-                break;
+              //  break;
             case EXIT:
                 controller.notifyExit();
                 break;
@@ -149,11 +123,44 @@ public class endView extends ScreenAdapter {
     }
     
     /**
+     * Called every frame
+     */
+    @Override
+    public void render(float delta) {   
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        batch.begin();
+        
+        handleKeyPresses();
+
+        // Draw the title screen at the middle of the screen, centered
+        //menuArtSprite.setPosition(SCREEN_WIDTH*0.5f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.5f);
+        //menuArtSprite.draw(batch);
+        
+        // Draw the credits at the bottom right of the screen
+        //menuCreditSprite.setPosition(SCREEN_WIDTH-menuCreditSprite.getWidth(), 0f);
+        //menuCreditSprite.draw(batch);
+        
+        // Draw the options
+        //menuOptionsRematch.draw(batch);
+        menuOptionsMainMenu.draw(batch);
+        //menuOptionsDisplayResults.draw(batch);
+        menuOptionsExit.draw(batch);
+        
+        //font.draw(batch, "GAME OVER", SCREEN_WIDTH*0.55f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.9f);
+        //font.draw(batch, "MAIN MENU", SCREEN_WIDTH*0.55f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.8f);
+       // font.draw(batch, "EXIT", SCREEN_WIDTH*0.55f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.7f);
+        
+        batch.end();
+    }
+    
+    /**
      * Called to do garbage collection
      */
     @Override
     public void dispose() {
-        menuArtTexture.dispose(); 
+        //menuArtTexture.dispose(); 
         //menuCreditTexture.dispose();
         menuOptionsTexture.dispose();
         
@@ -165,7 +172,7 @@ public class endView extends ScreenAdapter {
         config.title = "RobotSport370";
         config.height = 800;
         config.width = 1280;
-        new LwjglApplication(new setupController(), config);
+        new LwjglApplication(new EndController(), config);
         
         
     }
