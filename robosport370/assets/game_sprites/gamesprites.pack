@@ -5,70 +5,70 @@ filter: Nearest,Nearest
 repeat: none
 tile
   rotate: false
-  xy: 2, 2
-  size: 60, 52
+  xy: 1, 1
+  size: 60, 60
   orig: 60, 60
-  offset: 0, 4
+  offset: 0, 0
   index: 0
 tile
   rotate: false
-  xy: 64, 2
-  size: 60, 52
+  xy: 63, 1
+  size: 60, 60
   orig: 60, 60
-  offset: 0, 4
+  offset: 0, 0
   index: 1
 tile
   rotate: false
-  xy: 126, 2
-  size: 60, 52
+  xy: 125, 1
+  size: 60, 60
   orig: 60, 60
-  offset: 0, 4
+  offset: 0, 0
   index: 2
 tile
   rotate: false
-  xy: 188, 2
-  size: 60, 52
+  xy: 187, 1
+  size: 60, 60
   orig: 60, 60
-  offset: 0, 4
-  index: 3
-robot
-  rotate: false
-  xy: 250, 5
-  size: 39, 49
-  orig: 39, 49
-  offset: 0, 0
-  index: 0
-robot
-  rotate: false
-  xy: 291, 5
-  size: 39, 49
-  orig: 39, 49
-  offset: 0, 0
-  index: 1
-robot
-  rotate: false
-  xy: 332, 5
-  size: 39, 49
-  orig: 39, 49
-  offset: 0, 0
-  index: 2
-robot
-  rotate: false
-  xy: 373, 5
-  size: 39, 49
-  orig: 39, 49
   offset: 0, 0
   index: 3
 robot
   rotate: false
-  xy: 414, 5
+  xy: 249, 12
+  size: 39, 49
+  orig: 39, 49
+  offset: 0, 0
+  index: 0
+robot
+  rotate: false
+  xy: 290, 12
+  size: 39, 49
+  orig: 39, 49
+  offset: 0, 0
+  index: 1
+robot
+  rotate: false
+  xy: 331, 12
+  size: 39, 49
+  orig: 39, 49
+  offset: 0, 0
+  index: 2
+robot
+  rotate: false
+  xy: 372, 12
+  size: 39, 49
+  orig: 39, 49
+  offset: 0, 0
+  index: 3
+robot
+  rotate: false
+  xy: 413, 12
   size: 39, 49
   orig: 39, 49
   offset: 0, 0
   index: 4
 robot
   rotate: false
-  xy: 455, 5
+  xy: 454, 12
   size: 39, 49
   orig: 39, 49
   offset: 0, 0
