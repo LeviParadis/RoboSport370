@@ -4,8 +4,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Queue;
-
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import Models.Robot;
 import Models.Team;
@@ -39,8 +43,8 @@ public class GameController extends Game{
      * @param allTeams an array that contains all of the teams playing the match
      * @param hexSize the size of the map on one side
      */
-    public GameController(Team allTeams[], int hexSize){
-        
+    public GameController(){
+        /*
         teams = new HashMap<Integer, Team>();
         gameMap = new Map();
         
@@ -53,17 +57,15 @@ public class GameController extends Game{
         for(int i = 0; i < allTeams.length; i++){
             this.nextTeamIdx.add(allTeams[i]);            
         }
-        
-        
+        */
         //TODO // GameLog gameLog = new GameLog();
     }
-    
+
     
     /**
      * puts the game into a paused state
      */
     public void pause(){
-        this.pause();
     }
     
     /**
@@ -92,10 +94,7 @@ public class GameController extends Game{
         return this.animationSpeed;
     }
     
-    public int getMapSize(){
-        
-        return 0;
-    }
+    
     public int scan(){
        int count = 0;
        
@@ -183,28 +182,45 @@ public class GameController extends Game{
            }
        }
     }
-    
+        
+
     /**
      *  fire at the position passed in
      * @param shooter is the robot that will fire a shot
      * @param hexPos is the position that the robot is firing towards
      */
     public void shootAtSpace(Robot shooter, int hexPos){
-       
+
+        
+
     }
+    /**
+     * Called every frame
+     */
+   
     
+
     public void render(){
         super.render();
     }
     
+    public static void main(String[] args){
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        config.title = "RobotSport370";
+        config.height = 800;
+        config.width = 1280;
+        new LwjglApplication(new GameController(), config);
+        
+
+    }
+
+    
     @Override
     public void create() {
-        // TODO Auto-generated method stub
         
     }
     
-    public static void main(String args[]){
-        
-      
-    }
+   
 }
+
+
