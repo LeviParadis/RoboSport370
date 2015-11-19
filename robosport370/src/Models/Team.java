@@ -16,7 +16,7 @@ public class Team {
     //the team's color
     private Color teamColor;
     //a number assigned to this team by the simulator for id purposes
-    private long teamNumber;
+    private int teamNumber;
     
     /**
      * Default Constructor
@@ -109,7 +109,7 @@ public class Team {
     /**
      * @return the team's unique number
      */
-    public long getTeamNumber(){
+    public int getTeamNumber(){
         return teamNumber;
     }
     

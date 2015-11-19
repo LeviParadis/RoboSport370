@@ -1,13 +1,14 @@
 package Controllers;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Queue;
 
 import com.badlogic.gdx.Game;
 
 import Models.Robot;
 import Models.Team;
-import Models.Map.DIRECTION;
 import Models.Map;
 import Views.mapView;
 
@@ -41,7 +42,7 @@ public class GameController extends Game{
     public GameController(Team allTeams[], int hexSize){
         
         teams = new HashMap<Integer, Team>();
-        gameMap = new Map(hexSize);
+        gameMap = new Map();
         
         
         //adds the teams into the game controller
@@ -106,9 +107,40 @@ public class GameController extends Game{
     
     /**
      * 
+     * @param robotSN the S/N of the robot that we need info about
+     * @return a queue with the required info in the order
+     * 1: Team Number int
+     * 2: Robot health int
+     * 3: distance/range to robot int
+     * 4: direction to robot DIRECTION
      */
-    public void identifyRobot(int teamNumber, int range, int direction, int health ){
-    	teams.get(teamNumber);//TODO
+    public Queue<Object> identifyRobot(int robotSN){
+        Queue<Integer> toRet;
+        boolean exists = false;
+        
+    	for(int i = 0; i < teams.size(); i++){
+    	   Iterator<Entry<Integer, Team>> iter = teams.entrySet().iterator();
+    	   while(iter.hasNext()){
+    	       Team temp = (Team) iter.next();
+    	       if(temp.getAllRobots().contains(robotSN)){
+    	           exists = true;
+    	           toRet.add(temp.getTeamNumber());
+    	           Robot tempRobot = temp.getTeamMember(robotSN);
+    	           
+    	           toRet.add((int) tempRobot.getHealth());
+    	           //TODO add original robot position
+    	           //Calculate distance
+    	           int distance = gameMap.calcDistance( xPos,tempRobot.getXPosition(), 
+    	                   yPos,tempRobot.getYPoisition());
+    	           toRet.add(distance);
+    	           
+    	           
+    	           //Calculate direction
+    	           toRet.add(gameMap.getDirection(xPos, tempRobot.getXPosition(), 
+    	                   yPos, tempRobot.getYPoisition())); 
+    	       }
+    	   }
+    	}
     	
     }
     
@@ -169,5 +201,10 @@ public class GameController extends Game{
     public void create() {
         // TODO Auto-generated method stub
         
+    }
+    
+    public static void main(String args[]){
+        
+      
     }
 }
