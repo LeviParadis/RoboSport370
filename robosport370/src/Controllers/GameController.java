@@ -90,7 +90,7 @@ public class GameController extends Game{
     }
     
     public int scan(){
-       int count =0;
+       int count = 0;
        
        for(int i = 0; i < teams.size(); i++){
     	   
@@ -101,7 +101,7 @@ public class GameController extends Game{
     /**
      * 
      */
-    public void identifyRobot(int teamNumber, int range, DIRECTION direction, int health ){
+    public void identifyRobot(int teamNumber, int range, int direction, int health ){
     	teams.get(teamNumber);//TODO
     	
     }
@@ -150,20 +150,15 @@ public class GameController extends Game{
      *  fire at the position passed in
      * @param shooter is the robot that will fire a shot
      * @param hexPos is the position that the robot is firing towards
-     * @precond the robot must be alive
-     * @precond the hexPos must be on the map
      */
     public void shootAtSpace(Robot shooter, int hexPos){
-        for(int i = 0; i < teams.size(); i++){
-        	if ()
-        }
+       
     }
     
-    public static void main(){
-        
+    public void render(){
+        super.render();
     }
-
-
+    
     @Override
     public void create() {
         // TODO Auto-generated method stub

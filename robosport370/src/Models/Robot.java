@@ -21,12 +21,16 @@ public class Robot {
     
     private long serialNumber;
     private String name, teamName;
-    private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;;
+    private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;
+    private int xPosition;
+    private int yPosition;
     private long simTeamNumber, simMemberNumber;
     private RobotGameStats stats;
     private Color teamColor;
     private HashMap<String,String> forthVariables,forthWords;
     private HashMap<Integer, Queue<ForthWord>> mailBox;
+    
+    
     
     /**
     this constructor will be called to create a robot. A robot can only be created if you know all of the information
@@ -106,6 +110,22 @@ public class Robot {
      */
     public long getMemberNumber(){
         return this.simMemberNumber;
+    }
+    
+    public int getXPosition(){
+        return this.xPosition;
+    }
+    
+    public int getYPoisition(){
+        return this.yPosition;
+    }
+    
+    public void setXPosition(int newX){
+        this.xPosition = newX;
+    }
+    
+    public void setYPosition(int newY){
+        this.yPosition = newY;
     }
     
     /**

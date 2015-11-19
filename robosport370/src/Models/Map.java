@@ -33,14 +33,12 @@ public class Map {
 	
 	
 	public enum DIRECTION{
-//		EAST(1,0),
-//	    WEST(-1, 0),
 		NORTH(0,1),
 		SOUTH(0,-1),
-	    NORTH_WEST(-1,1),
-	    NORTH_EAST(1,0),
-	    SOUTH_WEST(-1,0),
-	    SOUTH_EAST(1,-1);
+	    NORTH_WEST(-1,0),
+	    NORTH_EAST(1,1),
+	    SOUTH_WEST(-1,-1),
+	    SOUTH_EAST(1,0);
 	    
 	    public final int northCoordinate;
 		public final int southCoordinate;
@@ -75,7 +73,9 @@ public class Map {
     	return this.boardSize;
     }
     
-    
+    public int direction(){
+        
+    }
     
     public static void main(int args[]){
         
