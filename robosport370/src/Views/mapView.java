@@ -1,6 +1,8 @@
 package Views;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -12,6 +14,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
+
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
+
 
 /**
  * A GUI view for the main menu
@@ -45,6 +52,10 @@ public class mapView extends ScreenAdapter {
 	// Sprites for the various teams
 	// It is a set of teams, which each holds a set of sprites
 	private HashMap<Integer, HashMap<Integer, Sprite>> teams;
+	
+	// For rendering tweens
+	private TweenManager tweenManager;
+	private Queue<Tween> tweenQueue;
 	
 	// For rendering sprites
     private SpriteBatch batch;
@@ -87,6 +98,9 @@ public class mapView extends ScreenAdapter {
     	teams = new HashMap<Integer, HashMap<Integer, Sprite>>();
     	createRobots();
 
+    	tweenManager = new TweenManager();
+    	Tween.registerAccessor(Sprite.class, new SpriteAccessor());
+    	tweenQueue = new LinkedList<Tween>();
     	batch = new SpriteBatch();
     }
     
@@ -168,6 +182,15 @@ public class mapView extends ScreenAdapter {
         renderTiles();
         renderRobots();
         renderTesting();
+        if(tweenQueue.peek() != null) {
+        	if(tweenQueue.peek().isFinished()) {
+        		tweenQueue.poll();
+        	}
+        	else if(!tweenQueue.peek().isStarted()) {
+        		tweenQueue.peek().start(tweenManager);
+        	}
+        }
+        tweenManager.update(delta);
         batch.end();
     }
     
@@ -239,27 +262,32 @@ public class mapView extends ScreenAdapter {
      * @param direction the direct (1 is north, 2 is north east, etc. to 6)
      */
     public void moveRobot(int team, int robot, int direction) {
+    	int moveX = 0;
+    	int moveY = 0;
+    	
     	// Doing all of our x translations
     	if(direction == 2 || direction == 3) {
-    		teams.get(team).get(robot).translateX(sizeX);
+    		moveX = sizeX;
     	}
     	if(direction == 5 || direction == 6) {
-    		teams.get(team).get(robot).translateX(-sizeX);
+    		moveX = -sizeX;
     	}
     	
     	// Doing all of our y translations
     	if(direction == 1) {
-    		teams.get(team).get(robot).translateY(sizeY);
+    		moveY = sizeY;
     	}
     	if(direction == 2 || direction == 6) {
-    		teams.get(team).get(robot).translateY(sizeY/2);
+    		moveY = sizeY/2;
     	}
     	if(direction == 3 || direction == 5) {
-    		teams.get(team).get(robot).translateY(-sizeY/2);
+    		moveY = -sizeY/2;
     	}
     	if(direction == 4) {
-    		teams.get(team).get(robot).translateY(-sizeY);
+    		moveY = -sizeY;
     	}
+    	
+    	tweenQueue.add(Tween.to(teams.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY));
     }
     
     @Override
