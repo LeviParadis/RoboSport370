@@ -9,23 +9,25 @@ import Models.Robot;
 import Models.RobotGameStats;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.client.WebResource;
+
 public class JsonInterpreter {
+    
+    public static final String ROBOT_LIBRARIAN_URL = "http://localhost:8080/CrunchifyTutorials/api/crunchifyService";
     
     //test method
     public static void main(String[] args) {
-        JSONParser parser=new JSONParser(); 
-        try {
-            JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
-            Robot newRobot = robotFromJSON(json);
-            System.out.println(json);
-            System.out.println(newRobot);
-        } catch (IOException | ParseException e1) {
-            e1.printStackTrace();
-        }
+        getRobot(123);
     }
     
     /**
@@ -118,20 +120,41 @@ public class JsonInterpreter {
      */
     public static Robot getRobot(long serial) {
       //create the json object
+        JSONObject json = new JSONObject();
+        json.put(JSONConstants.SERIAL, new Integer((int)serial));
+        json.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_ALL);
+        json.put(JSONConstants.LIST_TYPE_TAG, JSONConstants.LIST_TYPE_FULL);
+        
         JSONObject root = new JSONObject();
-        root.put(JSONConstants.SERIAL, new Integer((int)serial));
-        root.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_ALL);
-        root.put(JSONConstants.LIST_TYPE_TAG, JSONConstants.LIST_TYPE_FULL);
+        root.put(JSONConstants.LIST_TAG, json);
+        
+        System.out.println(root);
+        
         
       //TODO: implement
         JSONParser parser=new JSONParser(); 
         try {
-            JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
-            Robot newRobot = robotFromJSON(json);
+            JSONObject jsonRobot = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
+            Robot newRobot = robotFromJSON(jsonRobot);
             return newRobot;
         } catch (IOException | ParseException e) {
             return null;
         }
+    }
+    
+    private static JSONObject contactLibrarian(JSONObject inputJSON) throws RuntimeException, ParseException{
+
+        Client client = Client.create();
+        WebResource webResource = client.resource(ROBOT_LIBRARIAN_URL);
+
+        ClientResponse clientResponse = webResource.accept("application/json").get(ClientResponse.class);
+        if (clientResponse.getStatus() != 200) {
+            throw new RuntimeException("Failed"+ clientResponse.toString());
+        }
+
+        JSONObject resObj = (JSONObject)new JSONParser().parse(clientResponse.getEntity(String.class));
+       
+        return resObj;
     }
     
     /**
