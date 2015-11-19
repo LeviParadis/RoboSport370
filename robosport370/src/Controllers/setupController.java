@@ -80,7 +80,7 @@ public class setupController extends Game {
 	 */
     public void notifyContinue(){
           GameController gameController = new GameController();
-          gameController.createMap();
+          this.setScreen(new mapView(gameController));
     }
 	/**
 	 * Handles storing the mapsize data
