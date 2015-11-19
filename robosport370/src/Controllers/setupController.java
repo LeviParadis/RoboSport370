@@ -9,6 +9,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import Views.mainMenuView;
 import Views.setupView;
+import Views.mapView;
 
 /**
  * @author Corey
@@ -46,7 +47,7 @@ public class setupController extends Game {
 	 */
 	public void notifyTournament(){
 	    this.setScreen(new setupView(this));
-	    this.isTournament = true;
+	    gameVariables.isSim = false;
 	}
 	
 	/**
@@ -54,8 +55,10 @@ public class setupController extends Game {
 	 */
 	public void notifySim(){
 	      this.setScreen(new setupView(this));
-	      
-	      this.isSimulation = true;
+	      gameVariables.isSim = true;
+	}
+	public void notifyDebug(){
+	    gameVariables.isDebug = true;
 	}
 	/**
 	 * gets called when the Main Menu view selects exit
@@ -69,6 +72,16 @@ public class setupController extends Game {
 	public void notifyReturn(){
 	    this.setScreen(new mainMenuView(this));
 	}
+	/**
+     * gets called when Setup view selects return
+     */
+	/**
+	 * changes the screen when continue is pressed
+	 */
+    public void notifyContinue(){
+          GameController gameController = new GameController();
+          gameController.createMap();
+    }
 	/**
 	 * Handles storing the mapsize data
 	 */
