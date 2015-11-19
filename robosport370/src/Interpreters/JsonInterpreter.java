@@ -128,8 +128,8 @@ public class JsonInterpreter {
         JSONObject root = new JSONObject();
         root.put(JSONConstants.LIST_TAG, json);
         
-        System.out.println(root);
-        
+        JSONObject response =  contactLibrarian(root);
+        Robot newRobot = robotFromJSON(response);
         
       //TODO: implement
         JSONParser parser=new JSONParser(); 
@@ -142,8 +142,7 @@ public class JsonInterpreter {
         }
     }
     
-    private static JSONObject contactLibrarian(JSONObject inputJSON) throws RuntimeException, ParseException{
-
+    private static JSONObject contactLibrarian(JSONObject inputJSON) throws RuntimeException{
         Client client = Client.create();
         WebResource webResource = client.resource(ROBOT_LIBRARIAN_URL);
 
@@ -152,9 +151,12 @@ public class JsonInterpreter {
             throw new RuntimeException("Failed"+ clientResponse.toString());
         }
 
-        JSONObject resObj = (JSONObject)new JSONParser().parse(clientResponse.getEntity(String.class));
-       
-        return resObj;
+        try{
+            JSONObject resObj = (JSONObject)new JSONParser().parse(clientResponse.getEntity(String.class));
+            return resObj;
+        } catch(ParseException e){
+            throw new RuntimeException("Could not Parse Response From Server");
+        }
     }
     
     /**
@@ -219,9 +221,7 @@ public class JsonInterpreter {
      * @return a robot object with the information saved in the JSON file
      */
     protected static Robot robotFromJSON(JSONObject json){
-        
-        
-      
+
         JSONObject root = (JSONObject) json.get(JSONConstants.BASE_TAG);
         
         //get the identification information
