@@ -39,6 +39,7 @@ public class GameController extends Game{
      * @param hexSize the size of the map on one side
      */
     public GameController(Team allTeams[], int hexSize){
+        
         teams = new HashMap<Integer, Team>();
         gameMap = new Map(hexSize);
         
@@ -92,8 +93,9 @@ public class GameController extends Game{
        int count =0;
        
        for(int i = 0; i < teams.size(); i++){
-    	   if
+    	   
        }
+       return 0;
     }
     
     /**
@@ -131,13 +133,17 @@ public class GameController extends Game{
     
     public void moveRobot(Robot robotToMove, long newPosition, int TeamNumber){
        Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
-       if(temp.getMovesPerTurn() == 0){
-           
+       int movesLeft = (int) temp.getMovesPerTurn();
+       boolean doneTurn = false;
+       while(!doneTurn){ 
+           if(movesLeft == 0){
+               doneTurn = true;
+           }
+           else{ //distance to new position is greater then turns remaining, then fail.
+               temp.setPosition(newPosition);
+               movesLeft--;
+           }
        }
-       if(){ //distance to new position is greater then turns remaining, then fail.
-       
-       }
-       temp.setPosition(newPosition);
     }
     
     /**
@@ -149,7 +155,7 @@ public class GameController extends Game{
      */
     public void shootAtSpace(Robot shooter, int hexPos){
         for(int i = 0; i < teams.size(); i++){
-        	if 
+        	if ()
         }
     }
     
