@@ -271,8 +271,8 @@ public class setupView extends ScreenAdapter {
     }
     
     public void toggleDebugMode() {
-    	// TODO May need to call setup controller here
-    	debug = !debug;
+        controller.notifyDebug();
+        debug = !debug;
     	
     	// Switch to debug mode
     	if(debug) {
@@ -285,7 +285,7 @@ public class setupView extends ScreenAdapter {
     }
     
     public void continueSetup() {
-    	// TODO Call a controller function here for sure
+    	controller.notifyContinue();
     }
     
     public void returnSetup() {
