@@ -135,8 +135,8 @@ public class JsonInterpreter {
         JSONParser parser=new JSONParser(); 
         try {
             JSONObject jsonRobot = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
-            Robot newRobot = robotFromJSON(jsonRobot);
-            return newRobot;
+            Robot robot = robotFromJSON(jsonRobot);
+            return robot;
         } catch (IOException | ParseException e) {
             return null;
         }
@@ -171,7 +171,20 @@ public class JsonInterpreter {
      */
     public static boolean registerRobot(String name, String team, 
             long firepower, long health, long movement, String forthCode){
-      //TODO: implement
+        
+        JSONObject json = new JSONObject();
+        json.put(JSONConstants.NAME, name);
+        json.put(JSONConstants.TEAM, team);
+        json.put(JSONConstants.STRENGTH, firepower);
+        json.put(JSONConstants.HEALTH, health);
+        json.put(JSONConstants.MOVES_PER_TURN, name);
+        json.put(JSONConstants.FORTH_CODE, forthCode);
+        
+        JSONObject root = new JSONObject();
+        root.put(JSONConstants.REGISTER_TAG, json);
+        
+        contactLibrarian(root);
+        
         return true;
     }
     

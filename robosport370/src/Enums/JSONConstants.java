@@ -3,6 +3,7 @@ package Enums;
 public class JSONConstants {
     public static final String BASE_TAG = "script";
     public static final String LIST_TAG = "list-request";
+    public static final String REGISTER_TAG = "register";
     public static final String NAME = "name";
     public static final String TEAM = "team";
     public static final String SERIAL = "serial";
