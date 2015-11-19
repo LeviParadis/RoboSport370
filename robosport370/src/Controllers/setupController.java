@@ -80,8 +80,10 @@ public class setupController extends Game {
 	 */
     public void notifyContinue(){
           GameController gameController = new GameController();
-          this.setScreen(new mapView(gameController));
-    }
+          if (gameVariables.isSim == false){    
+             this.setScreen(new mapView(gameController));
+          }
+   }
 	/**
 	 * Handles storing the mapsize data
 	 */
