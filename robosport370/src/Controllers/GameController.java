@@ -210,8 +210,6 @@ public class GameController extends Game{
         config.height = 800;
         config.width = 1280;
         new LwjglApplication(new GameController(), config);
-        
-
     }
 
     
@@ -219,8 +217,6 @@ public class GameController extends Game{
     public void create() {
         
     }
-    
-   
 }
 
 
