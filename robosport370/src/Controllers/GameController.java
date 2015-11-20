@@ -2,6 +2,7 @@ package Controllers;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Queue;
 import com.badlogic.gdx.Game;
@@ -17,6 +18,8 @@ import Models.Map;
 import Views.mapView;
 
 public class GameController extends Game{
+    
+    private Music introMusic;
     
     /** All of the teams to be run in the simulation.*/
     private HashMap<Integer, Team> teams;
@@ -44,20 +47,31 @@ public class GameController extends Game{
      * @param hexSize the size of the map on one side
      */
     public GameController(){
-        /*
+        
         teams = new HashMap<Integer, Team>();
         gameMap = new Map();
+        Team[] allTeams = gameVariables.allTeams;
         
+//        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
+//        introMusic.setLooping(true);
+//        introMusic.setVolume(0.6f);
+//        introMusic.play();
         
-        //adds the teams into the game controller
-        for(int i = 0; i < allTeams.length; i++){
-            teams.put((int) allTeams[i].getTeamNumber(), allTeams[i]);
+        if(allTeams == null){
+            throw new RuntimeException("There must be teams added to begin the game");
+        }
+        else{
+            
+            //adds the teams into the game controller
+            for(int i = 0; i < allTeams.length; i++){
+                teams.put((int) allTeams[i].getTeamNumber(), allTeams[i]);
+            }
+            
+            for(int i = 0; i < allTeams.length; i++){
+                this.nextTeamIdx.add(allTeams[i]);            
+            }
         }
         
-        for(int i = 0; i < allTeams.length; i++){
-            this.nextTeamIdx.add(allTeams[i]);            
-        }
-        */
         //TODO // GameLog gameLog = new GameLog();
     }
 
@@ -113,16 +127,16 @@ public class GameController extends Game{
      * 3: distance/range to robot int
      * 4: direction to robot DIRECTION
      */
-    public Queue<Object> identifyRobot(int robotSN){
-        Queue<Integer> toRet;
-        boolean exists = false;
+    public LinkedList<Object> identifyRobot(int robotSN, int xPos, int yPos){
+        LinkedList<Object> toRet = new LinkedList<Object>();
+//        boolean exists = false;
         
     	for(int i = 0; i < teams.size(); i++){
     	   Iterator<Entry<Integer, Team>> iter = teams.entrySet().iterator();
     	   while(iter.hasNext()){
     	       Team temp = (Team) iter.next();
     	       if(temp.getAllRobots().contains(robotSN)){
-    	           exists = true;
+//    	           exists = true;
     	           toRet.add(temp.getTeamNumber());
     	           Robot tempRobot = temp.getTeamMember(robotSN);
     	           
@@ -137,10 +151,11 @@ public class GameController extends Game{
     	           //Calculate direction
     	           toRet.add(gameMap.getDirection(xPos, tempRobot.getXPosition(), 
     	                   yPos, tempRobot.getYPoisition())); 
+    	       
     	       }
     	   }
     	}
-    	
+    	return toRet;
     }
     
     
