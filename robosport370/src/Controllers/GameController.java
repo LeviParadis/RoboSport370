@@ -46,7 +46,7 @@ public class GameController extends Game{
      * @param allTeams an array that contains all of the teams playing the match
      * @param hexSize the size of the map on one side
      */
-    public GameController(){
+    public GameController() throws RuntimeException{
         
         teams = new HashMap<Integer, Team>();
         gameMap = new Map();
