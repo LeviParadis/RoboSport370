@@ -10,6 +10,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -42,6 +43,9 @@ public class mapView extends ScreenAdapter {
     private Array<Sprite> tiles;
     private Array<Sprite> robotSprites;
     
+    private Texture projectileTexture;
+    private Sprite projectile;
+    
     // Camera settings
     private int cameraWidth;
     private OrthographicCamera cam;
@@ -56,7 +60,7 @@ public class mapView extends ScreenAdapter {
 	
 	// For rendering tweens
 	private TweenManager tweenManager;
-	private Queue<Tween> tweenQueue;
+	private Queue<AudibleTimeline> timelineTweenQueue;
 	
 	// For rendering sprites
     private SpriteBatch batch;
@@ -83,6 +87,10 @@ public class mapView extends ScreenAdapter {
     	// Setting up the robots
     	robotSprites = atlas.createSprites("robot");
     	
+    	projectileTexture = new Texture("assets/game_sprites/projectile.png");
+    	projectile = new Sprite(projectileTexture);
+    	projectile.setPosition(5000f, 5000f);
+    	
     	// Setting up the camera based on map size
     	mapSize = gameVariables.mapSize; 
     	mapDiameter = mapSize * 2 - 1;
@@ -100,7 +108,7 @@ public class mapView extends ScreenAdapter {
 
     	tweenManager = new TweenManager();
     	Tween.registerAccessor(Sprite.class, new SpriteAccessor());
-    	tweenQueue = new LinkedList<Tween>();
+    	timelineTweenQueue = new LinkedList<AudibleTimeline>();
     	batch = new SpriteBatch();
     }
     
@@ -182,15 +190,16 @@ public class mapView extends ScreenAdapter {
         renderTiles();
         renderRobots();
         renderTesting();
-        if(tweenQueue.peek() != null) {
-        	if(tweenQueue.peek().isFinished()) {
-        		tweenQueue.poll();
+        if(timelineTweenQueue.peek() != null) {
+        	if(timelineTweenQueue.peek().getTimeline().isFinished()) {
+        		timelineTweenQueue.poll();
         	}
-        	else if(!tweenQueue.peek().isStarted()) {
-        		tweenQueue.peek().start(tweenManager);
+        	else if(!timelineTweenQueue.peek().getTimeline().isStarted()) {
+        		timelineTweenQueue.peek().startTimeline(tweenManager);
         	}
         }
         tweenManager.update(delta);
+        projectile.draw(batch);
         batch.end();
     }
     
@@ -213,6 +222,9 @@ public class mapView extends ScreenAdapter {
     	if(Gdx.input.isKeyJustPressed(Keys.NUM_6)) {
         	moveRobot(1, 1, 6);
         }
+    	if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+    		fireShot(1, 1, 3, 1);
+    	}
     }
     
     public void renderTiles() {
@@ -286,8 +298,21 @@ public class mapView extends ScreenAdapter {
     	if(direction == 4) {
     		moveY = -sizeY;
     	}
-    	
-    	tweenQueue.add(Tween.to(teams.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY));
+    	AudibleTimeline aTimeline = new AudibleTimeline();
+    	aTimeline.setTimeline(Timeline.createSequence()
+    						   .push(Tween.to(teams.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
+    	timelineTweenQueue.add(aTimeline);
+    }
+    
+    public void fireShot(int team1, int robot1, int team2, int robot2) {
+    	AudibleTimeline aTimeline = new AudibleTimeline();
+    	aTimeline.setProjectile(projectile);
+    	aTimeline.setSource(teams.get(team1).get(robot1));
+    	Timeline t = Timeline.createSequence()
+    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, 0.5f)
+    					.target(teams.get(team2).get(robot2).getX(), teams.get(team2).get(robot2).getY()));
+    	aTimeline.setTimeline(t);
+    	timelineTweenQueue.add(aTimeline);
     }
     
     @Override
