@@ -78,7 +78,8 @@ public class endView extends ScreenAdapter {
         menuOptionsMainMenu = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*0, menOpWidth, menOpHeight);
         menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
         //menuOptionsDisplayResults = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
-        //menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*6, menOpWidth, menOpHeight);
+        //menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*6, menOpWidth, menOpHeight
+        
         
         menuOptionsMainMenu.setPosition(SCREEN_WIDTH*0.5f-menuOptionsMainMenu.getWidth()/2, SCREEN_HEIGHT*0.45f-30*1f);
         menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsMainMenu.getWidth()/2, SCREEN_HEIGHT*0.45f-30*2f);

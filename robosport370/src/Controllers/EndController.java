@@ -19,7 +19,7 @@ public class EndController extends Game {
     endView view;
   
     public void create() {
-        // Getting the music intialized
+        // Getting the music initialized
         introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
         introMusic.setLooping(true);
         introMusic.setVolume(0.6f);
@@ -36,10 +36,17 @@ public class EndController extends Game {
         System.exit(0);
     }
     /**
-     * gets called when Setup view selects return
+     * gets called when Setup view selects Main Menu
      */
     public void notifyMainMenu(){
         this.setScreen(new mainMenuView(new setupController()));
-    }   
+    }
+    public static void main(String[] args) {
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        config.title = "RobotSport370";
+        config.height = 800;
+        config.width = 1280;
+        new LwjglApplication(new EndController(), config);
+    }
     
 }
