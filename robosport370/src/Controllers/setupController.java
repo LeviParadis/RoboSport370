@@ -78,6 +78,10 @@ public class setupController extends Game {
 	/**
 	 * changes the screen when continue is pressed
 	 */
+	public void notifyAddTeam(){
+	    //TODO: Create a new add/edit team view to open here
+	    
+	}
     public void notifyContinue(){
           GameController gameController = new GameController();
           if (gameVariables.isSim == false){    

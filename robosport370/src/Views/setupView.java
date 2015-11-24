@@ -248,6 +248,7 @@ public class setupView extends ScreenAdapter {
     public void addTeam() {
     	if(teamIndex < 6) {
     		Gdx.input.getTextInput(listener, "Enter team filepath:", "", "Robot's team filepath");
+    		controller.notifyAddTeam();
     	}
     }
     

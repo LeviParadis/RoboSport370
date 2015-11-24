@@ -50,7 +50,9 @@ public class GameController extends Game{
         
         teams = new HashMap<Integer, Team>();
         gameMap = new Map();
+        
         Team[] allTeams = gameVariables.allTeams;
+        
         
 //        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
 //        introMusic.setLooping(true);
