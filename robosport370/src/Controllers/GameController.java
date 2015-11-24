@@ -1,8 +1,10 @@
 package Controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Queue;
 import com.badlogic.gdx.Game;
@@ -16,25 +18,20 @@ import Models.Robot;
 import Models.Team;
 import Models.Tile;
 import Models.Map;
+import Models.Map.DIRECTION;
 import Views.mapView;
 
 public class GameController extends Game{
     
-    private Music introMusic;
-    
     /** All of the teams to be run in the simulation.*/
-    private HashMap<Integer, Team> teams;
-    
+    private ArrayList<Team> teams;
     /** The map that holds the information for calculations and the size*/
     private Map gameMap;
-    
-    
     /** holds the value to which team goes next*/
     private Queue<Team> nextTeamIdx;
     //TODO how do we choose which team goes first?
     
-    /** CHANGE*/
-    boolean isHeadless;
+    
     
     /** Stores the type of map view */
     mapView view;
@@ -49,16 +46,10 @@ public class GameController extends Game{
      */
     public GameController() throws RuntimeException{
         
-        teams = new HashMap<Integer, Team>();
+        teams = new ArrayList<Team>();
         gameMap = new Map();
         
         Team[] allTeams = gameVariables.allTeams;
-        
-        
-//        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
-//        introMusic.setLooping(true);
-//        introMusic.setVolume(0.6f);
-//        introMusic.play();
         
         if(allTeams == null){
             throw new RuntimeException("There must be teams added to begin the game");
@@ -67,7 +58,7 @@ public class GameController extends Game{
             
             //adds the teams into the game controller
             for(int i = 0; i < allTeams.length; i++){
-                teams.put((int) allTeams[i].getTeamNumber(), allTeams[i]);
+                ((Object) teams).put(allTeams[i].getTeamNumber());
             }
             
             for(int i = 0; i < allTeams.length; i++){
@@ -187,41 +178,78 @@ public class GameController extends Game{
     }
 
 
-    public void moveRobot(Robot robotToMove, int TeamNumber ,int newX, int newY, int range, ){
-       Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
-       
-       
-       
-       Tile[][] allTiles = this.gameMap.getTiles();
-               
-       allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
-       
-       temp.setXPosition(newX);
-       temp.setYPosition(newY);
-       
-       allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
-       
-       int movesLeft = (int) temp.getMovesPerTurn();
-       boolean doneTurn = false;
-       while(!doneTurn){ 
-           if(movesLeft == 0){
-               doneTurn = true;
-           }
-           else{ //distance to new position is greater then turns remaining, then fail.
-               temp.setPosition(newPosition);
-               movesLeft--;
-           }
-       }
-    }
-        
+    public void moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft){
+           
+      int newX;
+      int newY;
 
+      DIRECTION dir = gameMap.getDirection(Direction);
+      newX = dir.getXCoordinate();
+      newY = dir.getYCoordinate();
+        
+      newX = newX*range;
+      newY = newY*range;
+      
+//      for(int i = 0; i < teams.size(); i++){
+//          Team temp = teams.get(i);
+//          if(teams.get(i).getTeamNumber() == TeamNumber){
+//              if(temp.getTeamDirection() == 5){
+//                  newX = newX
+//              }
+//              newX = newX+teams.get(i).getTeamDirection();
+//              
+//          }
+//      }
+       
+      Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
+       
+      Tile[][] allTiles = this.gameMap.getTiles();
+       
+      //Removing the robot from it's current tile
+      allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
+       
+      if(movesLeft < range){
+          throw new RuntimeException("range to move cannot be higher than the amount of moves remaining");
+      }
+      
+      temp.setXPosition(newX);
+      temp.setYPosition(newY);
+        
+      //Adding the robot to the new tile
+      allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
+        
+   }
+        
+    
     /**
      *  fire at the position passed in
      * @param shooter is the robot that will fire a shot
      * @param hexPos is the position that the robot is firing towards
      */
-    public void shootAtSpace(Robot shooter, int hexPos){
-
+    public void shootAtSpace(Robot shooter, int range, int Direction){
+        Tile[][] allTiles = this.gameMap.getTiles();
+        
+        DIRECTION dir = gameMap.getDirection(Direction);
+        
+        int xPos = dir.getXCoordinate()*range;
+        int yPos = dir.getYCoordinate()*range;
+        
+        LinkedList<Robot> robots = allTiles[xPos][yPos].getRobots();
+        
+        Iterator<Robot> iter = robots.iterator();
+        
+        while(iter.hasNext()){
+            Robot temp = iter.next();
+            temp.inflictDamage(shooter.getStrength());
+            if(temp.getHealth() <= 0){
+                temp.destroy();
+                robots.remove(temp);
+                teams.
+            }
+            
+        }
+        
+        
         
 
     }

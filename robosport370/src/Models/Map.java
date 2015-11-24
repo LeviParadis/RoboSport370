@@ -1,5 +1,6 @@
 package Models;
 import Controllers.gameVariables;
+import Models.Map.DIRECTION;
 
 public class Map {
     
@@ -69,16 +70,32 @@ public class Map {
         }
     }
     
-    public DIRECTION getDirection(int x1,int x2,int y1,int y2){
-        int xDir = x2-x1;
-        int yDir = y2-y1;
-        DIRECTION toRet = null;
-        for (DIRECTION dir : DIRECTION.values()){
-            if(dir.getXCoordinate() == xDir && dir.getYCoordinate() == yDir){
-                toRet = dir;
-            }
+    public DIRECTION getDirection(int Direction){
+        
+        if(Direction == 0){
+            return DIRECTION.NORTH;
+           
         }
-        return toRet;
+        else if(Direction == 1){
+            return DIRECTION.NORTH_EAST;
+        }
+        else if(Direction == 2){
+            return DIRECTION.SOUTH_EAST;
+        }
+        else if(Direction == 3){
+            return DIRECTION.SOUTH;
+        }
+        else if(Direction == 4){
+            return DIRECTION.SOUTH_WEST;
+        }
+        else if(Direction == 5){
+            return DIRECTION.NORTH_WEST;
+        }
+        else{
+            throw new RuntimeException("The provided direction is not valid");
+        }
+        
+       
     }
     
     public Tile[][] getTiles(){

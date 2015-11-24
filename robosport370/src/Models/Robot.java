@@ -21,7 +21,8 @@ public class Robot {
     
     private long serialNumber;
     private String name, teamName;
-    private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;
+    private long baseHealth, currentHealth, movesPerTurn, hexPosition;
+    private int strength;
     private int xPosition;
     private int yPosition;
     private long simTeamNumber, simMemberNumber;
@@ -46,7 +47,7 @@ public class Robot {
      * @param stats       An object that holds the stats for this robot. If it w
      */
     public Robot(String robotName, long serial,
-            long health, long strength, long moves,
+            long health, int strength, long moves,
             HashMap<String,String> vars, HashMap<String,String> words, RobotGameStats stats) {
         this.name = robotName;
         this.serialNumber = serial;
@@ -71,7 +72,7 @@ public class Robot {
      * @param words       The list of forth commands
      */
     public Robot(String robotName, long serial,
-            long health, long strength, long moves,
+            long health, int strength, long moves,
             HashMap<String,String> vars, HashMap<String,String> words) {
         this(robotName, serial, health, strength, moves, vars, words, new RobotGameStats());
     }
@@ -179,7 +180,7 @@ public class Robot {
     /**
      * @return the amount of damage the robot can cause to others
      */
-    public long getStrength() {
+    public int getStrength() {
         return strength;
     }
     

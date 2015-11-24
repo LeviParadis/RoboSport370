@@ -17,6 +17,8 @@ public class Team {
     private Color teamColor;
     //a number assigned to this team by the simulator for id purposes
     private int teamNumber;
+    // teams starting direction on map
+    private int teamStartDirection;
     
     /**
      * Default Constructor
@@ -116,6 +118,18 @@ public class Team {
     public Robot getTeamMember(int memberNumber){
         Robot[] array = (Robot[]) this.robotList.toArray();
         return array[memberNumber];
+    }
+    
+    /**
+     * Sets which part of the map that the team starts on
+     * @param dir
+     */
+    public void setTeamDirection(int dir){
+        this.teamStartDirection = dir;
+    }
+    
+    public int getTeamDirection(){
+        return this.teamStartDirection;
     }
     
 }
