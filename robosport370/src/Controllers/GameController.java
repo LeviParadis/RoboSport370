@@ -14,6 +14,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import Models.Robot;
 import Models.Team;
+import Models.Tile;
 import Models.Map;
 import Views.mapView;
 
@@ -182,9 +183,18 @@ public class GameController extends Game{
         }
         return temp;
     }
-    
-    public void moveRobot(Robot robotToMove, long newPosition, int TeamNumber){
+
+
+    public void moveRobot(Robot robotToMove, int newX, int newY, int range ){
        Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
+       
+       Tile[][] allTiles = this.gameMap.getTiles();
+               
+       allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
+       
+       temp.setXPosition(newX);
+       
+       
        int movesLeft = (int) temp.getMovesPerTurn();
        boolean doneTurn = false;
        while(!doneTurn){ 
