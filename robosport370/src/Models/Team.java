@@ -7,10 +7,6 @@ import java.util.Queue;
 import java.util.Random;
 
 public class Team {
-    //we use this static value to ensure that each team is assigned a unique number
-    private static int uniqueNumber = 0;
-    //the name of the team
-    private String teamName;
     //the list of robots in the team. It's a queue so we can keep track of turn orders if we choose to
     private Queue<Robot> robotList;
     //the team's color
@@ -25,10 +21,9 @@ public class Team {
      * @param teamColor the team's color
      * @param uniqueNumber a number assigned to this team by the simulator for id purposes
      */
-    public Team(Queue<Robot> robots, String name, Color teamColor){ 
+    public Team(Queue<Robot> robots, Color teamColor, int uniqueNumber){ 
        
         this.robotList = robots;
-        this.teamName = name;
         this.teamColor = teamColor;
         this.teamNumber = uniqueNumber;
         
@@ -37,7 +32,7 @@ public class Team {
         int i = 0;
         while(robotIterator.hasNext()){
             Robot thisRobot = robotIterator.next();
-            thisRobot.setTeamIDs(uniqueNumber, i, name, teamColor);
+            thisRobot.setTeamIDs(uniqueNumber, i, teamColor);
             i++;
         }
         //increment unique number, so the next team will have a different number than this
@@ -50,8 +45,8 @@ public class Team {
      * @param name   the team's name
      * @param uniqueNumber a number assigned to this team by the simulator for id purposes
      */
-    public Team(Queue<Robot> robots, String name){
-        this(robots, name, null);
+    public Team(Queue<Robot> robots, int uniqueNumber){
+        this(robots, null, uniqueNumber);
         //create a random color to represent this team
         Random rand = new Random();
         int r = rand.nextInt(255);
@@ -99,12 +94,6 @@ public class Team {
         return this.teamColor;
     }
     
-    /**
-     * @return the team's name
-     */
-    public String getName(){
-        return this.teamName;
-    }
     
     /**
      * @return the team's unique number

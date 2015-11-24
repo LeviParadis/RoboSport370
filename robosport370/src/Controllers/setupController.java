@@ -89,7 +89,7 @@ private Queue<Team> selectedTeams;
 	public void notifyAddTeam(){
     if(this.selectedTeams.size() < 6){
 	         Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
-	         Team newTeam = new Team(robotList, "teamName");
+	         Team newTeam = new Team(robotList, this.selectedTeams.size());
 	         this.selectedTeams.add(newTeam);
 	         System.out.println(this.selectedTeams);
     } else {

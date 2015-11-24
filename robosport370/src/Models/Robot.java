@@ -20,7 +20,7 @@ import Exceptions.ForthRunTimeException;
 public class Robot implements Cloneable{
     
     private long serialNumber;
-    private String name, teamName;
+    private String name;
     private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;
     private int xPosition;
     private int yPosition;
@@ -81,12 +81,10 @@ public class Robot implements Cloneable{
      * When a robot is assigned to a team, it will recieve these attributes
      * @param teamNumber
      * @param memberNumber
-     * @param teamName
      */
-    public void setTeamIDs(int teamNumber, int memberNumber, String teamName, Color color){
+    public void setTeamIDs(int teamNumber, int memberNumber, Color color){
         this.simMemberNumber = memberNumber;
         this.simTeamNumber = teamNumber;
-        this.teamName = teamName;
         this.teamColor = color;
     }
     
@@ -142,13 +140,6 @@ public class Robot implements Cloneable{
         return this.teamColor;
     }
     
-    /**
-     * 
-     * @return robot's team's name
-     */
-    public String getTeamName(){
-        return this.teamName;
-    }
     
     /**
      * @return robot's current health
@@ -340,7 +331,7 @@ public class Robot implements Cloneable{
      * @return a string representation of the robot
      */
     public String toString(){
-        return name + " - " + teamName + " - " + serialNumber; 
+        return name +  " - " + serialNumber; 
     }
     
     /**
