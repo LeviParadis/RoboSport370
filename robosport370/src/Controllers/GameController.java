@@ -14,6 +14,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Exceptions.ForthParseException;
+import Exceptions.ForthRunTimeException;
+import Interpreters.ForthInterpreter;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
@@ -28,11 +31,9 @@ public class GameController extends Game{
     private ArrayList<Team> teams;
     /** The map that holds the information for calculations and the size*/
     private Map gameMap;
-    /** holds the value to which team goes next*/
-    private Queue<Team> nextTeamIdx;
-    //TODO how do we choose which team goes first?
     
     
+    private Thread executionThread;
     
     /** Stores the type of map view */
     mapView view;
@@ -48,7 +49,6 @@ public class GameController extends Game{
     public GameController(Queue<Team> allTeams) throws RuntimeException{
         
         teams = new ArrayList<Team>();
-        this.nextTeamIdx = new LinkedList<Team>();
 
         gameMap = new Map();
         
@@ -69,11 +69,50 @@ public class GameController extends Game{
             while(it.hasNext()){
                 Team nextTeam = it.next();
                 teams.add((int) nextTeam.getTeamNumber(), nextTeam);
-                this.nextTeamIdx.add(nextTeam);
+                //init robots
+                Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
+                while(robotIt.hasNext()){
+                    Robot nextRobot = robotIt.next();
+                    try {
+                        ForthInterpreter.initRobot(nextRobot, this);
+                    } catch (ForthRunTimeException | ForthParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         
-        //TODO // GameLog gameLog = new GameLog();
+        this.executionThread = new Thread(){
+            public void run(){
+                int i = 1;
+                while(teamsAlive() > 1){
+                    System.out.println("turn: " + i);
+                    executeNextTurn();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    i++;
+                }
+            }
+          };
+
+          executionThread.start();
+    }
+    
+    public int teamsAlive(){
+        int livingNum = 0;
+        Iterator<Team> it = this.teams.iterator();
+        while(it.hasNext()){
+            Team thisTeam = it.next();
+            int livingRobotCount = thisTeam.numberOfLivingRobots();
+            if(livingRobotCount > 0){
+                livingNum++;
+            }
+        }
+        return livingNum;
     }
 
     
@@ -81,6 +120,12 @@ public class GameController extends Game{
      * puts the game into a paused state
      */
     public void pause(){
+        try {
+            this.executionThread.wait();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -88,6 +133,7 @@ public class GameController extends Game{
      */
     public void resume(){
         this.resume();
+        this.executionThread.notify();
     }
     
     /**
@@ -170,17 +216,24 @@ public class GameController extends Game{
     }
     
     /**
-     * figures out which team gets to move next based off of the queue
+     * executes a round of turns
      */
-    public Team nextTurn(){
-        while(this.nextTeamIdx.peek().numberOfLivingRobots() == 0){
-            this.nextTeamIdx.remove();
+    public void executeNextTurn(){
+        Iterator<Team> teamIt = this.teams.iterator();
+        while(teamIt.hasNext()){
+            Team nextTeam = teamIt.next();
+            Queue<Robot> robotList = nextTeam.getLivingRobots();
+            Iterator<Robot> robotIt = robotList.iterator();
+            while(robotIt.hasNext()){
+                Robot nextRobot = robotIt.next();
+                try {
+                    ForthInterpreter.executeTurn(nextRobot, this);
+                } catch (ForthRunTimeException | ForthParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         }
-        Team temp = this.nextTeamIdx.remove();
-        if(temp.numberOfLivingRobots() != 0){
-            this.nextTeamIdx.add(temp);            
-        }
-        return temp;
     }
 
 
