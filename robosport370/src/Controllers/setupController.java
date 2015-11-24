@@ -1,5 +1,7 @@
 package Controllers;
 
+import java.util.Queue;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -7,6 +9,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Interpreters.JsonInterpreter;
+import Models.Robot;
+import Models.Team;
 import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
@@ -80,7 +85,14 @@ public class setupController extends Game {
 	 */
 	public void notifyAddTeam(){
 	    //TODO: Create a new add/edit team view to open here
+	    System.out.println(JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null));
 	    
+	    for(int i = 0; i <= 6; i++)
+	    {
+	        Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
+	        Team newTeam = new Team(robotList, "teamName");
+	        gameVariables.allTeams[i] = newTeam;
+	    }
 	}
     public void notifyContinue(){
           GameController gameController = new GameController();

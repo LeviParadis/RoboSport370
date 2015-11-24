@@ -186,6 +186,7 @@ public class GameController extends Game{
         return temp;
     }
 
+    /*
 
     public void moveRobot(Robot robotToMove, int newX, int newY, int range ){
        Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
@@ -210,7 +211,7 @@ public class GameController extends Game{
        }
     }
         
-
+*/
     /**
      *  fire at the position passed in
      * @param shooter is the robot that will fire a shot
