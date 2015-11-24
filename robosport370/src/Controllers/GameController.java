@@ -51,8 +51,7 @@ public class GameController extends Game{
         this.nextTeamIdx = new LinkedList<Team>();
 
         gameMap = new Map();
-        
-        
+   
         
 //        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
 //        introMusic.setLooping(true);
@@ -188,6 +187,10 @@ public class GameController extends Game{
     public void shootAtSpace(Robot shooter, int range, int Direction){
         Tile[][] allTiles = this.gameMap.getTiles();
         
+        if(range > 3){
+            throw new RuntimeException("cannot shoot farther then range 3");
+        }
+        
         DIRECTION dir = gameMap.getDirection(Direction);
         
         int xPos = dir.getXCoordinate()*range;
@@ -203,21 +206,13 @@ public class GameController extends Game{
             if(temp.getHealth() <= 0){
                 temp.destroy();
                 robots.remove(temp);
-
             }
-            
         }
-        
-        
-        
-
     }
+    
     /**
      * Called every frame
      */
-   
-    
-
     public void render(){
         super.render();
     }

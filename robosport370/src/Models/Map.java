@@ -7,11 +7,13 @@ public class Map {
     private int mapDiameter = gameVariables.mapSize *2 -1;
     private int height = gameVariables.mapSize;
     private int mapSize = gameVariables.mapSize;
+    private int xPosMax, xPosMin, yPosMax, yPosMin;
     
     Tile[][] tiles = new Tile[mapDiameter][mapDiameter];
     
     public Map(){
-        int xPos = -mapDiameter/ 2 ;
+        
+        //int xPos = -mapDiameter/ 2 ;
         int yPos = (mapSize - 2) + 1/2;
         int count = 0;
         for(int x = 0; x < mapDiameter; x++){
@@ -98,6 +100,7 @@ public class Map {
        
     }
     
+    
     public Tile[][] getTiles(){
         return this.tiles;
     }
@@ -110,4 +113,8 @@ public class Map {
         return this.mapDiameter;
     }
 
+    public int getMaxDirection(DIRECTION dir){
+        return 0;
+    }
+    
 } 
