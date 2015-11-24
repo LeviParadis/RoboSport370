@@ -17,7 +17,7 @@ import Exceptions.ForthRunTimeException;
  * Notes for report: Replaced getWinsLossStats with getters for each win loss, and tie 
  * value
  */
-public class Robot {
+public class Robot implements Cloneable{
     
     private long serialNumber;
     private String name, teamName;
@@ -341,6 +341,17 @@ public class Robot {
      */
     public String toString(){
         return name + " - " + teamName + " - " + serialNumber; 
+    }
+    
+    /**
+     * used to make a copy of this robot that has all the same attributes, but shares the same stats object
+     * this is so that we can have multiple copies of the robot on different teams, but they all update the same stats
+     * @return a copy of the robot with the same stats object
+     */
+    public Robot clone(){
+        Robot result = new Robot(this.name, this.serialNumber, this.baseHealth, this.strength, this.movesPerTurn, this.forthVariables, this.forthWords, this.stats);
+        return result;
+        
     }
 
 }
