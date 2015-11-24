@@ -17,7 +17,7 @@ public class Map {
             for(int y = 0; y < height; y++) {
                 yPos = yPos -1;
                 tiles[x][y] =  new Tile(x, y);
-//                System.out.print(y);
+                System.out.print(y);
                 count++;
             }
             if( (mapDiameter) / (x+1) >= 2) {
@@ -28,10 +28,10 @@ public class Map {
                 yPos = yPos + 1 * height - 1/2;
                 height--;
             }
-//            System.out.println();
+            System.out.println();
             
         }
-//        System.out.println(count);
+        System.out.println(count);
     }
     
     public static void main(String[] args){
@@ -80,39 +80,17 @@ public class Map {
         }
         return toRet;
     }
+    
+    public Tile[][] getTiles(){
+        return this.tiles;
+    }
+    
+    public int getMapSize(){
+        return this.mapSize;
+    }
+    
+    public int getMapDiameter(){
+        return this.mapDiameter;
+    }
 
 } 
-//  private int maxNorth;
-//  private int maxSouth;
-//  private int maxEast;
-//  private int maxWest;
-//  public static int center = 0;
-//  
-//  
- 
-//  
-//    private int boardSize;  
-//    
-//    public Map(int mapSideSize){
-//      this.boardSize  = mapSideSize;
-//      this.maxNorth   = mapSideSize;
-//      this.maxSouth   = -mapSideSize;
-//      this.maxEast    = mapSideSize;
-//      this.maxWest    = -mapSideSize;
-//      
-//      
-//    }
-//    
-//    public int getMapSize(){
-//      return this.boardSize;
-//    }
-//    
-//    public int direction(){
-//        return 0;
-//    }
-//    
-//    public static void main(int args[]){
-//        
-//    }
-//}
-    
