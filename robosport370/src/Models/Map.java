@@ -113,8 +113,20 @@ public class Map {
         return this.mapDiameter;
     }
 
-    public int getMaxDirection(DIRECTION dir){
-        return 0;
+    public int getMaxY(){
+        return yPosMax;
+    }
+    
+    public int getMaxX(){
+        return xPosMax;
+    }
+    
+    public int getMinY(){
+        return yPosMin;
+    }
+    
+    public int getMinX(){
+        return xPosMin;
     }
     
 } 

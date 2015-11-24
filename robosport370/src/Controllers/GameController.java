@@ -30,7 +30,7 @@ public class GameController extends Game{
     private Map gameMap;
     /** holds the value to which team goes next*/
     private Queue<Team> nextTeamIdx;
-    //TODO how do we choose which team goes first?
+    
     
     
     
@@ -51,6 +51,7 @@ public class GameController extends Game{
         this.nextTeamIdx = new LinkedList<Team>();
 
         gameMap = new Map();
+        
    
         
 //        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
@@ -148,6 +149,14 @@ public class GameController extends Game{
       newX = newX*range;
       newY = newY*range;
       
+      //TODO add the team specific direction here
+      if(newY > gameMap.getMaxY() || newY < gameMap.getMinY()){
+          throw new RuntimeException("can't go off the edge in the Y coordinate");
+      }
+      if(newX > gameMap.getMaxX() || newX < gameMap.getMinY()){
+          throw new RuntimeException("can't go off the edge in the X coordinate");
+      }
+      
 //      for(int i = 0; i < teams.size(); i++){
 //          Team temp = teams.get(i);
 //          if(teams.get(i).getTeamNumber() == TeamNumber){
@@ -236,7 +245,7 @@ public class GameController extends Game{
     
     @Override
     public void create() {
-        
+        this.setScreen(new mapView(this));
     }
 }
 
