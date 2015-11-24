@@ -31,11 +31,9 @@ public class GameController extends Game{
     private ArrayList<Team> teams;
     /** The map that holds the information for calculations and the size*/
     private Map gameMap;
-    /** holds the value to which team goes next*/
-    private int nextTeamIdx;
-    //TODO how do we choose which team goes first?
     
     
+    private Thread executionThread;
     
     /** Stores the type of map view */
     mapView view;
@@ -51,7 +49,6 @@ public class GameController extends Game{
     public GameController(Queue<Team> allTeams) throws RuntimeException{
         
         teams = new ArrayList<Team>();
-        this.nextTeamIdx = 0;
 
         gameMap = new Map();
         
@@ -85,6 +82,23 @@ public class GameController extends Game{
                 }
             }
         }
+        
+        this.executionThread = new Thread(){
+            public void run(){
+                //execute 100 turns
+                for(int i=0; i<100; i++){
+                    System.out.println("turn: " + i);
+                    executeNextTurn();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+          };
+
+          executionThread.start();
     }
 
     
@@ -92,6 +106,12 @@ public class GameController extends Game{
      * puts the game into a paused state
      */
     public void pause(){
+        try {
+            this.executionThread.wait();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -99,6 +119,7 @@ public class GameController extends Game{
      */
     public void resume(){
         this.resume();
+        this.executionThread.notify();
     }
     
     /**
@@ -181,40 +202,23 @@ public class GameController extends Game{
     }
     
     /**
-     * figures out which team gets to move next based off of the queue
+     * executes a round of turns
      */
     public void executeNextTurn(){
-        int originalIndex = this.nextTeamIdx;
-        Team nextTeam = this.teams.get(this.nextTeamIdx);
-        
-        //if the next team has no living robots, go to the next team in the list
-        while(nextTeam.numberOfLivingRobots()==0){
-            this.nextTeamIdx++;
-            if(this.nextTeamIdx == this.teams.size()){
-                this.nextTeamIdx = 0;
-            }else if(this.nextTeamIdx == originalIndex){
-                //TODO: Handle better
-                System.out.println("All Teams Dead");
-                return;
+        Iterator<Team> teamIt = this.teams.iterator();
+        while(teamIt.hasNext()){
+            Team nextTeam = teamIt.next();
+            Queue<Robot> robotList = nextTeam.getLivingRobots();
+            Iterator<Robot> robotIt = robotList.iterator();
+            while(robotIt.hasNext()){
+                Robot nextRobot = robotIt.next();
+                try {
+                    ForthInterpreter.executeTurn(nextRobot, this);
+                } catch (ForthRunTimeException | ForthParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
-            nextTeam = this.teams.get(this.nextTeamIdx);
-        }
-        
-        Queue<Robot> robotList = nextTeam.getLivingRobots();
-        Iterator<Robot> it = robotList.iterator();
-        while(it.hasNext()){
-            Robot nextRobot = it.next();
-            try {
-                ForthInterpreter.executeTurn(nextRobot, this);
-            } catch (ForthRunTimeException | ForthParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        
-        this.nextTeamIdx++;
-        if(this.nextTeamIdx == this.teams.size()){
-            this.nextTeamIdx = 0;
         }
     }
 
@@ -325,8 +329,6 @@ public class GameController extends Game{
     public void create() {
         mapView map = new mapView(this, this.teams);
         this.setScreen(map);
-        
-
     }
 }
 
