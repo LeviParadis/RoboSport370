@@ -108,10 +108,8 @@ public void notifyDeleteTeam(){
 
 public void notifyContinue(){
     try{
-          GameController gameController = new GameController(this.selectedTeams);
-          if (gameVariables.isSim == false){    
-             this.setScreen(new mapView(gameController));
-          }
+         new GameController(this.selectedTeams);
+
     } catch (RuntimeException e){
         //TODO: alert user that they have bad info
         System.out.println(e);

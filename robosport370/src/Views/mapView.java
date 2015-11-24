@@ -1,6 +1,8 @@
 package Views;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -16,7 +18,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 
+import Controllers.GameController;
 import Controllers.gameVariables;
+import Models.Robot;
+import Models.Team;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -56,7 +61,7 @@ public class mapView extends ScreenAdapter {
 	
 	// Sprites for the various teams
 	// It is a set of teams, which each holds a set of sprites
-	private HashMap<Integer, HashMap<Integer, Sprite>> teams;
+	private List<List<Sprite>> teamList;
 	
 	// For rendering tweens
 	private TweenManager tweenManager;
@@ -72,7 +77,7 @@ public class mapView extends ScreenAdapter {
      * Creates a mapView screen
      * @param controller the controller creating this screen
      */
-    public mapView(final Game controller) {
+    public mapView(final GameController controller, List<Team> teamsInMatch) {
     	this.controller = controller;
     	
     	WINDOW_WIDTH = Gdx.graphics.getWidth();
@@ -103,8 +108,12 @@ public class mapView extends ScreenAdapter {
     	cam.update();
 
     	// Creates out robots
-    	teams = new HashMap<Integer, HashMap<Integer, Sprite>>();
-    	createRobots();
+    this.teamList = new ArrayList<List<Sprite>>();
+    
+    Iterator<Team> it = teamsInMatch.iterator();
+    while(it.hasNext()){
+        createRobots(it.next());
+    }
 
     	tweenManager = new TweenManager();
     	Tween.registerAccessor(Sprite.class, new SpriteAccessor());
@@ -112,24 +121,21 @@ public class mapView extends ScreenAdapter {
     	batch = new SpriteBatch();
     }
     
-    public void createRobots() {
-    	HashMap<Integer, Sprite> team;
-    	Sprite s;
-    	
-    	// TODO include controller.getNumberOfTeams() as the for loop bound
-    	// Fill the map with the appropriate amount of robots
-    	// For every team
-    	for(int i = 1; i <= 6; i++) {
-    		team = new HashMap<Integer, Sprite>();
-    		// For every robot
-    		for(int j = 1; j <= 6; j++) {
-    			// Creates a new sprite instance
-    			s = atlas.createSprite("robot", i-1);
-    			setRobotPosition(i, s);
-    			team.put(j, s);
-    		}
-    		teams.put(i, team);
-    	}
+    public void createRobots(Team teamToAdd){
+    	    Queue<Robot> robotList = teamToAdd.getAllRobots();
+    	    Iterator<Robot> it = robotList.iterator();
+    	    ArrayList<Sprite> spriteList = new ArrayList<Sprite>();
+    	    
+    	    int counter = 1;
+    	    while(it.hasNext()){
+    	        it.next();
+    	        Sprite s = atlas.createSprite("robot", teamToAdd.getTeamNumber());
+            setRobotPosition(teamToAdd.getTeamNumber(), s);
+            spriteList.add(s); 
+            counter++;
+    	    }
+    	    this.teamList.add(spriteList);
+        
     }
     
     /**
@@ -141,10 +147,10 @@ public class mapView extends ScreenAdapter {
 	public void setRobotPosition(Integer i, Sprite s) {
     	s.setPosition(-14, -23);
     	
-    	if(i == 1) {
-    		s.translate(-(mapSize-1)*sizeX, 0);
+    	if(i == 0) {
+        s.translate(-(mapSize-1)*sizeX, 0);
     	}
-    	else if(i == 2) {
+    	else if(i == 1) {
     		// TODO controller.getNumTeams() == 2
     		if(false) {
     			s.translate((mapSize-1)*sizeX, 0);
@@ -158,7 +164,7 @@ public class mapView extends ScreenAdapter {
     			s.translate(-(mapSize/2)*sizeX, (0.75f*(float)mapSize-0.75f)*sizeY);
     		}
     	}
-    	else if(i == 3) {
+    	else if(i == 2) {
     		// TODO controller.getNumTeams() == 3
     		if(false) {
     			s.translate((mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
@@ -168,13 +174,13 @@ public class mapView extends ScreenAdapter {
     			s.translate((mapSize/2)*sizeX, (0.75f*(float)mapSize-0.75f)*sizeY);
     		}
     	}
-    	else if(i == 4) {
+    	else if(i == 3) {
     		s.translate((mapSize-1)*sizeX, 0);
     	}
-    	else if(i == 5) {
+    	else if(i == 4) {
     		s.translate((mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
     	}
-    	else if(i == 6) {
+    	else if(i == 5) {
     		s.translate(-(mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
     	}
     }
@@ -300,12 +306,12 @@ public class mapView extends ScreenAdapter {
     }
     
     public void renderRobots() {
-    	// Starts at team 1
-    	for(int i = 1; i <= teams.size(); i++) {
-    		for(int j = i; j <= teams.get(i).size(); j++) {
-    			teams.get(i).get(j).draw(batch);
-    		}
-    	}
+    // Starts at team 1
+        for(int i = 0; i < teamList.size(); i++) {
+    		        for(int j = 0; j < teamList.get(i).size(); j++) {
+    		            teamList.get(i).get(j).draw(batch);
+    		        }
+        }
     }
     
     /**
@@ -341,17 +347,17 @@ public class mapView extends ScreenAdapter {
     	}
     	AudibleTimeline aTimeline = new AudibleTimeline();
     	aTimeline.setTimeline(Timeline.createSequence()
-    						   .push(Tween.to(teams.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
+    						   .push(Tween.to(teamList.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
     	timelineTweenQueue.add(aTimeline);
     }
     
     public void fireShot(int team1, int robot1, int team2, int robot2) {
     	AudibleTimeline aTimeline = new AudibleTimeline();
     	aTimeline.setProjectile(projectile);
-    	aTimeline.setSource(teams.get(team1).get(robot1));
+    	aTimeline.setSource(teamList.get(team1).get(robot1));
     	Timeline t = Timeline.createSequence()
     			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, 0.5f)
-    					.target(teams.get(team2).get(robot2).getX(), teams.get(team2).get(robot2).getY()));
+    					.target(teamList.get(team2).get(robot2).getX(), teamList.get(team2).get(robot2).getY()));
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
     }
