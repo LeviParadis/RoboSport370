@@ -246,17 +246,13 @@ public class setupView extends ScreenAdapter {
     
     // TODO All of these funtions either do or may require functions call to the controller
     public void addTeam() {
-    	if(teamIndex < 6) {
-    		Gdx.input.getTextInput(listener, "Enter team filepath:", "", "Robot's team filepath");
-    		controller.notifyAddTeam();
-    	}
+        
+        controller.notifyAddTeam();
+
     }
     
     public void deleteTeam() {
-    	if(teamIndex > 0) {
-    		teamMap.get(teamIndex).setVisible(false);
-    		teamIndex--;
-    	}
+        controller.notifyDeleteTeam();
     }
     
     public void toggleMapSize() {

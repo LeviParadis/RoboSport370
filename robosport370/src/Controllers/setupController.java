@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.util.LinkedList;
 import java.util.Queue;
 
 import com.badlogic.gdx.Game;
@@ -26,6 +27,7 @@ public class setupController extends Game {
 	private Music introMusic;
 	public int mapSize;
 	public boolean isTournament,isSimulation;
+private Queue<Team> selectedTeams;
 	
 	/**
 	 * Called on initilization
@@ -42,6 +44,7 @@ public class setupController extends Game {
 		
         //This is for testing my first screen
         this.setScreen(new mainMenuView(this));
+        this.selectedTeams = new LinkedList<Team>();
 		
 		//This is for testing my second screen
 		//this.setScreen(new setupView(this));
@@ -84,22 +87,31 @@ public class setupController extends Game {
 	 * changes the screen when continue is pressed
 	 */
 	public void notifyAddTeam(){
-	    //TODO: Create a new add/edit team view to open here
-	    System.out.println(JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null));
-	    
-	    for(int i = 0; i <= 6; i++)
-	    {
-	        Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
-	        Team newTeam = new Team(robotList, "teamName");
-	        gameVariables.allTeams[i] = newTeam;
-	    }
+    if(this.selectedTeams.size() < 6){
+	         Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
+	         Team newTeam = new Team(robotList, "teamName");
+	         this.selectedTeams.add(newTeam);
+	         System.out.println(this.selectedTeams);
+    } else {
+        System.out.println("already 6 teams");
+    }
 	}
-    public void notifyContinue(){
+
+public void notifyDeleteTeam(){
+    if(!this.selectedTeams.isEmpty()){
+        this.selectedTeams.remove();
+        System.out.println(this.selectedTeams);
+    } else {
+        System.out.println("already empty");
+    }
+}
+
+public void notifyContinue(){
           GameController gameController = new GameController();
           if (gameVariables.isSim == false){    
              this.setScreen(new mapView(gameController));
           }
-   }
+}
 	/**
 	 * Handles storing the mapsize data
 	 */
