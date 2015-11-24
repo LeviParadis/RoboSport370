@@ -14,6 +14,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Exceptions.ForthParseException;
+import Exceptions.ForthRunTimeException;
+import Interpreters.ForthInterpreter;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
@@ -29,7 +32,7 @@ public class GameController extends Game{
     /** The map that holds the information for calculations and the size*/
     private Map gameMap;
     /** holds the value to which team goes next*/
-    private Queue<Team> nextTeamIdx;
+    private int nextTeamIdx;
     //TODO how do we choose which team goes first?
     
     
@@ -48,7 +51,7 @@ public class GameController extends Game{
     public GameController(Queue<Team> allTeams) throws RuntimeException{
         
         teams = new ArrayList<Team>();
-        this.nextTeamIdx = new LinkedList<Team>();
+        this.nextTeamIdx = 0;
 
         gameMap = new Map();
         
@@ -69,11 +72,19 @@ public class GameController extends Game{
             while(it.hasNext()){
                 Team nextTeam = it.next();
                 teams.add((int) nextTeam.getTeamNumber(), nextTeam);
-                this.nextTeamIdx.add(nextTeam);
+                //init robots
+                Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
+                while(robotIt.hasNext()){
+                    Robot nextRobot = robotIt.next();
+                    try {
+                        ForthInterpreter.initRobot(nextRobot, this);
+                    } catch (ForthRunTimeException | ForthParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
             }
         }
-        
-        //TODO // GameLog gameLog = new GameLog();
     }
 
     
@@ -172,15 +183,39 @@ public class GameController extends Game{
     /**
      * figures out which team gets to move next based off of the queue
      */
-    public Team nextTurn(){
-        while(this.nextTeamIdx.peek().numberOfLivingRobots() == 0){
-            this.nextTeamIdx.remove();
+    public void executeNextTurn(){
+        int originalIndex = this.nextTeamIdx;
+        Team nextTeam = this.teams.get(this.nextTeamIdx);
+        
+        //if the next team has no living robots, go to the next team in the list
+        while(nextTeam.numberOfLivingRobots()==0){
+            this.nextTeamIdx++;
+            if(this.nextTeamIdx == this.teams.size()){
+                this.nextTeamIdx = 0;
+            }else if(this.nextTeamIdx == originalIndex){
+                //TODO: Handle better
+                System.out.println("All Teams Dead");
+                return;
+            }
+            nextTeam = this.teams.get(this.nextTeamIdx);
         }
-        Team temp = this.nextTeamIdx.remove();
-        if(temp.numberOfLivingRobots() != 0){
-            this.nextTeamIdx.add(temp);            
+        
+        Queue<Robot> robotList = nextTeam.getLivingRobots();
+        Iterator<Robot> it = robotList.iterator();
+        while(it.hasNext()){
+            Robot nextRobot = it.next();
+            try {
+                ForthInterpreter.executeTurn(nextRobot, this);
+            } catch (ForthRunTimeException | ForthParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
-        return temp;
+        
+        this.nextTeamIdx++;
+        if(this.nextTeamIdx == this.teams.size()){
+            this.nextTeamIdx = 0;
+        }
     }
 
 
@@ -290,6 +325,8 @@ public class GameController extends Game{
     public void create() {
         mapView map = new mapView(this, this.teams);
         this.setScreen(map);
+        
+
     }
 }
 
