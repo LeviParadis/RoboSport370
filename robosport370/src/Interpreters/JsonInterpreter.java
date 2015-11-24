@@ -31,7 +31,7 @@ public class JsonInterpreter {
     }
     
     /**
-     * lists all robots that meet the passed in parameters. All parameters are optional except the last one
+     * lists all robots that meet the passed in parameters. All parameters are optional except currentVersionOnly
      * @param name the name of the robot we are searching for. Can be a regular expression
      * @param team the name of the team of the robots we are looking for
      * @param minWins the minimum number of wins of the robots we should return
@@ -43,9 +43,9 @@ public class JsonInterpreter {
      * @param currentVersionOnly determines whether we should show all version of robots, or just the latest
      * @return a list of robots that match the above parameters
      */
-    public static Queue<Robot> listRobots(String name, String team, 
+    public static Queue<Robot> listRobots(boolean currentVersionOnly, String name, String team, 
             Integer minWins, Integer maxWins, Integer minLosses, Integer maxLosses, 
-            Integer minMatches, Integer maxMatches, boolean currentVersionOnly){
+            Integer minMatches, Integer maxMatches){
         
         //create the json object
         JSONObject root = new JSONObject();
@@ -90,6 +90,11 @@ public class JsonInterpreter {
                 Robot newRobot = robotFromJSON(json);
                 Queue<Robot> list = new LinkedList<Robot>();
                 list.add(newRobot);
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
                 return list;
             } catch (IOException | ParseException e) {
                 return null;
@@ -97,7 +102,7 @@ public class JsonInterpreter {
 
     }
     
-    public static JSONArray createComparisonJSON(Integer minValueOrNull, Integer maxValueOrNull){
+    private static JSONArray createComparisonJSON(Integer minValueOrNull, Integer maxValueOrNull){
         JSONArray result = new JSONArray();
         if(minValueOrNull != null){
             JSONObject minJSON = new JSONObject();
