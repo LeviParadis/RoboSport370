@@ -263,7 +263,7 @@ public class JsonInterpreter {
         
         //get the robot's attributes
         long health = (long) root.get(JSONConstants.HEALTH);
-        int strength = (int) root.get(JSONConstants.STRENGTH);
+        long strength = (long) root.get(JSONConstants.STRENGTH);
         long moves = (long) root.get(JSONConstants.MOVES_PER_TURN);
     
     
@@ -291,7 +291,7 @@ public class JsonInterpreter {
         
     
         //create a robot from the information in the json
-        Robot newRobot = new Robot( name, serial, health, strength, moves, 
+        Robot newRobot = new Robot( name, serial, health, (int) strength, moves, 
                                     variableList, wordList, stats);
         return newRobot;
     }

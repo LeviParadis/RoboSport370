@@ -133,7 +133,7 @@ public class GameController extends Game{
 //        boolean exists = false;
         
     	for(int i = 0; i < teams.size(); i++){
-    	   Iterator<Entry<Integer, Team>> iter = teams.iterator();
+    	   Iterator<Team> iter = teams.iterator();
     	   while(iter.hasNext()){
     	       Team temp = (Team) iter.next();
     	       if(temp.getAllRobots().contains(robotSN)){
@@ -150,8 +150,7 @@ public class GameController extends Game{
     	           
     	           
     	           //Calculate direction
-    	           toRet.add(gameMap.getDirection(xPos, tempRobot.getXPosition(), 
-    	                   yPos, tempRobot.getYPoisition())); 
+    	           toRet.add(gameMap.getDirection(xPos)); 
     	       
     	       }
     	   }
@@ -289,7 +288,8 @@ public class GameController extends Game{
     
     @Override
     public void create() {
-        
+        mapView map = new mapView(this, this.teams);
+        this.setScreen(map);
     }
 }
 
