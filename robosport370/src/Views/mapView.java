@@ -228,7 +228,6 @@ public class mapView extends ScreenAdapter {
     }
     
     public void renderTiles() {
-    	int tileIndex = 0;
     	int width = mapDiameter;
     	int height = mapSize;
     	
@@ -239,13 +238,10 @@ public class mapView extends ScreenAdapter {
     	// Call the controller instead, getMapSize()
     	for(int i = 0; i < width; i++) {
     		for(int j = 0; j < height; j++) {
-    			tiles.get(tileIndex % 4).setPosition(xPos, yPos);
-    			tiles.get(tileIndex % 4).draw(batch);
-    			tileIndex++;
+    			tiles.get(chooseIndex(i, j)).setPosition(xPos, yPos);
+    			tiles.get(chooseIndex(i, j)).draw(batch);
     			yPos = yPos - sizeY;
     		}
-    		tileIndex++;
-    		tileIndex++;
     		if( (width) / (i+1) >= 2) {
     			yPos = yPos + sizeY * height + sizeY/2;
     			height++;
@@ -256,6 +252,51 @@ public class mapView extends ScreenAdapter {
     		}
     		xPos = xPos + sizeX;
     	}
+    }
+    
+    /**
+     * This function finds a index (0 through 3) based on map position
+     * @param tile the tile being chosen
+     * @param i the current column
+     * @param j the current height
+     * @return the index based of the current map tile
+     */
+    public int chooseIndex(int i, int j) {
+    	// This is essentially a bunch of magic number manipulation
+    	// It generates consistent results
+    	// But makes it so the map isnt either random or just all of one type of tile
+    	if(i == 9 || i == 12 || ( i == 3 && j > 7)) {
+    		return 1;
+    	}
+    	if((i == 0 || i == mapDiameter - 1) && j == mapSize - mapSize / 2 - 1) {
+    		return 1;
+    	}
+    	if(j < i - mapSize && (i % 3 == 2 || i % 3 == 2)) {
+    		return 2;
+    	}
+    	if(j > i + 3) {
+    		return 2;
+    	}
+
+    	if(j < 3 && (i % 3 == 2 || i % 3 == 1)) {
+    		return 2;
+    	}
+    	if(i < (mapDiameter / 2 + 1) && i < (mapDiameter / 2 - 1) && (j % 3 == 2 || j % 3 == 1) ) {
+    		return 3;
+    	}
+    	if((i - 1 == mapSize/2) && j < 6 && j > 3) {
+    		return 3;
+    	}
+    	if(i == mapSize / 2 + 3 && j == 6) {
+    		return 3;
+    	}
+    	if(i < 4 && i > 1 && j < 4 && j > 2) {
+    		return 0;
+    	}
+    	if(i > 5 && (j % 5 == 4)) {
+    		return 0;
+    	}
+    	return 1;
     }
     
     public void renderRobots() {

@@ -18,7 +18,6 @@ public class spriteMenuHandler {
 	private Integer maxSprites;
 	private HashMap<Integer, Sprite> spriteMap;
 	
-	
 	/**
 	 * 
 	 * @param s the first menu option

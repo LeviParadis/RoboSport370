@@ -21,5 +21,4 @@ public class testController extends Game {
 	public void create() {
 		this.setScreen(new mapView(this));
 	}
-
 }
