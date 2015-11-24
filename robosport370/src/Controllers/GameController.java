@@ -85,8 +85,8 @@ public class GameController extends Game{
         
         this.executionThread = new Thread(){
             public void run(){
-                //execute 100 turns
-                for(int i=0; i<100; i++){
+                int i = 1;
+                while(teamsAlive() > 1){
                     System.out.println("turn: " + i);
                     executeNextTurn();
                     try {
@@ -94,11 +94,25 @@ public class GameController extends Game{
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    i++;
                 }
             }
           };
 
           executionThread.start();
+    }
+    
+    public int teamsAlive(){
+        int livingNum = 0;
+        Iterator<Team> it = this.teams.iterator();
+        while(it.hasNext()){
+            Team thisTeam = it.next();
+            int livingRobotCount = thisTeam.numberOfLivingRobots();
+            if(livingRobotCount > 0){
+                livingNum++;
+            }
+        }
+        return livingNum;
     }
 
     
