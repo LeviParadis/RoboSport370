@@ -187,15 +187,19 @@ public class GameController extends Game{
     }
 
 
-    public void moveRobot(Robot robotToMove, int newX, int newY, int range ){
+    public void moveRobot(Robot robotToMove, int TeamNumber ,int newX, int newY, int range, ){
        Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
+       
+       
        
        Tile[][] allTiles = this.gameMap.getTiles();
                
        allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
        
        temp.setXPosition(newX);
+       temp.setYPosition(newY);
        
+       allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
        
        int movesLeft = (int) temp.getMovesPerTurn();
        boolean doneTurn = false;
