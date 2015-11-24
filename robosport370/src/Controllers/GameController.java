@@ -1,16 +1,10 @@
 package Controllers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Queue;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -171,7 +165,10 @@ public class GameController extends Game{
       Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
        
       Tile[][] allTiles = this.gameMap.getTiles();
-       
+      
+      if(movesLeft < allTiles[newX][newY].getCost()){
+          throw new RuntimeException("There are not enough moves left to go there");
+      }
       //Removing the robot from it's current tile
       allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
        
@@ -226,6 +223,11 @@ public class GameController extends Game{
         super.render();
     }
     
+    @Override
+    public void create() {
+        this.setScreen(new mapView(this));
+    }
+    
     public static void main(String[] args){
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.title = "RobotSport370";
@@ -242,11 +244,6 @@ public class GameController extends Game{
         new LwjglApplication(new GameController(teamList), config);
     }
 
-    
-    @Override
-    public void create() {
-        this.setScreen(new mapView(this));
-    }
 }
 
 
