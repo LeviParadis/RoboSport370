@@ -107,10 +107,15 @@ public void notifyDeleteTeam(){
 }
 
 public void notifyContinue(){
-          GameController gameController = new GameController();
+    try{
+          GameController gameController = new GameController(this.selectedTeams);
           if (gameVariables.isSim == false){    
              this.setScreen(new mapView(gameController));
           }
+    } catch (RuntimeException e){
+        //TODO: alert user that they have bad info
+        System.out.println(e);
+    }
 }
 	/**
 	 * Handles storing the mapsize data

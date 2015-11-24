@@ -12,6 +12,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
 import Models.Tile;
@@ -47,12 +48,12 @@ public class GameController extends Game{
      * @param allTeams an array that contains all of the teams playing the match
      * @param hexSize the size of the map on one side
      */
-    public GameController() throws RuntimeException{
+    public GameController(Queue<Team> allTeams) throws RuntimeException{
         
+        this.nextTeamIdx = new LinkedList<Team>();
         teams = new HashMap<Integer, Team>();
         gameMap = new Map();
         
-        Team[] allTeams = gameVariables.allTeams;
         
         
 //        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
@@ -62,16 +63,14 @@ public class GameController extends Game{
         
         if(allTeams == null){
             throw new RuntimeException("There must be teams added to begin the game");
-        }
-        else{
-            
-            //adds the teams into the game controller
-            for(int i = 0; i < allTeams.length; i++){
-                teams.put((int) allTeams[i].getTeamNumber(), allTeams[i]);
-            }
-            
-            for(int i = 0; i < allTeams.length; i++){
-                this.nextTeamIdx.add(allTeams[i]);            
+        } else if(allTeams.size() != 2 && allTeams.size() != 3 && allTeams.size() != 6){
+            throw new RuntimeException("Not a valid number of teams");
+        } else {
+            Iterator<Team> it = allTeams.iterator();
+            while(it.hasNext()){
+                Team nextTeam = it.next();
+                teams.put((int) nextTeam.getTeamNumber(), nextTeam);
+                this.nextTeamIdx.add(nextTeam);
             }
         }
         
@@ -237,7 +236,15 @@ public class GameController extends Game{
         config.title = "RobotSport370";
         config.height = 800;
         config.width = 1280;
-        new LwjglApplication(new GameController(), config);
+        
+        Queue<Team> teamList = new LinkedList<Team>();
+        for(int i=0; i<6; i++){
+            Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
+            Team newTeam = new Team(robotList, i);
+            teamList.add(newTeam);
+        }
+        
+        new LwjglApplication(new GameController(teamList), config);
     }
 
     
