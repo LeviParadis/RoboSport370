@@ -79,4 +79,11 @@ public class Team {
         return array[memberNumber];
     }
     
+    /**
+     * @return the team's name in a format for display
+     */
+    public String getTeamName(){
+        return "Team " + this.teamNumber;
+    }
+    
 }
