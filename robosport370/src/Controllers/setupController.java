@@ -1,5 +1,8 @@
 package Controllers;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -7,6 +10,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Interpreters.JsonInterpreter;
+import Models.Robot;
+import Models.Team;
 import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
@@ -21,6 +27,7 @@ public class setupController extends Game {
 	private Music introMusic;
 	public int mapSize;
 	public boolean isTournament,isSimulation;
+private Queue<Team> selectedTeams;
 	
 	/**
 	 * Called on initilization
@@ -37,6 +44,7 @@ public class setupController extends Game {
 		
         //This is for testing my first screen
         this.setScreen(new mainMenuView(this));
+        this.selectedTeams = new LinkedList<Team>();
 		
 		//This is for testing my second screen
 		//this.setScreen(new setupView(this));
@@ -79,15 +87,36 @@ public class setupController extends Game {
 	 * changes the screen when continue is pressed
 	 */
 	public void notifyAddTeam(){
-	    //TODO: Create a new add/edit team view to open here
-	    
+    if(this.selectedTeams.size() < 6){
+	         Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
+	         Team newTeam = new Team(robotList, this.selectedTeams.size());
+	         this.selectedTeams.add(newTeam);
+	         System.out.println(this.selectedTeams);
+    } else {
+        System.out.println("already 6 teams");
+    }
 	}
-    public void notifyContinue(){
-          GameController gameController = new GameController();
+
+public void notifyDeleteTeam(){
+    if(!this.selectedTeams.isEmpty()){
+        this.selectedTeams.remove();
+        System.out.println(this.selectedTeams);
+    } else {
+        System.out.println("already empty");
+    }
+}
+
+public void notifyContinue(){
+    try{
+          GameController gameController = new GameController(this.selectedTeams);
           if (gameVariables.isSim == false){    
              this.setScreen(new mapView(gameController));
           }
-   }
+    } catch (RuntimeException e){
+        //TODO: alert user that they have bad info
+        System.out.println(e);
+    }
+}
 	/**
 	 * Handles storing the mapsize data
 	 */

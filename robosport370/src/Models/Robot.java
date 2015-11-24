@@ -17,17 +17,16 @@ import Exceptions.ForthRunTimeException;
  * Notes for report: Replaced getWinsLossStats with getters for each win loss, and tie 
  * value
  */
-public class Robot {
+public class Robot implements Cloneable{
     
     private long serialNumber;
-    private String name, teamName;
+    private String name;
     private long baseHealth, currentHealth, movesPerTurn, hexPosition;
     private int strength;
     private int xPosition;
     private int yPosition;
     private long simTeamNumber, simMemberNumber;
     private RobotGameStats stats;
-    private Color teamColor;
     private HashMap<String,String> forthVariables,forthWords;
     private HashMap<Integer, Queue<ForthWord>> mailBox;
     
@@ -82,13 +81,10 @@ public class Robot {
      * When a robot is assigned to a team, it will recieve these attributes
      * @param teamNumber
      * @param memberNumber
-     * @param teamName
      */
-    public void setTeamIDs(int teamNumber, int memberNumber, String teamName, Color color){
+    public void setTeamIDs(int teamNumber, int memberNumber){
         this.simMemberNumber = memberNumber;
         this.simTeamNumber = teamNumber;
-        this.teamName = teamName;
-        this.teamColor = color;
     }
     
     
@@ -136,20 +132,6 @@ public class Robot {
         return this.simTeamNumber;
     }
     
-    /**
-    * @return robot's team color
-    */
-    public Color getTeamColor(){
-        return this.teamColor;
-    }
-    
-    /**
-     * 
-     * @return robot's team's name
-     */
-    public String getTeamName(){
-        return this.teamName;
-    }
     
     /**
      * @return robot's current health
@@ -341,7 +323,18 @@ public class Robot {
      * @return a string representation of the robot
      */
     public String toString(){
-        return name + " - " + teamName + " - " + serialNumber; 
+        return name +  " - " + serialNumber; 
+    }
+    
+    /**
+     * used to make a copy of this robot that has all the same attributes, but shares the same stats object
+     * this is so that we can have multiple copies of the robot on different teams, but they all update the same stats
+     * @return a copy of the robot with the same stats object
+     */
+    public Robot clone(){
+        Robot result = new Robot(this.name, this.serialNumber, this.baseHealth, this.strength, this.movesPerTurn, this.forthVariables, this.forthWords, this.stats);
+        return result;
+        
     }
 
 }

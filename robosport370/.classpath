@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="lib/lwjgl-platform-2.9.2-natives-osx.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-platform-2.9.2-natives-windows.jar"/>
 	<classpathentry kind="lib" path="lib/tween-engine-api.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-bundle-1.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

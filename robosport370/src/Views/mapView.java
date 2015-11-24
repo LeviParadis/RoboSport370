@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 
+import Controllers.GameController;
 import Controllers.gameVariables;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -72,7 +73,7 @@ public class mapView extends ScreenAdapter {
      * Creates a mapView screen
      * @param controller the controller creating this screen
      */
-    public mapView(final Game controller) {
+    public mapView(final GameController controller) {
     	this.controller = controller;
     	
     	WINDOW_WIDTH = Gdx.graphics.getWidth();
@@ -113,22 +114,22 @@ public class mapView extends ScreenAdapter {
     }
     
     public void createRobots() {
-    	HashMap<Integer, Sprite> team;
+    	HashMap<Integer, Sprite> teamSprite;
     	Sprite s;
     	
     	// TODO include controller.getNumberOfTeams() as the for loop bound
     	// Fill the map with the appropriate amount of robots
     	// For every team
     	for(int i = 1; i <= 6; i++) {
-    		team = new HashMap<Integer, Sprite>();
-    		// For every robot
-    		for(int j = 1; j <= 6; j++) {
-    			// Creates a new sprite instance
-    			s = atlas.createSprite("robot", i-1);
-    			setRobotPosition(i, s);
-    			team.put(j, s);
-    		}
-    		teams.put(i, team);
+    		    teamSprite = new HashMap<Integer, Sprite>();
+    		    // For every robot
+    		    for(int j = 1; j <= 6; j++) {
+    		        // Creates a new sprite instance
+    		        s = atlas.createSprite("robot", i-1);
+    		        setRobotPosition(i, s);
+    		        teamSprite.put(j, s);
+    		    }
+    		    this.teams.put(i, teamSprite);
     	}
     }
     
