@@ -1,5 +1,5 @@
 
-gamesprites.png
+tiles.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -73,3 +73,10 @@ robot
   orig: 39, 49
   offset: 0, 0
   index: 5
+projectile
+  rotate: false
+  xy: 495, 21
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
