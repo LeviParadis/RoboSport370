@@ -26,7 +26,6 @@ public class Robot implements Cloneable{
     private int yPosition;
     private long simTeamNumber, simMemberNumber;
     private RobotGameStats stats;
-    private Color teamColor;
     private HashMap<String,String> forthVariables,forthWords;
     private HashMap<Integer, Queue<ForthWord>> mailBox;
     
@@ -82,10 +81,9 @@ public class Robot implements Cloneable{
      * @param teamNumber
      * @param memberNumber
      */
-    public void setTeamIDs(int teamNumber, int memberNumber, Color color){
+    public void setTeamIDs(int teamNumber, int memberNumber){
         this.simMemberNumber = memberNumber;
         this.simTeamNumber = teamNumber;
-        this.teamColor = color;
     }
     
     
@@ -131,13 +129,6 @@ public class Robot implements Cloneable{
     */
     public long getTeamNumber(){
         return this.simTeamNumber;
-    }
-    
-    /**
-    * @return robot's team color
-    */
-    public Color getTeamColor(){
-        return this.teamColor;
     }
     
     
