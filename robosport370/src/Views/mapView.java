@@ -147,10 +147,10 @@ public class mapView extends ScreenAdapter {
 	public void setRobotPosition(Integer i, Sprite s) {
     	s.setPosition(-14, -23);
     	
-    	if(i == 1) {
-    		s.translate(-(mapSize-1)*sizeX, 0);
+    	if(i == 0) {
+        s.translate(-(mapSize-1)*sizeX, 0);
     	}
-    	else if(i == 2) {
+    	else if(i == 1) {
     		// TODO controller.getNumTeams() == 2
     		if(false) {
     			s.translate((mapSize-1)*sizeX, 0);
@@ -164,7 +164,7 @@ public class mapView extends ScreenAdapter {
     			s.translate(-(mapSize/2)*sizeX, (0.75f*(float)mapSize-0.75f)*sizeY);
     		}
     	}
-    	else if(i == 3) {
+    	else if(i == 2) {
     		// TODO controller.getNumTeams() == 3
     		if(false) {
     			s.translate((mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
@@ -174,13 +174,13 @@ public class mapView extends ScreenAdapter {
     			s.translate((mapSize/2)*sizeX, (0.75f*(float)mapSize-0.75f)*sizeY);
     		}
     	}
-    	else if(i == 4) {
+    	else if(i == 3) {
     		s.translate((mapSize-1)*sizeX, 0);
     	}
-    	else if(i == 5) {
+    	else if(i == 4) {
     		s.translate((mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
     	}
-    	else if(i == 6) {
+    	else if(i == 5) {
     		s.translate(-(mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
     	}
     }
