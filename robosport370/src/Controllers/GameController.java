@@ -237,7 +237,7 @@ public class GameController{
     }
 
 
-    public void moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft){
+    public int moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft) throws RuntimeException{
            
       int newX;
       int newY;
@@ -276,6 +276,7 @@ public class GameController{
         
       //Adding the robot to the new tile
       allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
+      return range;
         
    }
         
@@ -344,6 +345,37 @@ public class GameController{
      */
     public void displayNewAction(String newActionMessage, boolean lowPriority){
         System.out.println(newActionMessage);
+    }
+    
+    /**
+     * Tells us the number of robots at a given square from a reference robot
+     * Called but the Forth Interpreter
+     * @param referencePosition the robot asking for the population
+     * @param direction the direction to look in
+     * @param range the range to look in
+     * @return the number of robots on the space
+     */
+    public int populationAtPosition(Robot referencePosition, int direction, int range){
+        return 0;
+    }
+    
+    
+    /**
+     * Tells us the direction between two robots
+     * @param from the robot to start from
+     * @param to the robot we are finding the direction to
+     */
+    public int directionBetweenRobots(Robot from, Robot to){
+        return 0;
+    }
+    
+    /**
+     * Tells us the range between two robots
+     * @param from the robot to start from
+     * @param to the robot we are finding the range to
+     */
+    public int rangeBetweenRobots(Robot from, Robot to){
+        return 0;
     }
 }
 
