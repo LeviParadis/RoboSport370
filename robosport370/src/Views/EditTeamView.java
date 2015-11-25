@@ -34,7 +34,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     
     private final Stage stage;
     private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
-    private static final TextureAtlas commonAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-commons.atlas"));
+    private static final TextureAtlas grayAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-gray.atlas"));
     
 
     private TextButton confirmButton;
@@ -47,7 +47,6 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
 
     private CheckBoxStyle checkboxStyle;
     
-    private ScrollPaneStyle scrollPaneStyle;
     
     private Queue<Robot> robotList;
     private Queue<Robot> rosterList;
@@ -74,15 +73,16 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         Skin skin = new Skin();
         skin.addRegions(atlas);
         
-        Skin selectionSkin = new Skin();
-        selectionSkin.addRegions(commonAtlas);
+        Skin inactiveSkin = new Skin();
+        inactiveSkin.addRegions(grayAtlas);
         
         
         //set up buttons
-        TextButtonStyle textButtonStyle = new TextButtonStyle();
-        textButtonStyle.font = font;
-        textButtonStyle.up = skin.getDrawable("button_02");
-        textButtonStyle.down = skin.getDrawable("button_01");
+        TextButtonStyle buttonStyle = new TextButtonStyle();
+        buttonStyle.font = font;
+        buttonStyle.up = skin.getDrawable("button_02");
+        buttonStyle.down = skin.getDrawable("button_01");
+        buttonStyle.disabled = inactiveSkin.getDrawable("button_01");
         
         //set up text fields
         TextFieldStyle textFieldStyle = new TextFieldStyle();
@@ -90,7 +90,6 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         textFieldStyle.font=font;
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor=skin.getDrawable("textbox_cursor_02");
-        textFieldStyle.selection = selectionSkin.getDrawable("transparent-black-30");
         
         
         //set up labels
@@ -105,26 +104,32 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         checkboxStyle.fontColor = Color.BLACK;
         checkboxStyle.font = font;
         
-        //set up scroll panes
-        scrollPaneStyle = new ScrollPaneStyle();       
+        new ScrollPaneStyle();       
         
         //set up the title
-        Label titleLabel = new Label("Search for Robots", labelStyle);
+        String titleString;
+        if(controller.getMinimumSelectable() == controller.getMinimumSelectable()){
+            titleString = "Select " + controller.getMinimumSelectable() + " Robots";
+        } else {
+            titleString = "Select " + controller.getMinimumSelectable() + " - "  + controller.getMinimumSelectable() + " Robots";
+        }
+        Label titleLabel = new Label(titleString, labelStyle);
         titleLabel.setPosition(width/2 - 100, height-50);
         titleLabel.setFontScale(2);
         
         //set up buttons on the bottom
-        backButton = new TextButton("Cancel", textButtonStyle);
+        backButton = new TextButton("Cancel", buttonStyle);
         backButton.setPosition(100, 50);
         backButton.setSize(500, 50);
         backButton.addListener(this);
         
-        confirmButton = new TextButton("Confirm", textButtonStyle);
+        
+        confirmButton = new TextButton("Confirm", buttonStyle);
         confirmButton.setPosition(width-600,  50);
         confirmButton.setSize(500, 50);
         confirmButton.addListener(this);
         
-        searchButton = new TextButton("Search", textButtonStyle);
+        searchButton = new TextButton("Search", buttonStyle);
         searchButton.setPosition(width-200,  50);
         searchButton.setSize(500, 50);
         searchButton.addListener(this);
@@ -207,6 +212,8 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         stage.addActor(confirmButton);
         stage.addActor(masterTable);
         
+        this.refreshRosterList();
+        
     }
 
     
@@ -230,8 +237,12 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
             
             Robot selectedRobot = (Robot)arg0.getTarget().getUserObject();
             if(checked.getParent() == this.resultsTable){
-                if(isChecked && rosterList.size() < 6){
-                    rosterList.add(selectedRobot);
+                if(isChecked){
+                    if(rosterList.size() < controller.getMaxSelectable()){
+                        rosterList.add(selectedRobot);
+                    } else {
+                        checked.setChecked(false);
+                    }
                 } else {
                     rosterList.remove(selectedRobot);
                 }
@@ -283,6 +294,9 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     }
     
     public void refreshRosterList(){
+        
+        System.out.println(this.rosterList);
+        
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
         labelStyle.font = new BitmapFont();   
@@ -292,7 +306,6 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         
         while(it.hasNext()){
             Robot next = it.next();
-            System.out.println(next);
             Label nameLabel = new Label(next.getName(), labelStyle);
             CheckBox box = new CheckBox("", checkboxStyle);
             box.setUserObject(next);
@@ -302,6 +315,10 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
             this.rosterTable.add(box).padBottom(10);
             this.rosterTable.row();
         }  
+        int size = this.rosterList.size();
+
+        this.confirmButton.setDisabled(size < controller.getMinimumSelectable());
+        
     }
     
     public void refreshInfoList(){
