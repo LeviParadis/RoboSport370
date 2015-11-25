@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -75,9 +77,7 @@ public class AddRobotView extends ScreenAdapter {
 
     
         TextField nameField = new TextField("R2D2", textFieldStyle);
-        
         TextField teamField = new TextField("C3", textFieldStyle);
-        
         TextField forthField = new TextField("", textFieldStyle);
         
         LabelStyle labelStyle = new LabelStyle();
@@ -88,6 +88,20 @@ public class AddRobotView extends ScreenAdapter {
         Label teamLabel = new Label("Team: ", labelStyle);
         Label forthLabel = new Label("Forth Code: ", labelStyle);
         
+        
+        CheckBoxStyle checkboxStyle = new CheckBoxStyle();
+        checkboxStyle.checkboxOn = skin.getDrawable("checkbox_on");
+        checkboxStyle.checkboxOff = skin.getDrawable("checkbox_off");
+        checkboxStyle.fontColor = Color.BLACK;
+        checkboxStyle.font = font;
+        
+        CheckBox power1 = new CheckBox("Power", checkboxStyle);
+        CheckBox power2 = new CheckBox("Power", checkboxStyle);
+        CheckBox power3 = new CheckBox("Power", checkboxStyle);
+        CheckBox health1 = new CheckBox("Health", checkboxStyle);
+        CheckBox health2 = new CheckBox("Health", checkboxStyle);
+        CheckBox health3 = new CheckBox("Health", checkboxStyle);
+        
         Table table = new Table();
         table.setFillParent(true);
         table.add(nameLabel).padBottom(40f); 
@@ -95,6 +109,15 @@ public class AddRobotView extends ScreenAdapter {
         table.row();
         table.add(teamLabel).padBottom(40f); 
         table.add(teamField).padBottom(40f); 
+        table.row();
+        table.add(health1).padBottom(40f); 
+        table.add(power1).padBottom(40f); 
+        table.row();
+        table.add(health2).padBottom(40f); 
+        table.add(power2).padBottom(40f); 
+        table.row();
+        table.add(health3).padBottom(40f); 
+        table.add(power3).padBottom(40f); 
         table.row();
         table.add(forthLabel).padBottom(40f); 
         table.add(forthField).padBottom(40f);
