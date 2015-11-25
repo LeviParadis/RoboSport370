@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -127,8 +129,7 @@ public void notifyContinue(){
          manager.pushScreen(map);
 
     } catch (RuntimeException e){
-        //TODO: alert user that they have bad info
-        System.out.println(e);
+        JOptionPane.showMessageDialog(null, e.getMessage());
     }
 }
 	/**

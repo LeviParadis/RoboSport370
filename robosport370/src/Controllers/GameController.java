@@ -63,7 +63,7 @@ public class GameController{
             throw new RuntimeException("There must be teams added to begin the game");
      
         } else if(allTeams.size() != 2 && allTeams.size() != 3 && allTeams.size() != 6){
-            throw new RuntimeException("Not a valid number of teams");
+            throw new RuntimeException("You must select either 2, 3, or 6 teams");
         } else {
             Iterator<Team> it = allTeams.iterator();
             while(it.hasNext()){
