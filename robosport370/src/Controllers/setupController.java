@@ -89,6 +89,7 @@ public List<Team> selectedTeams;
 	public void notifyReturn(){
     UIManager manager = UIManager.sharedInstance();
     manager.popScreen();
+    this.selectedTeams.clear();
 	}
 	/**
      * gets called when Setup view selects return
