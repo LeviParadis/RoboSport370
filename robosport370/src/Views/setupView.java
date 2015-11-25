@@ -2,6 +2,7 @@ package Views;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -205,6 +206,7 @@ this.teamList = new Table();
 teamList.setPosition(880, SCREEN_HEIGHT-285);
 teamList.setFillParent(false);
 this.stage.addActor(teamList);
+this.updateTeamTable(new LinkedList<Team>());
     }
 	
     /**
@@ -282,7 +284,7 @@ this.stage.addActor(teamList);
     public void updateTeamTable(List<Team> teams){
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
-        labelStyle.font = new BitmapFont();
+        labelStyle.font = font;
         
         this.teamList.clear();
         
@@ -290,9 +292,15 @@ this.stage.addActor(teamList);
         while(it.hasNext()){
             Team next = it.next();
             Label newLabel = new Label(next.getTeamName(), labelStyle);
-            this.teamList.add(newLabel).width(50).padBottom(20);
+            this.teamList.add(newLabel).width(50).padBottom(3);
             this.teamList.row();
         } 
+        
+        if(teams.isEmpty()){
+            Label newLabel = new Label("No Teams", labelStyle);
+            this.teamList.add(newLabel).width(50).padBottom(3);
+            this.teamList.row();
+        }
     }
     
     public void toggleMapSize() {
