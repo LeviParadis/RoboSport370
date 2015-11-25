@@ -25,7 +25,7 @@ import Models.Map;
 import Models.Map.DIRECTION;
 import Views.mapView;
 
-public class GameController extends Game{
+public class GameController{
     
     /** All of the teams to be run in the simulation.*/
     private ArrayList<Team> teams;
@@ -46,7 +46,7 @@ public class GameController extends Game{
      * @param allTeams an array that contains all of the teams playing the match
      * @param hexSize the size of the map on one side
      */
-    public GameController(Queue<Team> allTeams) throws RuntimeException{
+    public GameController(List<Team> allTeams) throws RuntimeException{
         
         teams = new ArrayList<Team>();
 
@@ -132,7 +132,6 @@ public class GameController extends Game{
      * resumes the game from the paused state
      */
     public void resume(){
-        this.resume();
         this.executionThread.notify();
     }
     
@@ -312,38 +311,7 @@ public class GameController extends Game{
         
 
     }
-    /**
-     * Called every frame
-     */
-   
-    
 
-    public void render(){
-        super.render();
-    }
-    
-    public static void main(String[] args){
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "RobotSport370";
-        config.height = 800;
-        config.width = 1280;
-        
-        Queue<Team> teamList = new LinkedList<Team>();
-        for(int i=0; i<6; i++){
-            Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
-            Team newTeam = new Team(robotList, i);
-            teamList.add(newTeam);
-        }
-        
-        new LwjglApplication(new GameController(teamList), config);
-    }
-
-    
-    @Override
-    public void create() {
-        mapView map = new mapView(this, this.teams);
-        this.setScreen(map);
-    }
 }
 
 

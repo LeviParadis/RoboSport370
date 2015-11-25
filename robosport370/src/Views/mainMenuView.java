@@ -155,13 +155,4 @@ public class mainMenuView extends ScreenAdapter {
     	batch.dispose();
     }
     
-	public static void main(String[] args) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = "RobotSport370";
-		config.height = 800;
-		config.width = 1280;
-		new LwjglApplication(new setupController(), config);
-		
-		
-	}
 }
