@@ -51,7 +51,8 @@ private List<Team> selectedTeams;
 	 */
 	public void notifyTournament(){
     UIManager manager = UIManager.sharedInstance();
-    manager.setScreen(new setupView(this));
+    
+    manager.pushScreen(new setupView(this));
     System.out.println("Tournament");
 	}
 	
@@ -60,7 +61,7 @@ private List<Team> selectedTeams;
 	 */
 	public void notifySim(){
 	      UIManager manager = UIManager.sharedInstance();
-	      manager.setScreen(new setupView(this));
+	      manager.pushScreen(new setupView(this));
       gameVariables.isSim = true;
 	}
 	public void notifyDebug(){
@@ -77,7 +78,7 @@ private List<Team> selectedTeams;
 	 */
 	public void notifyReturn(){
     UIManager manager = UIManager.sharedInstance();
-	    manager.setScreen(new mainMenuView(this));
+    manager.popScreen();
 	}
 	/**
      * gets called when Setup view selects return
@@ -111,7 +112,7 @@ public void notifyContinue(){
         mapView map = new mapView(game, this.selectedTeams);
         
          UIManager manager = UIManager.sharedInstance();
-         manager.setScreen(map);
+         manager.pushScreen(map);
 
     } catch (RuntimeException e){
         //TODO: alert user that they have bad info
