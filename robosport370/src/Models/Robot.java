@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
 
 
 /**

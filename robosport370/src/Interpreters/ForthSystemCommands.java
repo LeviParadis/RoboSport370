@@ -5,11 +5,11 @@ import java.util.Stack;
 
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
 import Models.ForthBoolLiteral;
 import Models.ForthIntegerLiteral;
 import Models.ForthPointerLiteral;
 import Models.ForthStringLiteral;
-import Models.ForthWord;
 import Models.Robot;
 
 public class ForthSystemCommands {

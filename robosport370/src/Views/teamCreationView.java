@@ -102,12 +102,4 @@ public class teamCreationView extends ScreenAdapter {
         batch.end();
     }  
     
-    public static void main(String[] args) {
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "RobotSport370";
-        config.height = 800;
-        config.width = 1280;
-        new LwjglApplication(new setupController(), config);
-    }
-    
 }

@@ -1,4 +1,4 @@
-package Models;
+package Interfaces;
 
 public interface ForthWord {
     /**

@@ -1,9 +1,13 @@
 package Controllers;
 
+import java.util.Queue;
+
+import Interfaces.ListRobotsDelegate;
+import Models.Robot;
 import Views.AddRobotView;
 import Views.EditTeamView;
 
-public class ManageRobotController {
+public class ManageRobotController implements ListRobotsDelegate{
 
     public ManageRobotController() {
     }
@@ -31,11 +35,24 @@ public class ManageRobotController {
      * The edit button was pressed. Push the screen to edit existing robots
      */
     public void notifyEditButtonPressed() {
-        EditTeamController nextController = new EditTeamController(2, 6);
+        EditTeamController nextController = new EditTeamController(2, 6, this);
         EditTeamView nextView = new EditTeamView(nextController);
         
         UIManager manager = UIManager.sharedInstance();
         manager.pushScreen(nextView);
+    }
+
+    @Override
+    public void robotsListCancelled() {
+        UIManager manager = UIManager.sharedInstance();
+        manager.popScreen();
+    }
+
+    @Override
+    public void robotListFinished(Queue<Robot> listSelected) {
+        UIManager manager = UIManager.sharedInstance();
+        manager.popScreen();
+        System.out.println(listSelected);
     }
 
 }

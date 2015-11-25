@@ -2,6 +2,7 @@ package Models;
 
 import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthSystemWord implements ForthWord {
 

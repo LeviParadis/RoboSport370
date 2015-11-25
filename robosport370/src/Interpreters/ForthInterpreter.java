@@ -15,6 +15,7 @@ import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Exceptions.LeaveLoopException;
+import Interfaces.ForthWord;
 import Models.ForthBoolLiteral;
 import Models.ForthConditional;
 import Models.ForthCustomWord;
@@ -26,7 +27,6 @@ import Models.ForthPointerLiteral;
 import Models.ForthStringLiteral;
 import Models.ForthSystemWord;
 import Models.ForthUntilLoop;
-import Models.ForthWord;
 import Models.Robot;
 
 public class ForthInterpreter {

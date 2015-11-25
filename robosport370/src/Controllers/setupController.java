@@ -13,6 +13,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Interfaces.ListRobotsDelegate;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
@@ -30,7 +31,7 @@ import Views.EditTeamView;
  * setupController handles the main menu and setup screens while interfacing with the models
  *
  */
-public class setupController {
+public class setupController implements ListRobotsDelegate {
 	private Music introMusic;
 	public int mapSize;
 	public boolean isTournament,isSimulation;
@@ -82,7 +83,7 @@ public List<Team> selectedTeams;
 	}
 	
 	public void notifyNewTeam() {
-        EditTeamController cont = new EditTeamController(4, 4);
+        EditTeamController cont = new EditTeamController(4, 4, this);
         EditTeamView view = new EditTeamView(cont);
         UIManager manager = UIManager.sharedInstance();
         manager.pushScreen(view);
@@ -156,6 +157,19 @@ public void notifyContinue(){
         }   
 	    gameVariables.mapSize = this.mapSize;
 	}
+
+@Override
+public void robotsListCancelled() {
+    UIManager manager = UIManager.sharedInstance();
+    manager.popScreen();
+}
+
+@Override
+public void robotListFinished(Queue<Robot> listSelected) {
+    UIManager manager = UIManager.sharedInstance();
+    manager.popScreen();
+    System.out.println(listSelected);
+}
 
 
 }

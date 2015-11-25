@@ -1,6 +1,9 @@
 package Controllers;
 
 import javax.swing.JOptionPane;
+
+import Interfaces.ListRobotsDelegate;
+
 import java.util.Queue;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
@@ -9,10 +12,13 @@ public class EditTeamController {
     
     private int minSelection;
     private int maxSelection;
+    
+    private ListRobotsDelegate delegate;
 
-    public EditTeamController(int minSelection, int maxSelection) {
+    public EditTeamController(int minSelection, int maxSelection, ListRobotsDelegate delegate) {
         this.minSelection = minSelection;
         this.maxSelection = maxSelection;
+        this.delegate = delegate;
     }
     
     public int getMinimumSelectable(){
@@ -28,13 +34,12 @@ public class EditTeamController {
      * Called when the user presses the cancel button
      */
     public void notifyCancel(){
-        UIManager manager = UIManager.sharedInstance();
-        manager.popScreen();
+        this.delegate.robotsListCancelled();
     }
     
     public void notifyConfirm(Queue<Robot> robotList){
         if (robotList.size() >= this.getMinimumSelectable()){
-            System.out.println("Done");
+            this.delegate.robotListFinished(robotList);
         }
     }
     
