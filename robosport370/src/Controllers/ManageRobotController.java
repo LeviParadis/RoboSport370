@@ -1,6 +1,7 @@
 package Controllers;
 
 import Views.AddRobotView;
+import Views.EditTeamView;
 
 public class ManageRobotController {
 
@@ -24,16 +25,17 @@ public class ManageRobotController {
         
         UIManager manager = UIManager.sharedInstance();
         manager.pushScreen(nextView);
-        
     }
 
     /**
      * The edit button was pressed. Push the screen to edit existing robots
      */
     public void notifyEditButtonPressed() {
-        // TODO When edit screen is created
-        //push robot list view, then after we are given a robot from the list, push a new view to edit it
+        EditTeamController nextController = new EditTeamController();
+        EditTeamView nextView = new EditTeamView(nextController);
         
+        UIManager manager = UIManager.sharedInstance();
+        manager.pushScreen(nextView);
     }
 
 }
