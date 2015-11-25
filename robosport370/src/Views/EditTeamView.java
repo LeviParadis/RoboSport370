@@ -30,6 +30,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.swing.JOptionPane;
+
 public class EditTeamView extends ScreenAdapter implements EventListener {
     
     private final Stage stage;
@@ -54,6 +56,18 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     private Robot hoveredRobot;
 
     private EditTeamController controller;
+    
+    
+    private TextField nameSearchField;
+    private TextField teamSearchField;
+    private TextField minWinsSearchField;
+    private TextField maxWinsSearchField;
+    private TextField minLossesSearchField;
+    private TextField maxLossesSearchField;
+    private TextField minGamesPlayedSearchField;
+    private TextField maxGamesPlayedSearchField;
+    private CheckBox versionsSearchBox;
+    
     
     /**
      * Set up the controller
@@ -175,24 +189,24 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         masterTable.add(robotInfoTable).width(200);
 
         
-        
-        
         Label nameSearchLabel = new Label("Robot Name:", labelStyle);
         Label teamSearchLabel = new Label("Team Name:", labelStyle); 
         Label minWinsSearchLabel = new Label("Min Wins:", labelStyle); 
         Label maxWinsSearchLabel = new Label("Max Wins:", labelStyle); 
         Label minLossesSearchLabel = new Label("Min Losses:", labelStyle); 
         Label maxLossesSearchLabel = new Label("Max Losees:", labelStyle); 
-        Label gamesPlayedSearchLabel = new Label("Games Played:", labelStyle); 
+        Label minGamesPlayedSearchLabel = new Label("Min Matches:", labelStyle); 
+        Label maxGamesPlayedSearchLabel = new Label("Max Matches:", labelStyle); 
         Label allVersionsSearchLabel = new Label("All Versions:", labelStyle); 
-        TextField nameSearchField = new TextField("", textFieldStyle);
-        TextField teamSearchField = new TextField("", textFieldStyle);
-        TextField minWinsSearchField = new TextField("", textFieldStyle);
-        TextField maxWinsSearchField = new TextField("", textFieldStyle);
-        TextField minLossesSearchField = new TextField("", textFieldStyle);
-        TextField maxLossesSearchField = new TextField("", textFieldStyle);
-        TextField gamesPlayedSearchField = new TextField("", textFieldStyle);
-        CheckBox versionsSearchBox = new CheckBox("", checkboxStyle);
+        nameSearchField = new TextField("", textFieldStyle);
+        teamSearchField = new TextField("", textFieldStyle);
+        minWinsSearchField = new TextField("", textFieldStyle);
+        maxWinsSearchField = new TextField("", textFieldStyle);
+        minLossesSearchField = new TextField("", textFieldStyle);
+        maxLossesSearchField = new TextField("", textFieldStyle);
+        minGamesPlayedSearchField = new TextField("", textFieldStyle);
+        maxGamesPlayedSearchField = new TextField("", textFieldStyle);
+        versionsSearchBox = new CheckBox("", checkboxStyle);
         searchTable.row();
         searchTable.add(nameSearchLabel).padBottom(5);
         searchTable.add(nameSearchField).padBottom(5);
@@ -212,8 +226,11 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         searchTable.add(maxLossesSearchLabel).padBottom(5);
         searchTable.add(maxLossesSearchField).padBottom(5);
         searchTable.row();
-        searchTable.add(gamesPlayedSearchLabel).padBottom(5);
-        searchTable.add(gamesPlayedSearchField).padBottom(5);
+        searchTable.add(minGamesPlayedSearchLabel).padBottom(5);
+        searchTable.add(minGamesPlayedSearchField).padBottom(5);
+        searchTable.row();
+        searchTable.add(maxGamesPlayedSearchLabel).padBottom(5);
+        searchTable.add(maxGamesPlayedSearchField).padBottom(5);
         searchTable.row();
         searchTable.add(allVersionsSearchLabel).padBottom(5);
         searchTable.add(versionsSearchBox).padBottom(5);
@@ -274,14 +291,26 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
             } else if (sender == this.backButton){
                 this.controller.notifyCancel();
             } else if (sender == this.searchButton){
-                this.robotList = this.controller.notifySearch();
+                String name = nameSearchField.getText();
+                String team = teamSearchField.getText();
+                String minWins = minWinsSearchField.getText();
+                String maxWins = maxWinsSearchField.getText();
+                String minLosses = minLossesSearchField.getText();
+                String maxLosses = maxLossesSearchField.getText();
+                String minGamesPlayed = minGamesPlayedSearchField.getText();
+                String maxGamesPlayed = maxGamesPlayedSearchField.getText();
+                boolean allVersions = versionsSearchBox.isChecked();
+                try{
+                    this.robotList = this.controller.notifySearch(name, team, minWins, maxWins, minLosses, maxLosses, minGamesPlayed, maxGamesPlayed, !allVersions);
+                } catch (NumberFormatException e){
+                    JOptionPane.showMessageDialog(null, "Min and Max Values Must be Integers");
+                }
                 refreshResultsList();
             }
         } else if(arg0.getTarget() instanceof Label && arg0.getTarget().getUserObject() instanceof Robot){
             Robot currentRobot = (Robot)arg0.getTarget().getUserObject();
             hoveredRobot = currentRobot;
             refreshInfoList();
-            
         }
         return false;
     }
@@ -378,7 +407,6 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         this.robotInfoTable.add(movementInfoLabel).padBottom(5);
         this.robotInfoTable.add(movementRobotLabel).padBottom(5);
         this.robotInfoTable.padLeft(100);
-        
     }
 
     /**

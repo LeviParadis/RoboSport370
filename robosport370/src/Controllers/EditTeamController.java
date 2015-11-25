@@ -43,9 +43,15 @@ public class EditTeamController {
         }
     }
     
-    public Queue<Robot> notifySearch(){
-        //TODO: Add parameters
-        Queue<Robot> results = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
-       return results;
+    public Queue<Robot> notifySearch(String name, String team, String  minWins, String maxWins, String minLosses, String maxLosses, String minGamesPlayed, String maxGamesPlayed, boolean currentOnly) throws NumberFormatException {
+        int minWinsInt = Integer.parseInt(minWins);
+        int maxWinsInt = Integer.parseInt(maxWins);
+        int minLossesInt = Integer.parseInt(minLosses);
+        int maxLossesInt = Integer.parseInt(maxLosses);
+        int minGamesInt = Integer.parseInt(minGamesPlayed);
+        int maxGamesInt = Integer.parseInt(maxGamesPlayed);
+            
+        Queue<Robot> results = JsonInterpreter.listRobots(currentOnly, name, team, minWinsInt, maxWinsInt, minLossesInt, maxLossesInt, minGamesInt, maxGamesInt);
+        return results;
     }
 }
