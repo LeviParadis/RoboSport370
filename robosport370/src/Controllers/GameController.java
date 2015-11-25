@@ -125,6 +125,36 @@ public class GameController extends Game{
     }
 
 
+    public LinkedList<Tile> findBestPath(Tile current, Tile destination, int numMoves, 
+    		Tile[][] allTiles){
+		LinkedList<Tile> temp = new LinkedList<>();
+		int movesLeft = numMoves;
+		DIRECTION dir = gameMap.findDirection(current, destination);
+		
+		
+		boolean atLeastOne;
+		//go straight
+		int x = current.getXCoord()+dir.getXCoordinate() ;
+		int y  = current.getYCoord()+dir.getYCoordinate();
+		
+		if(allTiles[x][y].getCost() > movesLeft){
+			atLeastOne = false;
+		}else{
+			//If distance is 3 only possible direction is straight and on Plains
+			if(gameMap.calcDistance(current, destination) == numMoves){
+				
+			}
+		}
+		
+		while(movesLeft > 0){
+			
+			
+		}
+		
+    	
+    	return null;
+    }
+    
     public void moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft){
            
       int newX;

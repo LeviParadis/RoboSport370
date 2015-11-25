@@ -18,38 +18,50 @@ public class Map {
     	xPosMin = -this.mapSize;
     	yPosMin = -this.mapSize;
     	
-        //int xPos = -mapDiameter/ 2 ;
-        int yPos = (mapSize - 2) + 1/2;
+        int xPos = -mapDiameter/2 ;
+        int yPos = (mapSize - 2)/2 -1;
         int count = 0;
-        for(int x = 0; x < mapDiameter; x++){
-            for(int y = 0; y < height; y++) {
-                yPos = yPos -1;
-                tiles[x][y] =  new Tile(x, y);
-                System.out.print(y);
-                count++;
-            }
-            if( (mapDiameter) / (x+1) >= 2) {
-                yPos = yPos + 1 * height + 1/2;
-                height++;
-            }
-            else {
-                yPos = yPos + 1 * height - 1/2;
-                height--;
-            }
-            System.out.println();
-            
-        }
-        System.out.println(count);
+       
+	       
+     for(int x = 0; x < mapDiameter; x++){	           
+    	 for(int y = 0; y < height; y++) {
+     		
+			 tiles[x][y] = new Tile(xPos, yPos);	        			
+	 		
+	         yPos--;
+	         
+	         System.out.print("(" + tiles[x][y].getXCoord() +
+	         		"," + tiles[x][y].getYCoord() + ")");
+	         count++;
+	         }	
+	         if( mapDiameter/(x+1) >= 2) {
+	             yPos = yPos + 1 *height - 1/2;
+	             height++;
+	         }
+	         else {
+	             yPos = yPos + 1 *height - 1/2;
+	             height--;
+	         }
+	         xPos = xPos + 1;
+	         
+	     	System.out.println();	           
+	     }
+     	
+	     	
+     	System.out.println(count);
     }
     
-    public static void main(String[] args){
-        new Map();
-        
-        
-    }
+   
     
-    public int calcDistance(int x1, int x2, int y1, int y2){
-        return (int) Math.sqrt( ((x2-x1)*(x2-x1)) + ((y1-y2)*(y1-y2)) );
+    /**
+     * Calculates distance between two tiles
+     * @param cur the tile to start on 
+     * @param dest the tile that is being travelled to
+     * @return the distance as an integer
+     */
+    public int calcDistance(Tile cur, Tile dest){
+        return (int) Math.sqrt( (Math.pow(dest.getXCoord()- cur.getXCoord(),2)) + 
+        		(Math.pow(dest.getYCoord()- cur.getYCoord(),2)));
     }
     
     public enum DIRECTION{
@@ -77,6 +89,11 @@ public class Map {
         }
     }
     
+    /**
+     * returns the direction coordinates given the game direction (0,1,2,3...)
+     * @param Direction the direction in game format (0,1,2,3...)
+     * @return returns the type DIrection with x and y coordinates
+     */
     public DIRECTION getDirection(int Direction){
         
         if(Direction == 0){
@@ -103,6 +120,25 @@ public class Map {
         }
         
        
+    }
+    
+    /**
+     * returns a direction given a current and destination tile
+     * @param current the tile that the direction is going from
+     * @param destination the destination tile to calculate direction
+     * @return returns the direction as an enum DIRECTION.
+     */
+    public DIRECTION findDirection(Tile current, Tile destination){
+    	int xCoord = destination.getXCoord()- current.getXCoord();
+    	int yCoord = destination.getYCoord()- current.getYCoord();
+    	
+    	DIRECTION toRet = null;
+    	for(DIRECTION dir: DIRECTION.values()){
+    		if(dir.getXCoordinate() == xCoord && dir.getYCoordinate() == yCoord){
+    			toRet = dir;
+    		}
+    	}
+    	return toRet;
     }
     
     
@@ -134,4 +170,7 @@ public class Map {
         return xPosMin;
     }
     
+    public static void main(String[] args){
+        new Map();   
+    }
 } 
