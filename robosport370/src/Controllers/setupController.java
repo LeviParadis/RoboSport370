@@ -82,7 +82,7 @@ public List<Team> selectedTeams;
 	}
 	
 	public void notifyNewTeam() {
-        EditTeamController cont = new EditTeamController();
+        EditTeamController cont = new EditTeamController(4, 4);
         EditTeamView view = new EditTeamView(cont);
         UIManager manager = UIManager.sharedInstance();
         manager.pushScreen(view);

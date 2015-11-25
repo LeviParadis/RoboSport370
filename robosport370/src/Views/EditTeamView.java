@@ -219,7 +219,6 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
      * We use this to handle button presses
      */
     public boolean handle(Event arg0) {
-
         if(arg0.getTarget() instanceof CheckBox){
             CheckBox checked = (CheckBox)arg0.getTarget();
             boolean isChecked = checked.isChecked();
@@ -240,10 +239,9 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         } else  if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
             TextButton sender = (TextButton)arg0.getTarget();
             if(sender == this.confirmButton){
-
-                   
+                this.controller.notifyConfirm(this.rosterList);     
             } else if (sender == this.backButton){
-                    this.controller.notifyCancel();
+                this.controller.notifyCancel();
             } else if (sender == this.searchButton){
                 this.robotList = this.controller.notifySearch();
                 refreshResultsList();

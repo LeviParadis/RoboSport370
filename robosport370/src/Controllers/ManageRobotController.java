@@ -31,7 +31,7 @@ public class ManageRobotController {
      * The edit button was pressed. Push the screen to edit existing robots
      */
     public void notifyEditButtonPressed() {
-        EditTeamController nextController = new EditTeamController();
+        EditTeamController nextController = new EditTeamController(2, 6);
         EditTeamView nextView = new EditTeamView(nextController);
         
         UIManager manager = UIManager.sharedInstance();

@@ -6,9 +6,21 @@ import Interpreters.JsonInterpreter;
 import Models.Robot;
 
 public class EditTeamController {
+    
+    private int minSelection;
+    private int maxSelection;
 
-    public EditTeamController() {
-        
+    public EditTeamController(int minSelection, int maxSelection) {
+        this.minSelection = minSelection;
+        this.maxSelection = maxSelection;
+    }
+    
+    public int getMinimumSelectable(){
+        return this.minSelection;
+    }
+    
+    public int getMaxSelectable(){
+        return this.maxSelection;
     }
 
     
@@ -18,6 +30,12 @@ public class EditTeamController {
     public void notifyCancel(){
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
+    }
+    
+    public void notifyConfirm(Queue<Robot> robotList){
+        if (robotList.size() >= this.getMinimumSelectable()){
+            System.out.println("Done");
+        }
     }
     
     public Queue<Robot> notifySearch(){
