@@ -46,13 +46,6 @@ public class GameController extends Game{
 
         gameMap = new Map();
         
-   
-        
-//        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
-//        introMusic.setLooping(true);
-//        introMusic.setVolume(0.6f);
-//        introMusic.play();
-
         if(allTeams == null){
             throw new RuntimeException("There must be teams added to begin the game");
      
@@ -75,13 +68,14 @@ public class GameController extends Game{
      * puts the game into a paused state
      */
     public void pause(){
+    	//this.pause();
     }
     
     /**
      * resumes the game from the paused state
      */
     public void resume(){
-        this.resume();
+        //this.resume();
     }
     
     /**

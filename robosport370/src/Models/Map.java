@@ -13,6 +13,11 @@ public class Map {
     
     public Map(){
         
+    	xPosMax = this.mapSize;
+    	yPosMax = this.mapSize;
+    	xPosMin = -this.mapSize;
+    	yPosMin = -this.mapSize;
+    	
         //int xPos = -mapDiameter/ 2 ;
         int yPos = (mapSize - 2) + 1/2;
         int count = 0;
