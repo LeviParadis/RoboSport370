@@ -57,7 +57,6 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         
         //set up the stage
         stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
         
         BitmapFont font = new BitmapFont();//(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
         Skin skin = new Skin();
@@ -240,6 +239,12 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         return false;
     }
 
+    /**
+     * set this screen to receive buttons whenever it becomes active
+     */
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
  
 
 

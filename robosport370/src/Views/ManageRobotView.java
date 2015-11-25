@@ -32,9 +32,7 @@ public class ManageRobotView  extends ScreenAdapter  implements EventListener{
         this.controller = controller;
         
         //set up the stage
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-        
+        stage = new Stage();        
       
         TextureAtlas blueAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
         BitmapFont font = new BitmapFont();//(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -93,4 +91,12 @@ public class ManageRobotView  extends ScreenAdapter  implements EventListener{
         }
         return false;
     }
+    
+    /**
+     * set this screen to receive buttons whenever it becomes active
+     */
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
+ 
 }
