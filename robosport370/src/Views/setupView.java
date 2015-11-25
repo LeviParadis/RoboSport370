@@ -401,6 +401,7 @@ this.updateTeamTable(new LinkedList<Team>());
     	setupOptions.dispose();
     	setupdecor.dispose();
         batch.dispose();
+        this.stage.dispose();
     }
     
 }

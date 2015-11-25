@@ -97,5 +97,13 @@ public class ManageRobotView  extends ScreenAdapter  implements EventListener{
     public void show() {
         Gdx.input.setInputProcessor(stage);
     }
+    
+    /**
+     * Called to do garbage collection
+     */
+    @Override
+    public void dispose() {
+        this.stage.dispose();
+    }
  
 }

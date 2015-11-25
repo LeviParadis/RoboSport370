@@ -56,11 +56,11 @@ public class UIManager extends Game {
         if(screenStack.size()<=1){
             return;
         }
-        Screen prev = screenStack.pop();
-        prev.dispose();
+        screenStack.pop();
+
         
         Screen newScreen = screenStack.peek();
-        this.setScreen(newScreen);        
+        this.setScreen(newScreen); 
     }
 
     /**
@@ -68,8 +68,7 @@ public class UIManager extends Game {
      */
     public void popToRootScreen(){
         while(this.screenStack.size() > 1){
-             Screen prev = screenStack.pop();
-             prev.dispose();
+           screenStack.pop();
         }
         this.setScreen(screenStack.peek());
     }
