@@ -105,8 +105,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         checkboxStyle.checkboxOff = skin.getDrawable("checkbox_off");
         checkboxStyle.fontColor = Color.BLACK;
         checkboxStyle.font = font;
-        
-        new ScrollPaneStyle();       
+             
         
         //set up the title
         String titleString;
@@ -149,14 +148,26 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         Label resultsTitle = new Label("Robot List", labelStyle);
         Label rosterTitle = new Label("Current Roster", labelStyle);
         Label infoTitle = new Label("Robot Info", labelStyle);
+        
+        ScrollPaneStyle scrollStyle = new ScrollPaneStyle(); 
+        scrollStyle.vScrollKnob = skin.getDrawable("slider_back_ver");
+        scrollStyle.hScrollKnob = skin.getDrawable("slider_back_hor");
+        
+        
+        
+        ScrollPane scrollResults = new ScrollPane(resultsTable, scrollStyle);
+        scrollResults.setFadeScrollBars(false);
+        ScrollPane scrollRoster = new ScrollPane(rosterTable, scrollStyle);
+        scrollRoster.setFadeScrollBars(false);
+        
         masterTable.add(searchTitle);
         masterTable.add(resultsTitle);
         masterTable.add(rosterTitle);
         masterTable.add(infoTitle);
         masterTable.row();
         masterTable.add(searchTable).width(200).padRight(50);
-        masterTable.add(resultsTable).width(200);
-        masterTable.add(rosterTable).width(200);
+        masterTable.add(scrollResults).width(200).height(400);
+        masterTable.add(scrollRoster).width(200);
         masterTable.add(robotInfoTable).width(200);
 
         
@@ -222,6 +233,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     public void render(float delta) {   
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
 

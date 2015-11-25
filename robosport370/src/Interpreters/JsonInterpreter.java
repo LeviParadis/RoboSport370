@@ -95,11 +95,29 @@ public class JsonInterpreter {
                 list.add(newRobot.clone());
                 list.add(newRobot.clone());
                 list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
+                list.add(newRobot.clone());
                 return list;
             } catch (IOException | ParseException e) {
                 return null;
             }
-
     }
     
     private static JSONArray createComparisonJSON(Integer minValueOrNull, Integer maxValueOrNull){
