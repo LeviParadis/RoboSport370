@@ -44,17 +44,10 @@ public class ForthStringLiteral implements ForthWord {
     }
 
     /**
-     * @return the string value that appears in the developer's console
-     */
-    public String toString(){
-        return "string:" + forthStringEncoding();
-    }
-    
-    @Override
-    /**
      *  @return the string value that is printed by forth in the  console
      */
-    public String consoleFormat() {
-        return this.value;
+    public String toString(){
+        return "pushing string to the stack: " + forthStringEncoding();
     }
+    
 }

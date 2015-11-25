@@ -95,10 +95,11 @@ public class ForthSystemCommands {
      * 
      * @param forthStack     the stack for the currently running forth program
      */
-    protected static void console(Stack<ForthWord> forthStack) {
+    protected static void console(Stack<ForthWord> forthStack, GameController controller) {
         ForthWord first;
         first = forthStack.pop();
-        String consoleString = first.consoleFormat();
+        String consoleString = first.forthStringEncoding();
+        controller.displayNewAction("pringing message: " + consoleString, false);
         System.out.println(consoleString);
     }
 

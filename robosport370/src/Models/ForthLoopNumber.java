@@ -23,19 +23,11 @@ public class ForthLoopNumber implements ForthWord {
         return "I";
     }
 
-    @Override
     /**
      *  @return the string value that is printed by forth in the  console
      */
-    public String consoleFormat() {
-        return forthStringEncoding();
-    }
-    
-    /**
-     * @return the string value that appears in the developer's console
-     */
     public String toString(){
-        return forthStringEncoding();
+        return "pusing loop iteration number to the stack";
     }
 
 

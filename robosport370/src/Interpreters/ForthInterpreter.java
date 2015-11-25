@@ -140,6 +140,8 @@ public class ForthInterpreter {
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
             
+            controller.displayNewAction(nextItem.toString(), false);
+            
             //find what kind of word it is, and handle appropriately
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
                 //literals are pushed to the stack
@@ -306,7 +308,7 @@ public class ForthInterpreter {
                 ForthSystemCommands.memberNumber(forthStack, robot);
                 break;
             case CONSOLE:
-                ForthSystemCommands.console(forthStack);
+                ForthSystemCommands.console(forthStack, controller);
                 break;
             case RANDOM:
                 ForthSystemCommands.random(forthStack);

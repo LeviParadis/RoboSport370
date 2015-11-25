@@ -260,22 +260,21 @@ public class GameController{
 //          }
 //      }
        
-      Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
        
       Tile[][] allTiles = this.gameMap.getTiles();
        
       //Removing the robot from it's current tile
-      allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
+      allTiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].removeRobot(robotToMove);
        
       if(movesLeft < range){
           throw new RuntimeException("range to move cannot be higher than the amount of moves remaining");
       }
       
-      temp.setXPosition(newX);
-      temp.setYPosition(newY);
+      robotToMove.setXPosition(newX);
+      robotToMove.setYPosition(newY);
         
       //Adding the robot to the new tile
-      allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
+      allTiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].addRobot(robotToMove);
       return range;
         
    }
