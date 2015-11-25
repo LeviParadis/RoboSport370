@@ -15,6 +15,7 @@ import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
 import Views.AddRobotView;
+import Views.ManageRobotView;
 import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
@@ -72,8 +73,8 @@ private List<Team> selectedTeams;
 	 * gets called when the Main Menu view selects exit
 	 */
 	public void notifyExit(){
-	    AddRobotController cont = new AddRobotController();
-	    AddRobotView view = new AddRobotView(cont);
+	    ManageRobotController cont = new ManageRobotController();
+	    ManageRobotView view = new ManageRobotView(cont);
 	    UIManager manager = UIManager.sharedInstance();
     manager.pushScreen(view);
 	    
