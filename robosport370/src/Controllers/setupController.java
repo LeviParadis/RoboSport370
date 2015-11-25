@@ -22,6 +22,7 @@ import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
 import Views.teamCreationView;
+import Views.EditTeamView;
 
 /**
  * @author Corey
@@ -80,6 +81,13 @@ public List<Team> selectedTeams;
 	    manager.pushScreen(view);
 	}
 	
+	public void notifyNewTeam() {
+        EditTeamController cont = new EditTeamController();
+        EditTeamView view = new EditTeamView(cont);
+        UIManager manager = UIManager.sharedInstance();
+        manager.pushScreen(view);
+    }
+	
 	/**
 	 * gets called when the Main Menu view selects exit
 	 */
@@ -100,9 +108,9 @@ public List<Team> selectedTeams;
 	/**
 	 * changes the screen when continue is pressed
 	 */
-	public void notifyAddTeam(){
+	//public void notifyAddTeam(){
     
-	 setScreen(new teamCreationView(this));
+	 
 	 /*if(this.selectedTeams.size() < 6){
 	         
             Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
@@ -113,7 +121,7 @@ public List<Team> selectedTeams;
     } else {
         System.out.println("already 6 teams");
     }*/
-	}
+	//}
 
 public void notifyDeleteTeam(){
     if(!this.selectedTeams.isEmpty()){

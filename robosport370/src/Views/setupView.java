@@ -271,7 +271,7 @@ this.updateTeamTable(new LinkedList<Team>());
     // TODO All of these funtions either do or may require functions call to the controller
     public void addTeam() {
         
-        controller.notifyAddTeam();
+        controller.notifyNewTeam();
         this.updateTeamTable(controller.selectedTeams);
 
     }
