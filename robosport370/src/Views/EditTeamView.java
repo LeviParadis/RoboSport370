@@ -35,7 +35,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     private final Stage stage;
     private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
     private static final TextureAtlas grayAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-gray.atlas"));
-    
+    private static final TextureAtlas commonAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-commons.atlas"));
 
     private TextButton confirmButton;
     private TextButton searchButton;
@@ -78,6 +78,9 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         Skin inactiveSkin = new Skin();
         inactiveSkin.addRegions(grayAtlas);
         
+        Skin selectionSkin = new Skin();
+        selectionSkin.addRegions(commonAtlas);
+        
         
         //set up buttons
         TextButtonStyle buttonStyle = new TextButtonStyle();
@@ -92,6 +95,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         textFieldStyle.font=font;
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor=skin.getDrawable("textbox_cursor_02");
+        textFieldStyle.selection = selectionSkin.getDrawable("transparent-black-30");
         
         
         //set up labels
