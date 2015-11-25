@@ -23,65 +23,79 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-
 import Controllers.AddRobotController;
 
-public class AddRobotView extends ScreenAdapter {
+public class AddRobotView extends ScreenAdapter implements EventListener {
     
     private final Stage stage;
     private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
+    private static final TextureAtlas commonAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-commons.atlas"));
+    
+    private CheckBox power1;
+    private CheckBox power2;
+    private CheckBox power3;
+    private CheckBox health1;
+    private CheckBox health2;
+    private CheckBox health3;
+    private TextButton confirmButton;
+    private TextButton backButton;
+    private TextField nameField;
+    private TextField teamField;
+    private TextArea forthField;
 
+    
+    /**
+     * Set up the controller
+     * @param controller the controller we are setting up
+     */
     public AddRobotView(AddRobotController controller) {
         int width = Gdx.graphics.getWidth();
         int height = Gdx.graphics.getHeight();
         
+        //set up the stage
         stage = new Stage();
-        
         Gdx.input.setInputProcessor(stage);
         
         BitmapFont font = new BitmapFont();//(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
         Skin skin = new Skin();
         skin.addRegions(atlas);
         
+        Skin selectionSkin = new Skin();
+        selectionSkin.addRegions(commonAtlas);
+        
+        
+        //set up buttons
         TextButtonStyle textButtonStyle = new TextButtonStyle();
         textButtonStyle.font = font;
         textButtonStyle.up = skin.getDrawable("button_02");
         textButtonStyle.down = skin.getDrawable("button_01");
         
-        TextButton backButton = new TextButton("Cancel", textButtonStyle);
+        backButton = new TextButton("Cancel", textButtonStyle);
         backButton.setPosition(100, 50);
         backButton.setSize(500, 50);
-        backButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                System.out.println("backButton Pressed");
-            }
-        });
+        backButton.addListener(this);
         
-        TextButton confirmButton = new TextButton("Confirm", textButtonStyle);
+        confirmButton = new TextButton("Confirm", textButtonStyle);
         confirmButton.setPosition(width-600,  50);
         confirmButton.setSize(500, 50);
-        confirmButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                System.out.println("confirmButton Pressed");
-            }
-        });
+        confirmButton.addListener(this);
         
         
+        //set up text fields
         TextFieldStyle textFieldStyle = new TextFieldStyle();
         textFieldStyle.background= skin.getDrawable("textbox_01");
         textFieldStyle.font=font;
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor=skin.getDrawable("textbox_cursor_02");
+        textFieldStyle.selection = selectionSkin.getDrawable("transparent-black-30");
 
-    
-        TextField nameField = new TextField("R2D2", textFieldStyle);
-        TextField teamField = new TextField("C3", textFieldStyle);
-        TextArea forthField = new TextArea("", textFieldStyle);
+        nameField = new TextField("R2D2", textFieldStyle);
+        teamField = new TextField("C3", textFieldStyle);
+        forthField = new TextArea("", textFieldStyle);
         forthField.setWidth(600);
         
+        
+        //set up labels
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
         labelStyle.font = font;
@@ -93,27 +107,20 @@ public class AddRobotView extends ScreenAdapter {
         Label pointLabel2 = new Label("Point 2: ", labelStyle);
         Label pointLabel3 = new Label("Point 3: ", labelStyle);
         
-        Label powerLabel = new Label("Selected Power: ", labelStyle);
-        Label healthLabel = new Label("Selected Health: ", labelStyle);
-        Label movementLabel = new Label("Selected Movement: ", labelStyle);
-        Label powerNumber = new Label("5", labelStyle);
-        Label healthNumber = new Label("5", labelStyle);
-        Label movementNumber = new Label("5", labelStyle);
         
-        
+        //set up checkboxes
         CheckBoxStyle checkboxStyle = new CheckBoxStyle();
         checkboxStyle.checkboxOn = skin.getDrawable("checkbox_on");
         checkboxStyle.checkboxOff = skin.getDrawable("checkbox_off");
         checkboxStyle.fontColor = Color.BLACK;
         checkboxStyle.font = font;
         
-        CheckBox power1 = new CheckBox("Power", checkboxStyle);
-       
-        CheckBox power2 = new CheckBox("Power", checkboxStyle);
-        CheckBox power3 = new CheckBox("Power", checkboxStyle);
-        CheckBox health1 = new CheckBox("Health", checkboxStyle);
-        CheckBox health2 = new CheckBox("Health", checkboxStyle);
-        CheckBox health3 = new CheckBox("Health", checkboxStyle);
+         power1 = new CheckBox("Power", checkboxStyle);   
+         power2 = new CheckBox("Power", checkboxStyle);
+         power3 = new CheckBox("Power", checkboxStyle);
+         health1 = new CheckBox("Health", checkboxStyle);
+         health2 = new CheckBox("Health", checkboxStyle);
+         health3 = new CheckBox("Health", checkboxStyle);
         
         ChangeListener invertNeighbour = new ChangeListener() {
             @Override
@@ -137,9 +144,7 @@ public class AddRobotView extends ScreenAdapter {
         health3.addListener(invertNeighbour);
         health3.setUserObject(power3);
         
-        
-        
-        
+        //set up the table
         Table table = new Table();
         table.setFillParent(true);
         table.add(nameLabel).padBottom(40f); 
@@ -165,14 +170,12 @@ public class AddRobotView extends ScreenAdapter {
         table.row();
         
         
-        
-
-        
+        //set up the title
         Label titleLabel = new Label("Create a Robot", labelStyle);
         titleLabel.setPosition(width/2 - 100, height-50);
         titleLabel.setFontScale(2);
         
-        
+        //add actors to stage
         stage.addActor(titleLabel);
         stage.addActor(table);
         stage.addActor(backButton);
@@ -180,12 +183,31 @@ public class AddRobotView extends ScreenAdapter {
         
         
     }
+
     
-    
+    /**
+     * render the scene
+     */
     public void render(float delta) {   
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.draw();
+    }
+
+    @Override
+    /**
+     * We use this to handle button presses
+     */
+    public boolean handle(Event arg0) {
+        if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
+            TextButton sender = (TextButton)arg0.getTarget();
+            if(sender == this.confirmButton){
+                System.out.println(1);
+            } else if (sender == this.backButton){
+                System.out.println(0);
+            }
+        }
+        return false;
     }
 
 
