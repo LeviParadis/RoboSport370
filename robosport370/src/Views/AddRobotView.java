@@ -1,6 +1,8 @@
 package Views;
 
 
+import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -24,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import Controllers.AddRobotController;
+import Interpreters.JsonInterpreter;
 
 public class AddRobotView extends ScreenAdapter implements EventListener {
     
@@ -202,7 +205,7 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
             TextButton sender = (TextButton)arg0.getTarget();
             if(sender == this.confirmButton){
-                System.out.println(1);
+                this.createRobot();
             } else if (sender == this.backButton){
                 System.out.println(0);
             }
@@ -210,6 +213,41 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         return false;
     }
 
+    private void createRobot(){
+        String name = this.nameField.getText();
+        String team = this.teamField.getText();
+        String forth = this.forthField.getText();
+        
+        int movesLeft = 3;
+        int firePower = 1;
+        int health = 1;
+        
+        if(this.power1.isChecked()){
+            firePower++;
+            movesLeft--;
+        } else {
+            health++;
+        }
+        if(this.power3.isChecked()){
+            firePower++;
+            movesLeft--;
+        } else {
+            health++;
+        }
+        if(this.power3.isChecked()){
+            firePower++;
+            movesLeft--;
+        } else {
+            health++;
+        }
+        
+        
+        try{
+            JsonInterpreter.registerRobot(name, team, firePower, health, movesLeft, forth);
+        } catch (RuntimeException e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
 
 
 }
