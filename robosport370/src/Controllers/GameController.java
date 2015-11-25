@@ -282,12 +282,13 @@ public class GameController{
     /**
      *  fire at the position passed in
      * @param shooter is the robot that will fire a shot
-     * @param hexPos is the position that the robot is firing towards
+     * @param range the distance away to shoot
+     * @param direction the direction to shoot
      */
-    public void shootAtSpace(Robot shooter, int range, int Direction){
+    public void shootAtSpace(Robot shooter, int range, int direction){
         Tile[][] allTiles = this.gameMap.getTiles();
         
-        DIRECTION dir = gameMap.getDirection(Direction);
+        DIRECTION dir = gameMap.getDirection(direction);
         
         int xPos = dir.getXCoordinate()*range;
         int yPos = dir.getYCoordinate()*range;
