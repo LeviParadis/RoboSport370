@@ -30,7 +30,7 @@ public class setupController {
 	private Music introMusic;
 	public int mapSize;
 	public boolean isTournament,isSimulation;
-private List<Team> selectedTeams;
+public List<Team> selectedTeams;
 	
 	
 
@@ -97,6 +97,7 @@ private List<Team> selectedTeams;
 	         Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
 	         Team newTeam = new Team(robotList, this.selectedTeams.size());
 	         this.selectedTeams.add(newTeam);
+	         
 	         System.out.println(this.selectedTeams);
     } else {
         System.out.println("already 6 teams");

@@ -343,7 +343,7 @@ public class ForthInterpreter {
                 //fires the robot’s weapon at the space at range ir and direction id;
                 //( id ir -- )
                 if(shotAvailable){
-                    //TODO: After game controller is set up   
+                       
                 } else {
                     System.out.println("attempted shot, but shot was already used");
                 }
