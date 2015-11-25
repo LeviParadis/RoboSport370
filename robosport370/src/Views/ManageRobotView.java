@@ -35,7 +35,7 @@ public class ManageRobotView  extends ScreenAdapter  implements EventListener{
         stage = new Stage();        
       
         TextureAtlas blueAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
-        BitmapFont font = new BitmapFont();//(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
+        BitmapFont font = new BitmapFont();
         Skin skin = new Skin();
         skin.addRegions(blueAtlas);
         
@@ -80,7 +80,6 @@ public class ManageRobotView  extends ScreenAdapter  implements EventListener{
     public boolean handle(Event arg0) {
         if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
             TextButton sender = (TextButton)arg0.getTarget();
-            System.out.println(sender);
            if(sender == backButton){
                controller.notifyBackButtonPressed();
            } else if (sender == addButton){
