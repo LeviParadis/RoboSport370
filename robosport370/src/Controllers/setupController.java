@@ -69,15 +69,19 @@ public List<Team> selectedTeams;
 	public void notifyDebug(){
 	    gameVariables.isDebug = true;
 	}
+	
+	public void notifyNewRobot() {
+		ManageRobotController cont = new ManageRobotController();
+	    ManageRobotView view = new ManageRobotView(cont);
+	    UIManager manager = UIManager.sharedInstance();
+	    manager.pushScreen(view);
+	}
+	
 	/**
 	 * gets called when the Main Menu view selects exit
 	 */
 	public void notifyExit(){
-	    ManageRobotController cont = new ManageRobotController();
-	    ManageRobotView view = new ManageRobotView(cont);
-	    UIManager manager = UIManager.sharedInstance();
-    manager.pushScreen(view);
-	    
+	    Gdx.app.exit();
 	}
 	/**
 	 * gets called when Setup view selects return
