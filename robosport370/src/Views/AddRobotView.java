@@ -1,8 +1,6 @@
 package Views;
 
 
-import javax.swing.JOptionPane;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -26,7 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import Controllers.AddRobotController;
-import Interpreters.JsonInterpreter;
 
 public class AddRobotView extends ScreenAdapter implements EventListener {
     
@@ -46,12 +43,15 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
     private TextField teamField;
     private TextArea forthField;
 
+    private AddRobotController controller;
     
     /**
      * Set up the controller
      * @param controller the controller we are setting up
      */
     public AddRobotView(AddRobotController controller) {
+        this.controller = controller;
+        
         int width = Gdx.graphics.getWidth();
         int height = Gdx.graphics.getHeight();
         
@@ -205,49 +205,42 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
             TextButton sender = (TextButton)arg0.getTarget();
             if(sender == this.confirmButton){
-                this.createRobot();
+                    String name = this.nameField.getText();
+                    String team = this.teamField.getText();
+                    String forth = this.forthField.getText();
+                    
+                    int movesLeft = 3;
+                    int firePower = 1;
+                    int health = 1;
+                    
+                    if(this.power1.isChecked()){
+                        firePower++;
+                        movesLeft--;
+                    } else {
+                        health++;
+                    }
+                    if(this.power3.isChecked()){
+                        firePower++;
+                        movesLeft--;
+                    } else {
+                        health++;
+                    }
+                    if(this.power3.isChecked()){
+                        firePower++;
+                        movesLeft--;
+                    } else {
+                        health++;
+                    }
+                    
+                    this.controller.notifyAddRobot(name, team, forth, movesLeft, firePower, health);
             } else if (sender == this.backButton){
-                System.out.println(0);
+                    this.controller.notifyCancel();
             }
         }
         return false;
     }
 
-    private void createRobot(){
-        String name = this.nameField.getText();
-        String team = this.teamField.getText();
-        String forth = this.forthField.getText();
-        
-        int movesLeft = 3;
-        int firePower = 1;
-        int health = 1;
-        
-        if(this.power1.isChecked()){
-            firePower++;
-            movesLeft--;
-        } else {
-            health++;
-        }
-        if(this.power3.isChecked()){
-            firePower++;
-            movesLeft--;
-        } else {
-            health++;
-        }
-        if(this.power3.isChecked()){
-            firePower++;
-            movesLeft--;
-        } else {
-            health++;
-        }
-        
-        
-        try{
-            JsonInterpreter.registerRobot(name, team, firePower, health, movesLeft, forth);
-        } catch (RuntimeException e){
-            JOptionPane.showMessageDialog(null, e.getMessage());
-        }
-    }
+ 
 
 
 }

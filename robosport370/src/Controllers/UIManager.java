@@ -32,12 +32,9 @@ public class UIManager extends Game {
     @Override
     public void create() {
         // TODO Auto-generated method stub
-       // setupController initialController = new setupController();
-       // mainMenuView initialView = new mainMenuView(initialController);
-        
-        AddRobotController initialController = new AddRobotController();
-        AddRobotView initialView = new AddRobotView(initialController);
-        
+        setupController initialController = new setupController();
+        mainMenuView initialView = new mainMenuView(initialController);
+         
         this.screenStack = new Stack<Screen>();
         
         this.pushScreen(initialView);
