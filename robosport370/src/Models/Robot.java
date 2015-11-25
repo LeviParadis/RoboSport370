@@ -342,4 +342,13 @@ public class Robot implements Cloneable{
         return this.stats;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Robot){
+            Robot other = (Robot)obj;
+            long sn = other.getSerialNumber();
+            return (sn == this.getSerialNumber());
+        }
+        return false;
+    }
 }
