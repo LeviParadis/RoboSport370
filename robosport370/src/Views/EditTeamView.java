@@ -144,7 +144,6 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         resultsTable = new Table();
         rosterTable = new Table();
         robotInfoTable = new Table();
-        robotInfoTable.setColor(Color.RED);
         
         Label searchTitle = new Label("Search", labelStyle);
         Label resultsTitle = new Label("Robot List", labelStyle);
@@ -263,7 +262,6 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
                 refreshResultsList();
             }
         } else if(arg0.getTarget() instanceof Label && arg0.getTarget().getUserObject() instanceof Robot){
-            //Label hovered = (Label)arg0.getTarget();
             Robot currentRobot = (Robot)arg0.getTarget().getUserObject();
             hoveredRobot = currentRobot;
             refreshInfoList();
@@ -363,6 +361,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         this.robotInfoTable.row();
         this.robotInfoTable.add(movementInfoLabel).padBottom(5);
         this.robotInfoTable.add(movementRobotLabel).padBottom(5);
+        this.robotInfoTable.padLeft(100);
         
     }
 
