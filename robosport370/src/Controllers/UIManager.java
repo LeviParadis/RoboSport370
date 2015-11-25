@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Views.AddRobotView;
 import Views.mainMenuView;
 import Views.setupView;
 
@@ -26,8 +27,11 @@ public class UIManager extends Game {
     @Override
     public void create() {
         // TODO Auto-generated method stub
-        setupController initialController = new setupController();
-        mainMenuView initialView = new mainMenuView(initialController);
+       // setupController initialController = new setupController();
+       // mainMenuView initialView = new mainMenuView(initialController);
+        
+        AddRobotController initialController = new AddRobotController();
+        AddRobotView initialView = new AddRobotView(initialController);
         
         this.setScreen(initialView);
     }
