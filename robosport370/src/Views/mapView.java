@@ -34,7 +34,7 @@ import aurelienribon.tweenengine.TweenManager;
  */
 public class mapView extends ScreenAdapter {
 	// The controller which called the view
-	private final Game controller;
+	private final GameController controller;
 	
 	private float WINDOW_WIDTH;
     private float WINDOW_HEIGHT;

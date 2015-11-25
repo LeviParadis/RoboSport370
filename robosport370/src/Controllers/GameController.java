@@ -311,31 +311,7 @@ public class GameController{
         
 
     }
-    /**
-     * Called every frame
-     */
-   
-    
 
-
-    
-    public static void main(String[] args){
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "RobotSport370";
-        config.height = 800;
-        config.width = 1280;
-        
-        Queue<Team> teamList = new LinkedList<Team>();
-        for(int i=0; i<6; i++){
-            Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
-            Team newTeam = new Team(robotList, i);
-            teamList.add(newTeam);
-        }
-        
-       // new LwjglApplication(new GameController(teamList), config);
-    }
-
-    
 }
 
 
