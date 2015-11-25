@@ -160,7 +160,7 @@ public class mainMenuView extends ScreenAdapter {
 		config.title = "RobotSport370";
 		config.height = 800;
 		config.width = 1280;
-		new LwjglApplication(new setupController(), config);
+//		new LwjglApplication(new setupController(), config);
 		
 		
 	}
