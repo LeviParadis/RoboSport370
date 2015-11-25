@@ -41,6 +41,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     private TextButton searchButton;
     private TextButton backButton;
     
+    private Table searchTable;
     private Table resultsTable;
     private Table rosterTable;
     private Table robotInfoTable;
@@ -50,6 +51,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     
     private Queue<Robot> robotList;
     private Queue<Robot> rosterList;
+    private Robot hoveredRobot;
 
     private EditTeamController controller;
     
@@ -141,7 +143,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         searchTable.setColor(Color.BLUE);
         resultsTable = new Table();
         rosterTable = new Table();
-        Table robotInfoTable = new Table();
+        robotInfoTable = new Table();
         robotInfoTable.setColor(Color.RED);
         
         Label searchTitle = new Label("Search", labelStyle);
@@ -204,8 +206,6 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         searchTable.row();
         searchTable.add(searchButton);
         
-        
-        
         //add actors to stage
         stage.addActor(titleLabel);
         stage.addActor(backButton);
@@ -262,9 +262,12 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
                 this.robotList = this.controller.notifySearch();
                 refreshResultsList();
             }
-        } else if(arg0.getTarget() instanceof Label){
-            Label hovered = (Label)arg0.getTarget();
-            //boolean isHovered = hovered.
+        } else if(arg0.getTarget() instanceof Label && arg0.getTarget().getUserObject() instanceof Robot){
+            //Label hovered = (Label)arg0.getTarget();
+            Robot currentRobot = (Robot)arg0.getTarget().getUserObject();
+            hoveredRobot = currentRobot;
+            refreshInfoList();
+            
         }
         return false;
     }
@@ -286,6 +289,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
             }
             box.setUserObject(next);
             box.addListener(this);
+            nameLabel.setUserObject(next);
             nameLabel.addListener(this);
             this.resultsTable.add(nameLabel).padBottom(10).padRight(50);
             this.resultsTable.add(box).padBottom(10);
@@ -327,7 +331,38 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         labelStyle.font = new BitmapFont();
         
         this.robotInfoTable.clear();
+        Label nameInfoLabel = new Label("Robot Name:", labelStyle);
+        Label winsInfoLabel = new Label("Robot Total Wins:", labelStyle);
+        Label lossesInfoLabel = new Label("Robot Total Losses:", labelStyle);
+        Label healthInfoLabel = new Label("Robot Starting Health:", labelStyle);
+        Label powerInfoLabel = new Label("Robot Damage Per Shot:", labelStyle);
+        Label movementInfoLabel = new Label("Robot Moves Per Turn:", labelStyle);
         
+        Label nameRobotLabel = new Label(hoveredRobot.getName(), labelStyle);
+        Label winsRobotLabel = new Label(String.valueOf(hoveredRobot.getStats().getWins()), labelStyle);
+        Label lossesRobotLabel = new Label(String.valueOf(hoveredRobot.getStats().getLosses()), labelStyle);
+        Label healthRobotLabel = new Label(String.valueOf(hoveredRobot.getBaseHealth()), labelStyle);
+        Label powerRobotLabel = new Label(String.valueOf(hoveredRobot.getStrength()), labelStyle);
+        Label movementRobotLabel = new Label(String.valueOf(hoveredRobot.getMovesPerTurn()), labelStyle);
+        
+        this.robotInfoTable.row();
+        this.robotInfoTable.add(nameInfoLabel).padBottom(5);
+        this.robotInfoTable.add(nameRobotLabel).padBottom(5);
+        this.robotInfoTable.row();
+        this.robotInfoTable.add(winsInfoLabel).padBottom(5);
+        this.robotInfoTable.add(winsRobotLabel).padBottom(5);
+        this.robotInfoTable.row();
+        this.robotInfoTable.add(lossesInfoLabel).padBottom(5);
+        this.robotInfoTable.add(lossesRobotLabel).padBottom(5);
+        this.robotInfoTable.row();
+        this.robotInfoTable.add(healthInfoLabel).padBottom(5);
+        this.robotInfoTable.add(healthRobotLabel).padBottom(5);
+        this.robotInfoTable.row();
+        this.robotInfoTable.add(powerInfoLabel).padBottom(5);
+        this.robotInfoTable.add(powerRobotLabel).padBottom(5);
+        this.robotInfoTable.row();
+        this.robotInfoTable.add(movementInfoLabel).padBottom(5);
+        this.robotInfoTable.add(movementRobotLabel).padBottom(5);
         
     }
 

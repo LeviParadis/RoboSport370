@@ -337,5 +337,9 @@ public class Robot implements Cloneable{
         return result;
         
     }
+    
+    public RobotGameStats getStats(){
+        return this.stats;
+    }
 
 }
