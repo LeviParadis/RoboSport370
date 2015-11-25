@@ -13,7 +13,8 @@ import Controllers.setupController;
 
 /**
  * A GUI view for the main menu
- * @author Corey
+ * @author Corey 
+ * @author Levi Paradis
  *
  */
 public class mainMenuView extends ScreenAdapter {
@@ -50,6 +51,7 @@ public class mainMenuView extends ScreenAdapter {
     private Texture menuOptionsTexture;
     private Sprite menuOptionsTournament;
     private Sprite menuOptionsSimulation;
+    private Sprite menuOptionsNewRobot;
     private Sprite menuOptionsExit;
     
     // For tracking the active option
@@ -76,11 +78,13 @@ public class mainMenuView extends ScreenAdapter {
         menuOptionsTexture = new Texture("assets/mainMenu/menu_options.png");
         menuOptionsTournament = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*0, menOpWidth, menOpHeight);
         menuOptionsSimulation = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
+        menuOptionsNewRobot = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
         menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
         
     	menuOptionsTournament.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*1f);
     	menuOptionsSimulation.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*2f);
-    	menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*3f);
+    	menuOptionsNewRobot.setPosition(SCREEN_WIDTH*.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*3f);
+    	menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*4f);
         
     	// Add in the order for the associated constant variables
         menu = new spriteMenuHandler(menuOptionsTournament);
@@ -111,6 +115,7 @@ public class mainMenuView extends ScreenAdapter {
         // Draw the options
     	menuOptionsTournament.draw(batch);
     	menuOptionsSimulation.draw(batch);
+    	menuOptionsNewRobot.draw(batch);
     	menuOptionsExit.draw(batch);
         
         batch.end();
