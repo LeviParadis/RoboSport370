@@ -56,20 +56,22 @@ public class UIManager extends Game {
         if(screenStack.size()<=1){
             return;
         }
-        screenStack.pop();
-        Screen prevScreen = screenStack.peek();
-        this.setScreen(prevScreen);        
+        Screen prev = screenStack.pop();
+        prev.dispose();
+        
+        Screen newScreen = screenStack.peek();
+        this.setScreen(newScreen);        
     }
 
     /**
      * Goes back to the first screen in the view stack (welcome screen)
      */
     public void popToRootScreen(){
-        Screen prevScreen = screenStack.peek();
         while(this.screenStack.size() > 1){
-            prevScreen = screenStack.pop();
+             Screen prev = screenStack.pop();
+             prev.dispose();
         }
-        this.setScreen(prevScreen);
+        this.setScreen(screenStack.peek());
     }
     
     public static void main(String[] args) {
