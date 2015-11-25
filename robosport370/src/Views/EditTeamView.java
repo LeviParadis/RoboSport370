@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
@@ -41,8 +43,11 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     
     private Table resultsTable;
     private Table rosterTable;
+    private Table robotInfoTable;
 
     private CheckBoxStyle checkboxStyle;
+    
+    private ScrollPaneStyle scrollPaneStyle;
     
     private Queue<Robot> robotList;
     private Queue<Robot> rosterList;
@@ -100,8 +105,8 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         checkboxStyle.fontColor = Color.BLACK;
         checkboxStyle.font = font;
         
-        
-
+        //set up scroll panes
+        scrollPaneStyle = new ScrollPaneStyle();       
         
         //set up the title
         Label titleLabel = new Label("Search for Robots", labelStyle);
@@ -134,20 +139,20 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         Table robotInfoTable = new Table();
         robotInfoTable.setColor(Color.RED);
         
-        masterTable.add(searchTable).width(200).padRight(50);
-        masterTable.add(resultsTable).width(200);
-        masterTable.add(rosterTable).width(200);
-        masterTable.add(robotInfoTable).width(200);
-        
-        
         Label searchTitle = new Label("Search", labelStyle);
         Label resultsTitle = new Label("Robot List", labelStyle);
         Label rosterTitle = new Label("Current Roster", labelStyle);
         Label infoTitle = new Label("Robot Info", labelStyle);
-        searchTable.add(searchTitle);
-        resultsTable.add(resultsTitle);
-        rosterTable.add(rosterTitle);
-        robotInfoTable.add(infoTitle);
+        masterTable.add(searchTitle);
+        masterTable.add(resultsTitle);
+        masterTable.add(rosterTitle);
+        masterTable.add(infoTitle);
+        masterTable.row();
+        masterTable.add(searchTable).width(200).padRight(50);
+        masterTable.add(resultsTable).width(200);
+        masterTable.add(rosterTable).width(200);
+        masterTable.add(robotInfoTable).width(200);
+
         
         
         
@@ -226,7 +231,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
             
             Robot selectedRobot = (Robot)arg0.getTarget().getUserObject();
             if(checked.getParent() == this.resultsTable){
-                if(isChecked){
+                if(isChecked && rosterList.size() < 6){
                     rosterList.add(selectedRobot);
                 } else {
                     rosterList.remove(selectedRobot);
@@ -248,6 +253,9 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
                 this.robotList = this.controller.notifySearch();
                 refreshResultsList();
             }
+        } else if(arg0.getTarget() instanceof Label){
+            Label hovered = (Label)arg0.getTarget();
+            //boolean isHovered = hovered.
         }
         return false;
     }
@@ -259,6 +267,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         
         this.resultsTable.clear();
         Iterator<Robot> it = this.robotList.iterator();
+        
         while(it.hasNext()){
             Robot next = it.next();
             Label nameLabel = new Label(next.getName(), labelStyle);
@@ -268,6 +277,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
             }
             box.setUserObject(next);
             box.addListener(this);
+            nameLabel.addListener(this);
             this.resultsTable.add(nameLabel).padBottom(10).padRight(50);
             this.resultsTable.add(box).padBottom(10);
             this.resultsTable.row();
@@ -281,6 +291,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
         
         this.rosterTable.clear();
         Iterator<Robot> it = this.rosterList.iterator();
+        
         while(it.hasNext()){
             Robot next = it.next();
             System.out.println(next);
@@ -292,7 +303,17 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
             this.rosterTable.add(nameLabel).padBottom(10).padRight(50);
             this.rosterTable.add(box).padBottom(10);
             this.rosterTable.row();
-        }
+        }  
+    }
+    
+    public void refreshInfoList(){
+        LabelStyle labelStyle = new LabelStyle();
+        labelStyle.fontColor = Color.BLACK;
+        labelStyle.font = new BitmapFont();
+        
+        this.robotInfoTable.clear();
+        
+        
     }
 
     /**
