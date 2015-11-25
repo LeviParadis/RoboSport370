@@ -108,11 +108,37 @@ public class AddRobotView extends ScreenAdapter {
         checkboxStyle.font = font;
         
         CheckBox power1 = new CheckBox("Power", checkboxStyle);
+       
         CheckBox power2 = new CheckBox("Power", checkboxStyle);
         CheckBox power3 = new CheckBox("Power", checkboxStyle);
         CheckBox health1 = new CheckBox("Health", checkboxStyle);
         CheckBox health2 = new CheckBox("Health", checkboxStyle);
         CheckBox health3 = new CheckBox("Health", checkboxStyle);
+        
+        ChangeListener invertNeighbour = new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                CheckBox thisBox = (CheckBox)actor;
+                CheckBox otherBox = (CheckBox)actor.getUserObject();
+                otherBox.setChecked(!thisBox.isChecked());
+            }
+        };
+        
+        power1.addListener(invertNeighbour);
+        power1.setUserObject(health1);
+        health1.addListener(invertNeighbour);
+        health1.setUserObject(power1);
+        power2.addListener(invertNeighbour);
+        power2.setUserObject(health2);
+        health2.addListener(invertNeighbour);
+        health2.setUserObject(power2);
+        power3.addListener(invertNeighbour);
+        power3.setUserObject(health3);
+        health3.addListener(invertNeighbour);
+        health3.setUserObject(power3);
+        
+        
+        
         
         Table table = new Table();
         table.setFillParent(true);
