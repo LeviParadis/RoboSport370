@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -39,7 +40,7 @@ public class AddRobotView extends ScreenAdapter {
         
         Gdx.input.setInputProcessor(stage);
         
-        BitmapFont font = new BitmapFont();
+        BitmapFont font = new BitmapFont();//(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
         Skin skin = new Skin();
         skin.addRegions(atlas);
         
@@ -78,7 +79,8 @@ public class AddRobotView extends ScreenAdapter {
     
         TextField nameField = new TextField("R2D2", textFieldStyle);
         TextField teamField = new TextField("C3", textFieldStyle);
-        TextField forthField = new TextField("", textFieldStyle);
+        TextArea forthField = new TextArea("", textFieldStyle);
+        forthField.setWidth(600);
         
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
@@ -87,6 +89,16 @@ public class AddRobotView extends ScreenAdapter {
         Label nameLabel = new Label("Name: ", labelStyle);
         Label teamLabel = new Label("Team: ", labelStyle);
         Label forthLabel = new Label("Forth Code: ", labelStyle);
+        Label pointLabel1 = new Label("Point 1: ", labelStyle);
+        Label pointLabel2 = new Label("Point 2: ", labelStyle);
+        Label pointLabel3 = new Label("Point 3: ", labelStyle);
+        
+        Label powerLabel = new Label("Selected Power: ", labelStyle);
+        Label healthLabel = new Label("Selected Health: ", labelStyle);
+        Label movementLabel = new Label("Selected Movement: ", labelStyle);
+        Label powerNumber = new Label("5", labelStyle);
+        Label healthNumber = new Label("5", labelStyle);
+        Label movementNumber = new Label("5", labelStyle);
         
         
         CheckBoxStyle checkboxStyle = new CheckBoxStyle();
@@ -105,24 +117,37 @@ public class AddRobotView extends ScreenAdapter {
         Table table = new Table();
         table.setFillParent(true);
         table.add(nameLabel).padBottom(40f); 
-        table.add(nameField).padBottom(40f); 
+        table.add(nameField).padBottom(40f).width(600); 
         table.row();
         table.add(teamLabel).padBottom(40f); 
-        table.add(teamField).padBottom(40f); 
+        table.add(teamField).padBottom(40f).width(600); 
         table.row();
-        table.add(health1).padBottom(40f); 
-        table.add(power1).padBottom(40f); 
+        table.add(pointLabel1).padBottom(40f); 
+        table.add(health1).padBottom(40f);
+        table.add(power1).padBottom(40f);
         table.row();
+        table.add(pointLabel2).padBottom(40f); 
         table.add(health2).padBottom(40f); 
         table.add(power2).padBottom(40f); 
         table.row();
+        table.add(pointLabel3).padBottom(40f);
         table.add(health3).padBottom(40f); 
         table.add(power3).padBottom(40f); 
         table.row();
         table.add(forthLabel).padBottom(40f); 
-        table.add(forthField).padBottom(40f);
+        table.add(forthField).padBottom(40f).width(600).height(200);
         table.row();
         
+        
+        
+
+        
+        Label titleLabel = new Label("Create a Robot", labelStyle);
+        titleLabel.setPosition(width/2 - 100, height-50);
+        titleLabel.setFontScale(2);
+        
+        
+        stage.addActor(titleLabel);
         stage.addActor(table);
         stage.addActor(backButton);
         stage.addActor(confirmButton);
