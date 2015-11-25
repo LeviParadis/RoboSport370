@@ -14,6 +14,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
+import Views.AddRobotView;
 import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
@@ -71,7 +72,11 @@ private List<Team> selectedTeams;
 	 * gets called when the Main Menu view selects exit
 	 */
 	public void notifyExit(){
-	    System.exit(0);
+	    AddRobotController cont = new AddRobotController();
+	    AddRobotView view = new AddRobotView(cont);
+	    UIManager manager = UIManager.sharedInstance();
+    manager.pushScreen(view);
+	    
 	}
 	/**
 	 * gets called when Setup view selects return

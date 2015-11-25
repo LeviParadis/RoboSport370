@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Views.AddRobotView;
 import Views.mainMenuView;
 import Views.setupView;
 
@@ -33,7 +34,7 @@ public class UIManager extends Game {
         // TODO Auto-generated method stub
         setupController initialController = new setupController();
         mainMenuView initialView = new mainMenuView(initialController);
-        
+         
         this.screenStack = new Stack<Screen>();
         
         this.pushScreen(initialView);

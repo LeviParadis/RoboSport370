@@ -175,7 +175,9 @@ public class JsonInterpreter {
      * @return a bool indicating whether the registration was a success
      */
     public static boolean registerRobot(String name, String team, 
-            long firepower, long health, long movement, String forthCode){
+            long firepower, long health, long movement, String forthCode) throws RuntimeException{
+        
+        
         
         JSONObject json = new JSONObject();
         json.put(JSONConstants.NAME, name);
