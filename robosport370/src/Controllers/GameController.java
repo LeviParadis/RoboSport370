@@ -21,6 +21,7 @@ import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
 import Models.Tile;
+import Models.ForthWord;
 import Models.Map;
 import Models.Map.DIRECTION;
 import Views.mapView;
@@ -307,12 +308,43 @@ public class GameController{
             }
             
         }
-        
-        
-        
-
+    }
+    
+    /**
+     * Finds a returns a list of the closest robots to input robot r
+     * Will return up to 4 robots, in a range up to 3 spaces
+     * Called by the ForthInterpreter
+     * @param r the robot asking for closest robots
+     * @return
+     */
+    public List<Robot> getClosest(Robot r) {
+        return new LinkedList<Robot>();
+    }
+    
+    /**
+     * Sends a forth word from one robot to the mailbox of another
+     * Robots must be on the same team, and the forth word must be either an int, a string, or a boolean
+     * Called by the forth interpreter
+     * @param sender  the robot sending the message
+     * @param receiver the robot receiving the message
+     * @param value the value to send
+     * @return a bool indicating whether the operation was a success. 
+     *         Will fail if robots aren't on the same team, if the receiver is destroyed, or if the receiver's mailbox is full
+     */
+    public boolean sendMail(Robot sender, Robot receiver, ForthWord value){
+        return false;
     }
 
+    
+    /**
+     * Will be called by the forth interpreter to show new actions for display in the interface
+     * Will be called anytime the robot does anything, so the user can be updated as to what is happening
+     * @param newActionMessage the latest action being run by a robot
+     * @param lowPriority a flag indicating how important the message is. Low priority messages could be only shown in debug mode, for example
+     */
+    public void displayNewAction(String newActionMessage, boolean lowPriority){
+        System.out.println(newActionMessage);
+    }
 }
 
 
