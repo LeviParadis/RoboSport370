@@ -7,19 +7,19 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import Views.mainMenuView;
 import Views.setupView;
 
-public class GameManager extends Game {
+public class UIManager extends Game {
     
-    public static GameManager manager;
+    public static UIManager manager;
     
-    public static GameManager sharedInstance(){
+    public static UIManager sharedInstance(){
         if(manager == null){
-            manager = new GameManager();
+            manager = new UIManager();
         }
         return manager;
     }
     
 
-    public GameManager() {
+    public UIManager() {
         // TODO Auto-generated constructor stub
     }
 
@@ -38,7 +38,7 @@ public class GameManager extends Game {
         config.title = "RobotSport370";
         config.height = 800;
         config.width = 1280;
-        new LwjglApplication(GameManager.sharedInstance(), config);
+        new LwjglApplication(UIManager.sharedInstance(), config);
 
     }
     

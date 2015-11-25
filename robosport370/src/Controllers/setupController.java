@@ -50,7 +50,7 @@ private List<Team> selectedTeams;
 	 * 
 	 */
 	public void notifyTournament(){
-    GameManager manager = GameManager.sharedInstance();
+    UIManager manager = UIManager.sharedInstance();
     manager.setScreen(new setupView(this));
     System.out.println("Tournament");
 	}
@@ -59,7 +59,7 @@ private List<Team> selectedTeams;
 	 * Gets called when the Main Menu view selects a simulation
 	 */
 	public void notifySim(){
-	      GameManager manager = GameManager.sharedInstance();
+	      UIManager manager = UIManager.sharedInstance();
 	      manager.setScreen(new setupView(this));
       gameVariables.isSim = true;
 	}
@@ -76,7 +76,7 @@ private List<Team> selectedTeams;
 	 * gets called when Setup view selects return
 	 */
 	public void notifyReturn(){
-    GameManager manager = GameManager.sharedInstance();
+    UIManager manager = UIManager.sharedInstance();
 	    manager.setScreen(new mainMenuView(this));
 	}
 	/**
@@ -110,7 +110,7 @@ public void notifyContinue(){
         GameController game = new GameController(this.selectedTeams);
         mapView map = new mapView(game, this.selectedTeams);
         
-         GameManager manager = GameManager.sharedInstance();
+         UIManager manager = UIManager.sharedInstance();
          manager.setScreen(map);
 
     } catch (RuntimeException e){
