@@ -51,9 +51,9 @@ public class setupView extends ScreenAdapter {
 	private static final Integer menOpWidth = 190;
 	private static final Integer menOpHeight = 30;
 	private Sprite addTeam;
-		private Integer teamIndex;
-		private HashMap<Integer, hideableSprite> teamMap;
-		private myTextInputListener listener;
+	private Integer teamIndex;
+	private HashMap<Integer, hideableSprite> teamMap;
+	private myTextInputListener listener;
 	private Sprite deleteTeam;
 	private Sprite mapToggle;
 	private Sprite debugToggle;

@@ -16,6 +16,7 @@ import Models.Team;
 import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
+import Views.teamCreationView;
 
 /**
  * @author Corey
@@ -87,14 +88,17 @@ private Queue<Team> selectedTeams;
 	 * changes the screen when continue is pressed
 	 */
 	public void notifyAddTeam(){
-    if(this.selectedTeams.size() < 6){
-	         Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
+    
+	 setScreen(new teamCreationView(this));
+	 /*if(this.selectedTeams.size() < 6){
+	         
+            Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
 	         Team newTeam = new Team(robotList, this.selectedTeams.size());
 	         this.selectedTeams.add(newTeam);
 	         System.out.println(this.selectedTeams);
     } else {
         System.out.println("already 6 teams");
-    }
+    }*/
 	}
 
 public void notifyDeleteTeam(){
