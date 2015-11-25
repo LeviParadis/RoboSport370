@@ -1,35 +1,26 @@
 package Models;
 
-import java.awt.Color;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Random;
 
 public class Team {
-    //we use this static value to ensure that each team is assigned a unique number
-    private static int uniqueNumber = 0;
-    //the name of the team
-    private String teamName;
     //the list of robots in the team. It's a queue so we can keep track of turn orders if we choose to
     private Queue<Robot> robotList;
-    //the team's color
-    private Color teamColor;
     //a number assigned to this team by the simulator for id purposes
-    private long teamNumber;
+    private int teamNumber;
+    // teams starting direction on map
+    private int teamStartDirection;
     
     /**
      * Default Constructor
      * @param robots a list of robots to make up the team
      * @param name   the team's name
-     * @param teamColor the team's color
      * @param uniqueNumber a number assigned to this team by the simulator for id purposes
      */
-    public Team(Queue<Robot> robots, String name, Color teamColor){ 
+    public Team(Queue<Robot> robots, int uniqueNumber){ 
        
         this.robotList = robots;
-        this.teamName = name;
-        this.teamColor = teamColor;
         this.teamNumber = uniqueNumber;
         
         //assign each robot it's id information for this game
@@ -37,28 +28,13 @@ public class Team {
         int i = 0;
         while(robotIterator.hasNext()){
             Robot thisRobot = robotIterator.next();
-            thisRobot.setTeamIDs(uniqueNumber, i, name, teamColor);
+            thisRobot.setTeamIDs(uniqueNumber, i);
             i++;
         }
         //increment unique number, so the next team will have a different number than this
         uniqueNumber++;
     }
     
-    /**
-     * Another constructor, without color requirement. If no color is passed it, it will be assigned a random one
-     * @param robots a list of robots to make up the team
-     * @param name   the team's name
-     * @param uniqueNumber a number assigned to this team by the simulator for id purposes
-     */
-    public Team(Queue<Robot> robots, String name){
-        this(robots, name, null);
-        //create a random color to represent this team
-        Random rand = new Random();
-        int r = rand.nextInt(255);
-        int g = rand.nextInt(255);
-        int b = rand.nextInt(255);
-        this.teamColor =  new Color(r, g, b);
-    }
     
     /**
      * @return an ordered list of all robots on the team
@@ -92,30 +68,39 @@ public class Team {
         return livingSet.size();
     }
     
-    /**
-     * @return the team's color
-     */
-    public Color getColor(){
-        return this.teamColor;
-    }
-    
-    /**
-     * @return the team's name
-     */
-    public String getName(){
-        return this.teamName;
-    }
     
     /**
      * @return the team's unique number
      */
-    public long getTeamNumber(){
+    public int getTeamNumber(){
         return teamNumber;
     }
     
     public Robot getTeamMember(int memberNumber){
         Robot[] array = (Robot[]) this.robotList.toArray();
         return array[memberNumber];
+    }
+    
+    /**
+
+     * Sets which part of the map that the team starts on
+     * @param dir
+     */
+    public void setTeamDirection(int dir){
+        this.teamStartDirection = dir;
+    }
+    
+    public int getTeamDirection(){
+        return this.teamStartDirection;
+    }
+        
+    /**
+     * @return the team's name in a format for display
+     */
+    public String getTeamName(){
+        int oneHigher = (this.teamNumber + 1);
+        return "Team " + oneHigher;
+
     }
     
 }

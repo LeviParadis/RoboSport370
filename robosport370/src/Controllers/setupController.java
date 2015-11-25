@@ -1,5 +1,11 @@
 package Controllers;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -7,9 +13,17 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Interfaces.ListRobotsDelegate;
+import Interpreters.JsonInterpreter;
+import Models.Robot;
+import Models.Team;
+import Views.AddRobotView;
+import Views.ManageRobotView;
 import Views.mainMenuView;
 import Views.setupView;
-import Views.endView;
+import Views.mapView;
+import Views.teamCreationView;
+import Views.EditTeamView;
 
 /**
  * @author Corey
@@ -17,59 +31,120 @@ import Views.endView;
  * setupController handles the main menu and setup screens while interfacing with the models
  *
  */
-public class setupController extends Game {
+public class setupController implements ListRobotsDelegate {
 	private Music introMusic;
 	public int mapSize;
 	public boolean isTournament,isSimulation;
+public List<Team> selectedTeams;
 	
-	/**
-	 * Called on initilization
-	 */
-	public void create() {
-		// Getting the music intialized
-		introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
+	
+
+    public setupController(){
+        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
         introMusic.setLooping(true);
         introMusic.setVolume(0.6f);
         introMusic.play();
         mapSize = 5;
         isTournament = false;
         isSimulation = false;
-		
+
         //This is for testing my first screen
-        this.setScreen(new mainMenuView(this));
-		
-		//This is for testing my second screen
-		//this.setScreen(new setupView(this));
+        this.selectedTeams = new LinkedList<Team>();
     }
+
 	/**
 	 * Gets called when the Main Menu view selects tournament
 	 * 
 	 */
 	public void notifyTournament(){
-	    this.setScreen(new setupView(this));
-	    this.isTournament = true;
+    UIManager manager = UIManager.sharedInstance();
+    
+    manager.pushScreen(new setupView(this));
+    System.out.println("Tournament");
 	}
 	
 	/**
 	 * Gets called when the Main Menu view selects a simulation
 	 */
 	public void notifySim(){
-	      this.setScreen(new setupView(this));
-	      
-	      this.isSimulation = true;
+	      UIManager manager = UIManager.sharedInstance();
+	      manager.pushScreen(new setupView(this));
+      gameVariables.isSim = true;
 	}
+	public void notifyDebug(){
+	    gameVariables.isDebug = true;
+	}
+	
+	public void notifyNewRobot() {
+		ManageRobotController cont = new ManageRobotController();
+	    ManageRobotView view = new ManageRobotView(cont);
+	    UIManager manager = UIManager.sharedInstance();
+	    manager.pushScreen(view);
+	}
+	
+	public void notifyNewTeam() {
+        EditTeamController cont = new EditTeamController(4, 4, this);
+        EditTeamView view = new EditTeamView(cont);
+        UIManager manager = UIManager.sharedInstance();
+        manager.pushScreen(view);
+    }
+	
 	/**
 	 * gets called when the Main Menu view selects exit
 	 */
 	public void notifyExit(){
-	    System.exit(0);
+	    Gdx.app.exit();
 	}
 	/**
 	 * gets called when Setup view selects return
 	 */
 	public void notifyReturn(){
-	    this.setScreen(new mainMenuView(this));
+    UIManager manager = UIManager.sharedInstance();
+    manager.popScreen();
+    this.selectedTeams.clear();
 	}
+	/**
+     * gets called when Setup view selects return
+     */
+	/**
+	 * changes the screen when continue is pressed
+	 */
+	//public void notifyAddTeam(){
+    
+	 
+	 /*if(this.selectedTeams.size() < 6){
+	         
+            Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
+	         Team newTeam = new Team(robotList, this.selectedTeams.size());
+	         this.selectedTeams.add(newTeam);
+	         
+	         System.out.println(this.selectedTeams);
+    } else {
+        System.out.println("already 6 teams");
+    }*/
+	//}
+
+public void notifyDeleteTeam(){
+    if(!this.selectedTeams.isEmpty()){
+        this.selectedTeams.remove(this.selectedTeams.size()-1);
+        System.out.println(this.selectedTeams);
+    } else {
+        System.out.println("already empty");
+    }
+}
+
+public void notifyContinue(){
+    try{
+        GameController game = new GameController(this.selectedTeams);
+        mapView map = new mapView(game, this.selectedTeams);
+        
+         UIManager manager = UIManager.sharedInstance();
+         manager.pushScreen(map);
+
+    } catch (RuntimeException e){
+        JOptionPane.showMessageDialog(null, e.getMessage());
+    }
+}
 	/**
 	 * Handles storing the mapsize data
 	 */
@@ -80,21 +155,21 @@ public class setupController extends Game {
         else if (this.mapSize >= 11) {
             this.mapSize = this.mapSize - 6;
         }   
+	    gameVariables.mapSize = this.mapSize;
 	}
-	/**
-	 * Called every frame
-	 */
-	public void render() {
-        super.render();
-    }
-	
-	public static void main(String[] args) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = "RobotSport370";
-		config.height = 800;
-		config.width = 1280;
-		new LwjglApplication(new setupController(), config);
-		
 
-	}
+@Override
+public void robotsListCancelled() {
+    UIManager manager = UIManager.sharedInstance();
+    manager.popScreen();
+}
+
+@Override
+public void robotListFinished(Queue<Robot> listSelected) {
+    UIManager manager = UIManager.sharedInstance();
+    manager.popScreen();
+    System.out.println(listSelected);
+}
+
+
 }

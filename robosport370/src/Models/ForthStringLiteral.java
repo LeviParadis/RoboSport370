@@ -1,5 +1,7 @@
 package Models;
 
+import Interfaces.ForthWord;
+
 public class ForthStringLiteral implements ForthWord {
     
     private String value;

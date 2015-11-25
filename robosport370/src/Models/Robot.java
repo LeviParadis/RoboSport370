@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
 
 
 /**
@@ -17,16 +18,20 @@ import Exceptions.ForthRunTimeException;
  * Notes for report: Replaced getWinsLossStats with getters for each win loss, and tie 
  * value
  */
-public class Robot {
+public class Robot implements Cloneable{
     
     private long serialNumber;
-    private String name, teamName;
-    private long baseHealth, currentHealth, strength, movesPerTurn, hexPosition;;
+    private String name;
+    private long baseHealth, currentHealth, movesPerTurn, hexPosition;
+    private int strength;
+    private int xPosition;
+    private int yPosition;
     private long simTeamNumber, simMemberNumber;
     private RobotGameStats stats;
-    private Color teamColor;
     private HashMap<String,String> forthVariables,forthWords;
     private HashMap<Integer, Queue<ForthWord>> mailBox;
+    
+    
     
     /**
     this constructor will be called to create a robot. A robot can only be created if you know all of the information
@@ -42,7 +47,7 @@ public class Robot {
      * @param stats       An object that holds the stats for this robot. If it w
      */
     public Robot(String robotName, long serial,
-            long health, long strength, long moves,
+            long health, int strength, long moves,
             HashMap<String,String> vars, HashMap<String,String> words, RobotGameStats stats) {
         this.name = robotName;
         this.serialNumber = serial;
@@ -67,7 +72,7 @@ public class Robot {
      * @param words       The list of forth commands
      */
     public Robot(String robotName, long serial,
-            long health, long strength, long moves,
+            long health, int strength, long moves,
             HashMap<String,String> vars, HashMap<String,String> words) {
         this(robotName, serial, health, strength, moves, vars, words, new RobotGameStats());
     }
@@ -77,13 +82,10 @@ public class Robot {
      * When a robot is assigned to a team, it will recieve these attributes
      * @param teamNumber
      * @param memberNumber
-     * @param teamName
      */
-    public void setTeamIDs(int teamNumber, int memberNumber, String teamName, Color color){
+    public void setTeamIDs(int teamNumber, int memberNumber){
         this.simMemberNumber = memberNumber;
         this.simTeamNumber = teamNumber;
-        this.teamName = teamName;
-        this.teamColor = color;
     }
     
     
@@ -108,6 +110,22 @@ public class Robot {
         return this.simMemberNumber;
     }
     
+    public int getXPosition(){
+        return this.xPosition;
+    }
+    
+    public int getYPoisition(){
+        return this.yPosition;
+    }
+    
+    public void setXPosition(int newX){
+        this.xPosition = newX;
+    }
+    
+    public void setYPosition(int newY){
+        this.yPosition = newY;
+    }
+    
     /**
     * @return robot's team number for this match, assigned by the simulator
     */
@@ -115,20 +133,6 @@ public class Robot {
         return this.simTeamNumber;
     }
     
-    /**
-    * @return robot's team color
-    */
-    public Color getTeamColor(){
-        return this.teamColor;
-    }
-    
-    /**
-     * 
-     * @return robot's team's name
-     */
-    public String getTeamName(){
-        return this.teamName;
-    }
     
     /**
      * @return robot's current health
@@ -159,7 +163,7 @@ public class Robot {
     /**
      * @return the amount of damage the robot can cause to others
      */
-    public long getStrength() {
+    public int getStrength() {
         return strength;
     }
     
@@ -320,7 +324,31 @@ public class Robot {
      * @return a string representation of the robot
      */
     public String toString(){
-        return name + " - " + teamName + " - " + serialNumber; 
+        return name +  " - " + serialNumber; 
+    }
+    
+    /**
+     * used to make a copy of this robot that has all the same attributes, but shares the same stats object
+     * this is so that we can have multiple copies of the robot on different teams, but they all update the same stats
+     * @return a copy of the robot with the same stats object
+     */
+    public Robot clone(){
+        Robot result = new Robot(this.name, this.serialNumber, this.baseHealth, this.strength, this.movesPerTurn, this.forthVariables, this.forthWords, this.stats);
+        return result;
+        
+    }
+    
+    public RobotGameStats getStats(){
+        return this.stats;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Robot){
+            Robot other = (Robot)obj;
+            long sn = other.getSerialNumber();
+            return (sn == this.getSerialNumber());
+        }
+        return false;
+    }
 }

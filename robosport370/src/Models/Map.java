@@ -1,83 +1,113 @@
 package Models;
+import Controllers.gameVariables;
+import Models.Map.DIRECTION;
 
 public class Map {
-   
-//	public enum DIRECTION{
-//	    
-//		NORTH(0),
-//		SOUTH(3),
-//	    NORTH_WEST(5),
-//	    NORTH_EAST(1),
-//	    SOUTH_WEST(4),
-//	    SOUTH_EAST(2);
-//		
-//		public final int direction;
-//		
-//		
-//		DIRECTION(int direction){
-//			this.direction = direction;
-//		}
-//		
-//		public int getDirection(){
-//			return direction;
-//		}
-//		
-//	}
     
-	
-	private int maxNorth;
-	private int maxSouth;
-	private int maxEast;
-	private int maxWest;
-	public static int center = 0;
-	
-	
-	public enum DIRECTION{
-//		EAST(1,0),
-//	    WEST(-1, 0),
-		NORTH(0,1),
-		SOUTH(0,-1),
-	    NORTH_WEST(-1,1),
-	    NORTH_EAST(1,0),
-	    SOUTH_WEST(-1,0),
-	    SOUTH_EAST(1,-1);
-	    
-	    public final int northCoordinate;
-		public final int southCoordinate;
-		
-		DIRECTION(int northCoordinate, int southCoordinate){
-			this.northCoordinate = northCoordinate;
-			this.southCoordinate = southCoordinate;
-		}
-		
-		public int[] getXY(){
-			int[] toRet = new int[2];
-			toRet[0] = northCoordinate;
-			toRet[1] = southCoordinate;
-			return toRet;
-		}
-	   
-	}
-	
-    private int boardSize;  
+    private int mapDiameter = gameVariables.mapSize *2 -1;
+    private int height = gameVariables.mapSize;
+    private int mapSize = gameVariables.mapSize;
     
-    public Map(int mapSideSize){
-    	this.boardSize 	= mapSideSize;
-    	this.maxNorth 	= mapSideSize;
-    	this.maxSouth 	= -mapSideSize;
-    	this.maxEast 	= mapSideSize;
-    	this.maxWest	= -mapSideSize;
-    	
-    	
+    Tile[][] tiles = new Tile[mapDiameter][mapDiameter];
+    
+    public Map(){
+        int xPos = -mapDiameter/ 2 ;
+        int yPos = (mapSize - 2) + 1/2;
+        int count = 0;
+        for(int x = 0; x < mapDiameter; x++){
+            for(int y = 0; y < height; y++) {
+                yPos = yPos -1;
+                tiles[x][y] =  new Tile(x, y);
+                System.out.print(y);
+                count++;
+            }
+            if( (mapDiameter) / (x+1) >= 2) {
+                yPos = yPos + 1 * height + 1/2;
+                height++;
+            }
+            else {
+                yPos = yPos + 1 * height - 1/2;
+                height--;
+            }
+            System.out.println();
+            
+        }
+        System.out.println(count);
+    }
+    
+    public static void main(String[] args){
+        new Map();
+        
+        
+    }
+    
+    public int calcDistance(int x1, int x2, int y1, int y2){
+        return (int) Math.sqrt( ((x2-x1)*(x2-x1)) + ((y1-y2)*(y1-y2)) );
+    }
+    
+    public enum DIRECTION{
+        NORTH(0,1),
+        SOUTH(0,-1),
+        NORTH_WEST(-1,0),
+        NORTH_EAST(1,1),
+        SOUTH_WEST(-1,-1),
+        SOUTH_EAST(1,0);
+        
+        private final int xCoordinate;
+        private final int yCoordinate;
+        
+        DIRECTION(int xCoordinate, int yCoordinate){
+            this.xCoordinate = xCoordinate;
+            this.yCoordinate = yCoordinate;
+        }
+        
+        public int getXCoordinate(){
+           
+            return xCoordinate;
+        }
+        public int getYCoordinate(){
+            return yCoordinate;            
+        }
+    }
+    
+    public DIRECTION getDirection(int Direction){
+        
+        if(Direction == 0){
+            return DIRECTION.NORTH;
+           
+        }
+        else if(Direction == 1){
+            return DIRECTION.NORTH_EAST;
+        }
+        else if(Direction == 2){
+            return DIRECTION.SOUTH_EAST;
+        }
+        else if(Direction == 3){
+            return DIRECTION.SOUTH;
+        }
+        else if(Direction == 4){
+            return DIRECTION.SOUTH_WEST;
+        }
+        else if(Direction == 5){
+            return DIRECTION.NORTH_WEST;
+        }
+        else{
+            throw new RuntimeException("The provided direction is not valid");
+        }
+        
+       
+    }
+    
+    public Tile[][] getTiles(){
+        return this.tiles;
     }
     
     public int getMapSize(){
-    	return this.boardSize;
+        return this.mapSize;
     }
     
-    
-    
-    public static void main(int args[]){
-        
+    public int getMapDiameter(){
+        return this.mapDiameter;
     }
-}
+
+} 

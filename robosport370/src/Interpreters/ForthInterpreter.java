@@ -15,6 +15,7 @@ import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Exceptions.LeaveLoopException;
+import Interfaces.ForthWord;
 import Models.ForthBoolLiteral;
 import Models.ForthConditional;
 import Models.ForthCustomWord;
@@ -26,7 +27,6 @@ import Models.ForthPointerLiteral;
 import Models.ForthStringLiteral;
 import Models.ForthSystemWord;
 import Models.ForthUntilLoop;
-import Models.ForthWord;
 import Models.Robot;
 
 public class ForthInterpreter {
@@ -38,6 +38,8 @@ public class ForthInterpreter {
     public static final String TURN_WORD = "turn";
     public static final String STACK_EXCEPTION_ERROR = "attempted to pop off an empty stack";
     
+    public static boolean isPaused;
+    
     //indicates whether the current robot has used it's shot. Reset on every execution
     private static boolean shotAvailable;
     //indicates how many moves the current robot has left. Reset on every execution
@@ -48,7 +50,7 @@ public class ForthInterpreter {
         JSONParser parser=new JSONParser(); 
         try {
             JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
-            Robot newRobot = JsonInterpreter.robotFromJSON(json, null);
+            Robot newRobot = JsonInterpreter.robotFromJSON(json);
             System.out.println(INIT_WORD);
             initRobot(newRobot, null);
             System.out.println();
@@ -60,6 +62,23 @@ public class ForthInterpreter {
         }
     }
 
+    
+    /**
+     * pauses the forth program.
+     *  If this method is callled, the running turn won't progress until resume is called
+     */
+    public static void pause(){
+        isPaused = true;
+    }
+    
+    /**
+     * resumes the forth program.
+     *  If the program was previously paused, it will be resumed
+     */
+    public static void resume(){
+        isPaused = false;
+    }
+    
     /**
      * Run's a robot's forth init logic
      * @param robot             the robot we are setting up
@@ -71,6 +90,7 @@ public class ForthInterpreter {
         //robot should not move or shoot in it's init method
         shotAvailable = false;
         movesAvailable = 0;
+        isPaused = false;
         
         //find logic string
         String logicString = robot.getForthWord(INIT_WORD);
@@ -92,6 +112,7 @@ public class ForthInterpreter {
      * Run's a robot's forth turn logic
      * @param robot             the robot we are setting up
      * @param GameController    the controller that controls the game
+     * @param delaySeconds      the amount of time to wait in between commands
      * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
      * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */
@@ -99,6 +120,7 @@ public class ForthInterpreter {
       //set initial values for shot and moves available
         movesAvailable = robot.getMovesPerTurn();
         shotAvailable = true;
+        isPaused = false;
         
       //find logic string
         String logicString = robot.getForthWord(TURN_WORD);
@@ -133,6 +155,16 @@ public class ForthInterpreter {
             if(!robot.isAlive()){
                 return;
             }
+            
+            //implement a delay so the user can actually watch the match
+            //the delay will be looped if the interpreter is paused, so no more instructions will be run
+            do{
+                //TODO: add in delay when game controller is implemented
+                //float speed = GameController.getSpeed()
+                //Thread.sleep(speed);
+            } while(isPaused);
+            
+            
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
             
@@ -311,7 +343,7 @@ public class ForthInterpreter {
                 //fires the robot’s weapon at the space at range ir and direction id;
                 //( id ir -- )
                 if(shotAvailable){
-                    //TODO: After game controller is set up   
+                       
                 } else {
                     System.out.println("attempted shot, but shot was already used");
                 }
@@ -415,6 +447,7 @@ public class ForthInterpreter {
       }
   
    }
+    
     
     
 }

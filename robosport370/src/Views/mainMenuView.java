@@ -13,7 +13,8 @@ import Controllers.setupController;
 
 /**
  * A GUI view for the main menu
- * @author Corey
+ * @author Corey 
+ * @author Levi Paradis
  *
  */
 public class mainMenuView extends ScreenAdapter {
@@ -24,7 +25,7 @@ public class mainMenuView extends ScreenAdapter {
     private static final Integer menOpSrcX = 45;
     private static final Integer menOpSrcY = 30;
     private static final Integer menOpWidth = 170;
-    private static final Integer menOpHeight = 30;    
+    private static final Integer menOpHeight = 31;    
 	
 	// To store the screen dimensions
     private Integer SCREEN_WIDTH;
@@ -33,7 +34,8 @@ public class mainMenuView extends ScreenAdapter {
     // For ease of use when passing to the controller
     private static final int NEW_TOURNAMENT = 1;
     private static final int NEW_SIMULATION = 2;
-    private static final int EXIT = 3;
+    private static final int NEW_ROBOT = 3;
+    private static final int EXIT = 4;
     
     // For rendering sprites
     private SpriteBatch batch;
@@ -50,6 +52,7 @@ public class mainMenuView extends ScreenAdapter {
     private Texture menuOptionsTexture;
     private Sprite menuOptionsTournament;
     private Sprite menuOptionsSimulation;
+    private Sprite menuOptionsNewRobot;
     private Sprite menuOptionsExit;
     
     // For tracking the active option
@@ -76,15 +79,18 @@ public class mainMenuView extends ScreenAdapter {
         menuOptionsTexture = new Texture("assets/mainMenu/menu_options.png");
         menuOptionsTournament = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*0, menOpWidth, menOpHeight);
         menuOptionsSimulation = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
-        menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
+        menuOptionsNewRobot = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
+        menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*6, menOpWidth, menOpHeight);
         
     	menuOptionsTournament.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*1f);
     	menuOptionsSimulation.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*2f);
-    	menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*3f);
+    	menuOptionsNewRobot.setPosition(SCREEN_WIDTH*.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*3f);
+    	menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsTournament.getWidth()/2, SCREEN_HEIGHT*0.45f-30*4f);
         
     	// Add in the order for the associated constant variables
         menu = new spriteMenuHandler(menuOptionsTournament);
         menu.addSprite(menuOptionsSimulation);
+        menu.addSprite(menuOptionsNewRobot);
         menu.addSprite(menuOptionsExit);
     }
 
@@ -111,6 +117,7 @@ public class mainMenuView extends ScreenAdapter {
         // Draw the options
     	menuOptionsTournament.draw(batch);
     	menuOptionsSimulation.draw(batch);
+    	menuOptionsNewRobot.draw(batch);
     	menuOptionsExit.draw(batch);
         
         batch.end();
@@ -136,6 +143,9 @@ public class mainMenuView extends ScreenAdapter {
         	case NEW_SIMULATION:
         	    controller.notifySim();
         	    break;
+        	case NEW_ROBOT:
+        		controller.notifyNewRobot();
+        		break;
         	case EXIT:
         	    controller.notifyExit();
         		break;
@@ -154,14 +164,4 @@ public class mainMenuView extends ScreenAdapter {
     	
     	batch.dispose();
     }
-    
-	public static void main(String[] args) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = "RobotSport370";
-		config.height = 800;
-		config.width = 1280;
-		new LwjglApplication(new setupController(), config);
-		
-		
-	}
 }
