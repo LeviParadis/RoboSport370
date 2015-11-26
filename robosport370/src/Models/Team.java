@@ -98,8 +98,7 @@ public class Team {
      * @return the team's name in a format for display
      */
     public String getTeamName(){
-        int oneHigher = (this.teamNumber + 1);
-        return "Team " + oneHigher;
+        return "Team " + this.teamNumber;
 
     }
     

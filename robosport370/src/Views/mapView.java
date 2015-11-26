@@ -97,6 +97,9 @@ public class mapView extends ScreenAdapter implements EventListener {
     private Label numLabel;
     private TextButton pauseBtn;
     private TextButton speedBtn;
+    private  Label movesLabel;
+    private  Label healthLabel;
+    private  Label strengthLabel;
     
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -207,15 +210,22 @@ public class mapView extends ScreenAdapter implements EventListener {
     purpleLabelStyle.font = font;
 
     
+    
     Label titleLabel = new Label("Current Robot Information: ", blackLabelStyle);
     Label nameTitle = new Label("Name: ", blackLabelStyle);
     Label teamTitle = new Label("Team: ", blackLabelStyle);
     Label turnTitle = new Label("Turn: ", blackLabelStyle);
-    Label numTitle = new Label("Number: ", blackLabelStyle);
+    Label numTitle = new Label("Member: ", blackLabelStyle);
+    Label healthTitle = new Label("Health: ", blackLabelStyle);
+    Label strengthTitle = new Label("Strength: ", blackLabelStyle);
+    Label movesTitle = new Label("Moves: ", blackLabelStyle);
     nameLabel = new Label("", blackLabelStyle);
     teamLabel = new Label("", blackLabelStyle);
     turnLabel = new Label("", blackLabelStyle);
     numLabel = new Label("", blackLabelStyle);
+    healthLabel = new Label("", blackLabelStyle);
+    strengthLabel = new Label("", blackLabelStyle);
+    movesLabel = new Label("", blackLabelStyle);
     bottom.add(titleLabel);
     bottom.row();
     bottom.add(nameTitle);
@@ -229,6 +239,15 @@ public class mapView extends ScreenAdapter implements EventListener {
     bottom.row();
     bottom.add(turnTitle);
     bottom.add(turnLabel);
+    bottom.row();
+    bottom.add(healthTitle).padTop(20);
+    bottom.add(healthLabel).padTop(20);
+    bottom.row();
+    bottom.add(strengthTitle);
+    bottom.add(strengthLabel);
+    bottom.row();
+    bottom.add(movesTitle);
+    bottom.add(movesLabel);
     }
     
     /**
@@ -262,14 +281,17 @@ public class mapView extends ScreenAdapter implements EventListener {
      */
     public void updateRobotInfo(Robot robot, int turnNum){
         nameLabel.setText(robot.getName());
-        long teamNum = robot.getTeamNumber() + 1;
-        teamLabel.setText("Team " + teamNum);
+        teamLabel.setText("" + robot.getTeamNumber());
         numLabel.setText("" + robot.getMemberNumber());
         if(turnNum == 0){
             turnLabel.setText("init");
         } else {
             turnLabel.setText("" + turnNum);
         }
+        healthLabel.setText("" + robot.getHealth());
+        strengthLabel.setText("" + robot.getStrength());
+        //TODO: make this value change as the robot moves. Can do this in game controller, whenever a move is made
+        movesLabel.setText("" + robot.getMovesPerTurn());
     }
     
     public void createRobots(Team teamToAdd){
