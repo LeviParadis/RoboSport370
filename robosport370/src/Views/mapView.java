@@ -175,7 +175,6 @@ public class mapView extends ScreenAdapter implements EventListener {
     master.setSize(WINDOW_WIDTH/3, WINDOW_HEIGHT);
     master.setPosition(WINDOW_WIDTH-(WINDOW_WIDTH/3), 0);
     topTable = new Table();
-    topTable.setHeight(50);
     Table bottom = new Table();
     
     scrollResults = new ScrollPane(topTable, scrollStyle);
@@ -186,7 +185,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     master.add(speedBtn);
     master.add(pauseBtn);
     master.row();
-    master.add(bottom).padTop(300);
+    master.add(bottom).padBottom(300);
     stage.addActor(master);
     
     BitmapFont font = new BitmapFont();
@@ -358,12 +357,12 @@ public class mapView extends ScreenAdapter implements EventListener {
         tweenManager.update(delta);
         projectile.draw(batch);
         batch.end();
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        
         //we want to keep the scroll bar at the bottom when we add new items
-
         if(!controller.isPaused() && (scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 500)){
             scrollResults.setScrollPercentY(1);
         }
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
     

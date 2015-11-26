@@ -103,7 +103,7 @@ public class GameController{
                     executeNextTurn(i);
                     i++;
                 }
-                view.displayMessage("done", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+               displayMessage("done", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             }
           };
 
@@ -111,21 +111,22 @@ public class GameController{
     }
     
     private void initRobots(){
-        view.displayMessage("Init", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+        displayMessage("Init", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
         Iterator<Team> it = this.teams.iterator();
         while(it.hasNext()){
             Team nextTeam = it.next();
-            view.displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+            displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
             while(robotIt.hasNext()){
                 Robot nextRobot = robotIt.next();
                 view.updateRobotInfo(nextRobot, 0);
+                displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
                 try {
                     ForthInterpreter.initRobot(nextRobot, this);
                 } catch (ForthRunTimeException | ForthParseException e) {
                     e.printStackTrace();
-                    view.displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
-                    view.displayMessage("Ending Init", ConsoleMessageType.CONSOLE_ERROR);
+                    displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
+                    displayMessage("Ending Init", ConsoleMessageType.CONSOLE_ERROR);
                 }
             }
         }
@@ -175,10 +176,6 @@ public class GameController{
         return this.speedMultiplier;
     }
     
-
-    public int getDelayDuration(){
-        return this.delayDuration;
-    }
     
     /**
      * @return whether the game should be paused
@@ -280,25 +277,25 @@ public class GameController{
      * executes a round of turns
      */
     public void executeNextTurn(int turnNum){
-        view.displayMessage("Turn " + turnNum, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+        displayMessage("Turn " + turnNum, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
         Iterator<Team> teamIt = this.teams.iterator();
         while(teamIt.hasNext()){
             Team nextTeam = teamIt.next();
-            view.displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+            displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             Queue<Robot> robotList = nextTeam.getLivingRobots();
             Iterator<Robot> robotIt = robotList.iterator();
             while(robotIt.hasNext()){
                 Robot nextRobot = robotIt.next();
-                view.displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
                 view.updateRobotInfo(nextRobot, turnNum);
+                displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
                 try {
                     ForthInterpreter.executeTurn(nextRobot, this);
                 } catch (ForthRunTimeException | ForthParseException e) {
                     e.printStackTrace();
                     //this is thrown when forth encounters an error that it can't handle. 
                     //Display the error, and end the turn
-                    view.displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
-                    view.displayMessage("Ending Turn", ConsoleMessageType.CONSOLE_ERROR);
+                    displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
+                    displayMessage("Ending Turn", ConsoleMessageType.CONSOLE_ERROR);
                 }
             }
         }
@@ -412,6 +409,15 @@ public class GameController{
      */
     public void displayMessage(String newActionMessage, ConsoleMessageType type){
         this.view.displayMessage(newActionMessage, type);
+        //sleep in between messages, so that we get an even printing speed
+        //do not progress to the next action if we are paused
+        try {
+            do{
+                Thread.sleep(this.delayDuration);
+            } while (this.isPaused);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
     /**
