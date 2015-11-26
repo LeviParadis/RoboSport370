@@ -124,6 +124,8 @@ public class GameController{
                     ForthInterpreter.initRobot(nextRobot, this);
                 } catch (ForthRunTimeException | ForthParseException e) {
                     e.printStackTrace();
+                    view.displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
+                    view.displayMessage("Ending Init", ConsoleMessageType.CONSOLE_ERROR);
                 }
             }
         }
@@ -290,14 +292,13 @@ public class GameController{
                 view.displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
                 view.updateRobotInfo(nextRobot, turnNum);
                 try {
-                    Thread.sleep(delayDuration * 3);
                     ForthInterpreter.executeTurn(nextRobot, this);
                 } catch (ForthRunTimeException | ForthParseException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    //this is thrown when forth encounters an error that it can't handle. 
+                    //Display the error, and end the turn
+                    view.displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
+                    view.displayMessage("Ending Turn", ConsoleMessageType.CONSOLE_ERROR);
                 }
             }
         }
@@ -409,7 +410,7 @@ public class GameController{
      * @param newActionMessage the latest action being run by a robot
      * @param type the type of message to display
      */
-    public void displayNewAction(String newActionMessage, ConsoleMessageType type){
+    public void displayMessage(String newActionMessage, ConsoleMessageType type){
         this.view.displayMessage(newActionMessage, type);
     }
     

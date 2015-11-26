@@ -100,8 +100,7 @@ public class ForthSystemCommands {
         ForthWord first;
         first = forthStack.pop();
         String consoleString = first.forthStringEncoding();
-        controller.displayNewAction("pringing message: " + consoleString, ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
-        System.out.println(consoleString);
+        controller.displayMessage("pringing message: " + consoleString, ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
     }
 
     /**
@@ -595,7 +594,7 @@ public class ForthSystemCommands {
             if(shotAvailable){
                 controller.shootAtSpace(robot, ir, id);
             } else {
-                System.out.println("attempted shot, but shot was already used");
+                controller.displayMessage("Shot already used", ConsoleMessageType.CONSOLE_ERROR);
             }
         } else {
             throw new ForthRunTimeException("shoot command called without two ints on top of the stack");
@@ -616,7 +615,10 @@ public class ForthSystemCommands {
                     int cost = controller.moveRobot(robot, (int)robot.getTeamNumber(), firstInt, secondInt, movesAvailable);
                     return cost;
                 } catch (RuntimeException e){
-                    throw e;
+                    //we don't have enough moves left. Display an error, and attempt the next command
+                    controller.displayMessage("Not enough moves left to move to space", ConsoleMessageType.CONSOLE_ERROR);
+                    //we couldn't move, so don't use any moves up
+                    return 0;
                 }
             } else {
                 throw new ForthRunTimeException("move command called without two ints on top of the stack");
