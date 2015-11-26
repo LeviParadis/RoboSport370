@@ -76,22 +76,14 @@ public class GameController{
             while(it.hasNext()){
                 Team nextTeam = it.next();
                 teams.add((int) nextTeam.getTeamNumber(), nextTeam);
-                //init robots
-                Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
-                while(robotIt.hasNext()){
-                    Robot nextRobot = robotIt.next();
-                    try {
-                        ForthInterpreter.initRobot(nextRobot, this);
-                    } catch (ForthRunTimeException | ForthParseException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
             }
         }
         
         this.executionThread = new Thread(){
             public void run(){
+                //init robots
+                initRobots();
+                
                 int i = 1;
                 while(teamsAlive() > 1){
                     System.out.println("turn: " + i);
@@ -107,6 +99,23 @@ public class GameController{
           };
 
           executionThread.start();
+    }
+    
+    private void initRobots(){
+        Iterator<Team> it = this.teams.iterator();
+        while(it.hasNext()){
+            Team nextTeam = it.next();
+            Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
+            while(robotIt.hasNext()){
+                Robot nextRobot = robotIt.next();
+                try {
+                    ForthInterpreter.initRobot(nextRobot, this);
+                } catch (ForthRunTimeException | ForthParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     
     public int teamsAlive(){
@@ -349,8 +358,14 @@ public class GameController{
      * @param lowPriority a flag indicating how important the message is. Low priority messages could be only shown in debug mode, for example
      */
     public void displayNewAction(String newActionMessage, boolean lowPriority){
-        System.out.println(newActionMessage);
-        this.view.displayMessage(newActionMessage);
+        try {
+            Thread.sleep(1000);
+            System.out.println(newActionMessage);
+            this.view.displayMessage(newActionMessage);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     /**

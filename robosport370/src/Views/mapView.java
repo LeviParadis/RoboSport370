@@ -83,6 +83,7 @@ public class mapView extends ScreenAdapter {
     private Stage stage;
     private Table topTable;
     private LabelStyle labelStyle;
+    private ScrollPane scrollResults;
     
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -144,7 +145,6 @@ public class mapView extends ScreenAdapter {
     skin.addRegions(atlas);
     ScrollPaneStyle scrollStyle = new ScrollPaneStyle(); 
     scrollStyle.vScrollKnob = skin.getDrawable("slider_back_ver");
-    scrollStyle.hScrollKnob = skin.getDrawable("slider_back_hor");
 
     TextButtonStyle buttonStyle = new TextButtonStyle();
     buttonStyle.font = new BitmapFont();
@@ -163,7 +163,7 @@ public class mapView extends ScreenAdapter {
     topTable.setHeight(50);
     Table bottom = new Table();
     
-    ScrollPane scrollResults = new ScrollPane(topTable, scrollStyle);
+    scrollResults = new ScrollPane(topTable, scrollStyle);
     scrollResults.setFadeScrollBars(false);
     
     master.add(scrollResults);
@@ -192,13 +192,10 @@ public class mapView extends ScreenAdapter {
     }
     
     public void displayMessage(String newMessage){   
-        /*
+        
         Label messageLabel = new Label(newMessage, labelStyle);
-        topTable.clear();
-        topTable.row();
         topTable.add(messageLabel);
-        */
-    }
+        topTable.row();    }
     
     public void createRobots(Team teamToAdd){
     	    Queue<Robot> robotList = teamToAdd.getAllRobots();
@@ -286,6 +283,11 @@ public class mapView extends ScreenAdapter {
         projectile.draw(batch);
         batch.end();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        //we want to keep the scroll bar at the bottom when we add new items
+
+        if(scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 450){
+            scrollResults.setScrollPercentY(1);
+        }
         stage.draw();
     }
     
