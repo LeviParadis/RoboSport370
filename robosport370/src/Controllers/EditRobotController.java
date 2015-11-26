@@ -2,6 +2,10 @@ package Controllers;
 
 import javax.swing.JOptionPane;
 
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 
@@ -56,5 +60,6 @@ public class EditRobotController extends AddRobotController {
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
     }
+    
 
 }

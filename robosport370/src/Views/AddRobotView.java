@@ -27,7 +27,7 @@ import Controllers.AddRobotController;
 
 public class AddRobotView extends ScreenAdapter implements EventListener {
     
-    private final Stage stage;
+    protected final Stage stage;
     private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
     private static final TextureAtlas commonAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-commons.atlas"));
     
@@ -43,8 +43,11 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
     protected TextField teamField;
     protected TextArea forthField;
     protected Label titleLabel;
+    protected Table table;
+    protected  Label nameLabel;
+    protected  Label teamLabel;
 
-    private AddRobotController controller;
+    protected AddRobotController controller;
     
     /**
      * Set up the controller
@@ -103,8 +106,8 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         labelStyle.fontColor = Color.BLACK;
         labelStyle.font = font;
         
-        Label nameLabel = new Label("Name: ", labelStyle);
-        Label teamLabel = new Label("Team: ", labelStyle);
+        nameLabel = new Label("Name: ", labelStyle);
+        teamLabel = new Label("Team: ", labelStyle);
         Label forthLabel = new Label("Forth Code: ", labelStyle);
         Label pointLabel1 = new Label("Point 1: ", labelStyle);
         Label pointLabel2 = new Label("Point 2: ", labelStyle);
@@ -148,7 +151,7 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         health3.setUserObject(power3);
         
         //set up the table
-        Table table = new Table();
+        table = new Table();
         table.setFillParent(true);
         table.add(nameLabel).padBottom(40f); 
         table.add(nameField).padBottom(40f).width(600); 
@@ -233,8 +236,10 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
                     }
                     
                     this.controller.notifyDone(name, team, forth, movesLeft, firePower, health);
+                    return true;
             } else if (sender == this.backButton){
                     this.controller.notifyCancel();
+                    return true;
             }
         }
         return false;
