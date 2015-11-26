@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthUntilLoop implements ForthWord {
 

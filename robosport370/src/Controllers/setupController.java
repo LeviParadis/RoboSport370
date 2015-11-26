@@ -13,6 +13,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Interfaces.PickRobotsDelegate;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
@@ -21,6 +22,8 @@ import Views.ManageRobotView;
 import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
+import Views.teamCreationView;
+import Views.PickRobotsView;
 
 /**
  * @author Corey
@@ -28,7 +31,7 @@ import Views.mapView;
  * setupController handles the main menu and setup screens while interfacing with the models
  *
  */
-public class setupController {
+public class setupController implements PickRobotsDelegate {
 	private Music introMusic;
 	public int mapSize;
 	public boolean isTournament,isSimulation;
@@ -79,6 +82,13 @@ public List<Team> selectedTeams;
 	    manager.pushScreen(view);
 	}
 	
+	public void notifyNewTeam() {
+        PickRobotsController cont = new PickRobotsController(4, 4, this);
+        PickRobotsView view = new PickRobotsView(cont);
+        UIManager manager = UIManager.sharedInstance();
+        manager.pushScreen(view);
+    }
+	
 	/**
 	 * gets called when the Main Menu view selects exit
 	 */
@@ -99,17 +109,20 @@ public List<Team> selectedTeams;
 	/**
 	 * changes the screen when continue is pressed
 	 */
-	public void notifyAddTeam(){
-    if(this.selectedTeams.size() < 6){
-	         Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
+	//public void notifyAddTeam(){
+    
+	 
+	 /*if(this.selectedTeams.size() < 6){
+	         
+            Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
 	         Team newTeam = new Team(robotList, this.selectedTeams.size());
 	         this.selectedTeams.add(newTeam);
 	         
 	         System.out.println(this.selectedTeams);
     } else {
         System.out.println("already 6 teams");
-    }
-	}
+    }*/
+	//}
 
 public void notifyDeleteTeam(){
     if(!this.selectedTeams.isEmpty()){
@@ -144,6 +157,22 @@ public void notifyContinue(){
         }   
 	    gameVariables.mapSize = this.mapSize;
 	}
+
+@Override
+public void robotsListCancelled() {
+    UIManager manager = UIManager.sharedInstance();
+    manager.popScreen();
+}
+
+@Override
+public void robotListFinished(Queue<Robot> listSelected) {
+    
+    Team newTeam = new Team(listSelected, this.selectedTeams.size());
+    this.selectedTeams.add(newTeam);
+    
+    UIManager manager = UIManager.sharedInstance();
+    manager.popScreen();
+}
 
 
 }

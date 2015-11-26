@@ -1,6 +1,7 @@
 package Models;
 
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthPointerLiteral implements ForthWord {
 

@@ -88,18 +88,24 @@ public class JsonInterpreter {
             try {
                 JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
                 Robot newRobot = robotFromJSON(json);
+                
+                JSONObject json2 = (JSONObject) parser.parse(new FileReader("resources/RobotExample2.JSON"));
+                Robot newRobot2 = robotFromJSON(json2);
+                
+                JSONObject json3 = (JSONObject) parser.parse(new FileReader("resources/RobotExample3.JSON"));
+                Robot newRobot3 = robotFromJSON(json3);
+                
+                JSONObject json4 = (JSONObject) parser.parse(new FileReader("resources/RobotExample4.JSON"));
+                Robot newRobot4 = robotFromJSON(json4);
                 Queue<Robot> list = new LinkedList<Robot>();
                 list.add(newRobot);
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
+                list.add(newRobot2);
+                list.add(newRobot3);
+                list.add(newRobot4);
                 return list;
             } catch (IOException | ParseException e) {
                 return null;
             }
-
     }
     
     private static JSONArray createComparisonJSON(Integer minValueOrNull, Integer maxValueOrNull){

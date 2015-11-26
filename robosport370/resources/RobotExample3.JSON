@@ -1,8 +1,8 @@
 {
     "script" :  {
-        "serial" : 11111,
+        "serial" : 33333,
         "team" : "C3",
-        "name" : "Robot 1",
+        "name" : "Robot 3",
         "version" : 2,
         "matches" : 43,
         "wins" : 12,
@@ -35,7 +35,7 @@
                     },
                     {"word" :       {   "name" : "turn",
                                         "comment" : "( -- )",
-                                        "body" :  "1 1 move! 1 1 shoot!"
+                                        "body" :  "0 begin dup 1 swap 1 + dup 5 > until drop"
                                     }
                     }
                 ]

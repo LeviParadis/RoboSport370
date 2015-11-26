@@ -16,12 +16,12 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
 import Interpreters.ForthInterpreter;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
 import Models.Tile;
-import Models.ForthWord;
 import Models.Map;
 import Models.Map.DIRECTION;
 import Views.mapView;

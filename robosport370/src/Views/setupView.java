@@ -60,9 +60,9 @@ public class setupView extends ScreenAdapter {
 	private static final Integer menOpWidth = 190;
 	private static final Integer menOpHeight = 30;
 	private Sprite addTeam;
-		private Integer teamIndex;
-		private HashMap<Integer, hideableSprite> teamMap;
-		private myTextInputListener listener;
+	private Integer teamIndex;
+	private HashMap<Integer, hideableSprite> teamMap;
+	private myTextInputListener listener;
 	private Sprite deleteTeam;
 	private Sprite mapToggle;
 	private Sprite debugToggle;
@@ -271,7 +271,7 @@ this.updateTeamTable(new LinkedList<Team>());
     // TODO All of these funtions either do or may require functions call to the controller
     public void addTeam() {
         
-        controller.notifyAddTeam();
+        controller.notifyNewTeam();
         this.updateTeamTable(controller.selectedTeams);
 
     }
@@ -402,6 +402,15 @@ this.updateTeamTable(new LinkedList<Team>());
     	setupdecor.dispose();
         batch.dispose();
         this.stage.dispose();
+    }
+    
+    /**
+     * set this screen to receive buttons whenever it becomes active.
+     * Also, refresh the list of teams
+     */
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        this.updateTeamTable(controller.selectedTeams);   
     }
     
 }
