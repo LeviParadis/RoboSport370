@@ -5,18 +5,15 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
-import Controllers.AddRobotController;
 import Controllers.EditRobotController;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
