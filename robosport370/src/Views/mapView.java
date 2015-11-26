@@ -32,6 +32,7 @@ import com.badlogic.gdx.utils.Array;
 
 import Controllers.GameController;
 import Controllers.gameVariables;
+import Enums.GameSpeed;
 import Models.Robot;
 import Models.Team;
 import aurelienribon.tweenengine.Timeline;
@@ -163,7 +164,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     
     pauseBtn = new TextButton("Pause", buttonStyle);
     pauseBtn.addListener(this);
-    speedBtn = new TextButton("FastForward", buttonStyle);
+    speedBtn = new TextButton("1X", buttonStyle);
     speedBtn.addListener(this);
     
     Table master = new Table();
@@ -327,7 +328,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         //we want to keep the scroll bar at the bottom when we add new items
 
-        if(!controller.isPaused && (scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 500)){
+        if(!controller.isPaused() && (scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 500)){
             scrollResults.setScrollPercentY(1);
         }
         stage.draw();
@@ -504,7 +505,7 @@ public class mapView extends ScreenAdapter implements EventListener {
             //handle button presses
             TextButton sender = (TextButton)arg0.getTarget();
             if(sender == this.pauseBtn){
-                if(this.controller.isPaused){
+                if(this.controller.isPaused()){
                     this.controller.resume();
                     pauseBtn.setText("Pause");
                 } else {
@@ -512,7 +513,21 @@ public class mapView extends ScreenAdapter implements EventListener {
                     pauseBtn.setText("Play");
                 }
             } else if (sender == this.speedBtn){
-                System.out.println("fast fwd");
+                GameSpeed newSpeed = this.controller.switchGameSpeed();
+                switch(newSpeed){
+                    case GAME_SPEED_1X:
+                        this.speedBtn.setText("1X");
+                        break;
+                    case GAME_SPEED_2X:
+                        this.speedBtn.setText("2X");
+                        break;
+                    case GAME_SPEED_4X:
+                        this.speedBtn.setText("4X");
+                        break;
+                    case GAME_SPEED_16X:
+                        this.speedBtn.setText("16X");
+                        break;
+                }
             }
         }
         return false;

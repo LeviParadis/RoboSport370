@@ -139,11 +139,11 @@ public class ForthInterpreter {
             
             do{
                 try {
-                    Thread.sleep(controller.delayDuration);
+                    Thread.sleep(controller.getDelayDuration());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            } while(controller.isPaused);
+            } while(controller.isPaused());
             
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 

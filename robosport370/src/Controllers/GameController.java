@@ -14,6 +14,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import Enums.GameSpeed;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Interfaces.ForthWord;
@@ -35,18 +36,22 @@ public class GameController{
     
     private mapView view;
     
-    public boolean isPaused;
+    private boolean isPaused;
     
     
     private Thread executionThread;
     
 
+    /**
+     * setting this enum will automatically change the animation speed and the delay duration
+     */
+    private GameSpeed speedMultiplier;
     
     /** how long it takes for each animation to complete in milliseconds */
-    public int animationSpeed = 100;
+    private int animationSpeed = 100;
     
     /** how long it waits in between actions in milliseconds */
-    public int delayDuration = 500;
+    private int delayDuration = 500;
     
     /**
      * initializes the teams and ??sets their position on the map??
@@ -54,6 +59,8 @@ public class GameController{
      * @param hexSize the size of the map on one side
      */
     public GameController(List<Team> allTeams) throws RuntimeException{
+        
+        this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
         
         teams = new ArrayList<Team>();
 
@@ -130,7 +137,44 @@ public class GameController{
         }
         return livingNum;
     }
+   
+    public GameSpeed switchGameSpeed(){
+        switch(this.speedMultiplier){
+            case GAME_SPEED_1X:
+                this.speedMultiplier = GameSpeed.GAME_SPEED_2X;
+                this.delayDuration = 250;
+                this.animationSpeed = 50;
+                 break;
+            case GAME_SPEED_2X:
+                this.speedMultiplier = GameSpeed.GAME_SPEED_4X;
+                this.delayDuration = 125;
+                this.animationSpeed = 25;
+                break;
+            case GAME_SPEED_4X:
+                this.speedMultiplier = GameSpeed.GAME_SPEED_16X;
+                this.delayDuration = 30;
+                this.animationSpeed = 7;
+                break;
+            case GAME_SPEED_16X:
+                this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
+                this.delayDuration = 500;
+                this.animationSpeed = 100;
+                break;
+        }
+        return this.speedMultiplier;
+    }
+    
 
+    public int getDelayDuration(){
+        return this.delayDuration;
+    }
+    
+    /**
+     * @return whether the game should be paused
+     */
+    public boolean isPaused(){
+        return this.isPaused;
+    }
     
     /**
      * puts the game into a paused state
@@ -153,14 +197,10 @@ public class GameController{
         //TODO new EndController();
     }
     
+
     /**
-     * Changes the animation speed to a new one in milliseconds.
-     * @param newSpeed
+     * @return the animation speed
      */
-    public void setAnimationSpeed(int newSpeed){
-        this.animationSpeed = newSpeed;
-    }
-    
     public int getAnimationSpeed(){
         return this.animationSpeed;
     }
