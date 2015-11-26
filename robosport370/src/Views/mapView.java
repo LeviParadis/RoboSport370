@@ -258,8 +258,7 @@ public class mapView extends ScreenAdapter implements EventListener {
      */
     public void displayMessage(String newMessage, ConsoleMessageType type){  
         this.consoleList.add(newMessage);
-        this.consoleTypeList.add(type);
-        this.updateConsoleTable();   
+        this.consoleTypeList.add(type);  
     }
     
     private void updateConsoleTable(){
@@ -361,6 +360,8 @@ public class mapView extends ScreenAdapter implements EventListener {
             s.translate(-(mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
         }
     }
+    
+    private float counter = 0;
 
     public void render(float delta) {   
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -384,6 +385,12 @@ public class mapView extends ScreenAdapter implements EventListener {
         tweenManager.update(delta);
         projectile.draw(batch);
         batch.end();
+        
+        counter = counter + delta;
+        if(counter > 0.03){
+            this.updateConsoleTable();
+            counter = 0;
+        }
 
         stage.draw();
     }
