@@ -170,7 +170,7 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         Label searchTitle = new Label("Search", labelStyle);
         Label resultsTitle = new Label("Robot List", labelStyle);
         Label rosterTitle = new Label("Selected List", labelStyle);
-        Label infoTitle = new Label("Robot Info", labelStyle);
+        Label infoTitle = new Label("Robot Info (Hover Over Name)", labelStyle);
         
         ScrollPaneStyle scrollStyle = new ScrollPaneStyle(); 
         scrollStyle.vScrollKnob = skin.getDrawable("slider_back_ver");
@@ -188,9 +188,9 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         masterTable.add(rosterTitle);
         masterTable.add(infoTitle);
         masterTable.row();
-        masterTable.add(searchTable).width(200).padRight(50);
-        masterTable.add(scrollResults).width(200).height(400);
-        masterTable.add(scrollRoster).width(200);
+        masterTable.add(searchTable).width(200).padRight(80);
+        masterTable.add(scrollResults).width(200).height(400).padRight(80);
+        masterTable.add(scrollRoster).width(200).height(400);
         masterTable.add(robotInfoTable).width(200);
 
         
