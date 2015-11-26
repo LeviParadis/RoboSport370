@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -256,7 +257,7 @@ public class GameController{
      * to be played is on
      * @param robotNum the s/n of the robot who's turn it is
      */
-    public Robot getRobot(int teamNum, int robotNum){
+    public Robot getRobot(int teamNum, int robotNum) throws IndexOutOfBoundsException{
         return teams.get(teamNum).getTeamMember(robotNum);
     }
     
@@ -384,7 +385,16 @@ public class GameController{
      *         Will fail if the receiverNumber is invalid, if the receiver is destroyed, or if the receiver's mailbox is full
      */
     public boolean sendMail(Robot sender, int receiverNumber, ForthWord value){
-        return false;
+        int teamNum = (int) sender.getTeamNumber();
+        Team thisTeam = this.teams.get(teamNum);
+        try{
+            Robot reciever = thisTeam.getTeamMember(receiverNumber);
+            //attempt to send mail. Will return true if it worked, or false if it failed
+            return reciever.addMailFromMember((int)sender.getMemberNumber(), value);
+        } catch (IndexOutOfBoundsException e){
+            //if there is no team mate with the number requested, return false
+            return false;
+        }
     }
 
     
