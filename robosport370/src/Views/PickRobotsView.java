@@ -23,6 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
+import com.badlogic.gdx.utils.Align;
+
 import Controllers.PickRobotsController;
 import Models.Robot;
 
@@ -96,14 +98,14 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         selectionSkin.addRegions(commonAtlas);
         
         
-        //set up buttons
+        //set up button styles
         TextButtonStyle buttonStyle = new TextButtonStyle();
         buttonStyle.font = font;
         buttonStyle.up = skin.getDrawable("button_02");
         buttonStyle.down = skin.getDrawable("button_01");
         buttonStyle.disabled = inactiveSkin.getDrawable("button_01");
         
-        //set up text fields
+        //set up text field styles
         TextFieldStyle textFieldStyle = new TextFieldStyle();
         textFieldStyle.background= skin.getDrawable("textbox_01");
         textFieldStyle.font=font;
@@ -112,12 +114,12 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         textFieldStyle.selection = selectionSkin.getDrawable("transparent-black-30");
         
         
-        //set up labels
+        //set up label styles
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
         labelStyle.font = font;   
         
-        //set up checkboxes
+        //set up checkbox styles
         checkboxStyle = new CheckBoxStyle();
         checkboxStyle.checkboxOn = skin.getDrawable("checkbox_on");
         checkboxStyle.checkboxOff = skin.getDrawable("checkbox_off");
@@ -129,7 +131,6 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         
         //set up the title
         String titleString;
-        
         if(controller.getMaxSelectable() == 1){
             titleString = "Select a Robot"; 
         } else if(controller.getMinimumSelectable() == controller.getMinimumSelectable()){
@@ -158,6 +159,8 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         searchButton.setSize(500, 50);
         searchButton.addListener(this);
         
+        
+        //set up tables
         Table masterTable = new Table();
         masterTable.setFillParent(true);
         
@@ -172,17 +175,19 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         Label rosterTitle = new Label("Selected List", labelStyle);
         Label infoTitle = new Label("Robot Info (Hover Over Name)", labelStyle);
         
+        //set up scroll bar style
         ScrollPaneStyle scrollStyle = new ScrollPaneStyle(); 
         scrollStyle.vScrollKnob = skin.getDrawable("slider_back_ver");
         scrollStyle.hScrollKnob = skin.getDrawable("slider_back_hor");
-        
-        
-        
+
+        //put lists in scroll panes, so we can scroll to see all entries
         ScrollPane scrollResults = new ScrollPane(resultsTable, scrollStyle);
         scrollResults.setFadeScrollBars(false);
         ScrollPane scrollRoster = new ScrollPane(rosterTable, scrollStyle);
         scrollRoster.setFadeScrollBars(false);
         
+        //set up the master table, that contains all other tables
+        //gives us our 4 column layout
         masterTable.add(searchTitle);
         masterTable.add(resultsTitle);
         masterTable.add(rosterTitle);
@@ -193,7 +198,7 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         masterTable.add(scrollRoster).width(200).height(400);
         masterTable.add(robotInfoTable).width(200);
 
-        
+        //set up search filter column
         Label nameSearchLabel = new Label("Robot Name:", labelStyle);
         Label teamSearchLabel = new Label("Team Name:", labelStyle); 
         Label minWinsSearchLabel = new Label("Min Wins:", labelStyle); 
@@ -249,6 +254,7 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         stage.addActor(confirmButton);
         stage.addActor(masterTable);
         
+        //refresh list once, to update the confirm button's state in case it should be disabled
         this.refreshRosterList();
         
     }
@@ -266,61 +272,88 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
 
     @Override
     /**
-     * We use this to handle button presses
+     * We use this to handle button presses, check box marks, and other events
      */
     public boolean handle(Event arg0) {
         if(arg0.getTarget() instanceof CheckBox){
+            //handle check box marks
             CheckBox checked = (CheckBox)arg0.getTarget();
             boolean isChecked = checked.isChecked();
-            
             Robot selectedRobot = (Robot)arg0.getTarget().getUserObject();
-            if(checked.getParent() == this.resultsTable){
-                if(isChecked){
-                    if(rosterList.size() < controller.getMaxSelectable()){
-                        rosterList.add(selectedRobot);
-                    } else {
-                        checked.setChecked(false);
-                    }
-                } else {
-                    rosterList.remove(selectedRobot);
-                }
-            } else {
-                rosterList.remove(selectedRobot);
-            }
-            refreshRosterList();
-            refreshResultsList();
+            
+            handleCheckBoxEvent(checked, isChecked, selectedRobot);
 
         } else  if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
+            //handle button presses
             TextButton sender = (TextButton)arg0.getTarget();
             if(sender == this.confirmButton){
                 this.controller.notifyConfirm(this.rosterList);     
             } else if (sender == this.backButton){
                 this.controller.notifyCancel();
             } else if (sender == this.searchButton){
-                String name = nameSearchField.getText();
-                String team = teamSearchField.getText();
-                String minWins = minWinsSearchField.getText();
-                String maxWins = maxWinsSearchField.getText();
-                String minLosses = minLossesSearchField.getText();
-                String maxLosses = maxLossesSearchField.getText();
-                String minGamesPlayed = minGamesPlayedSearchField.getText();
-                String maxGamesPlayed = maxGamesPlayedSearchField.getText();
-                boolean allVersions = versionsSearchBox.isChecked();
-                try{
-                    this.robotList = this.controller.notifySearch(name, team, minWins, maxWins, minLosses, maxLosses, minGamesPlayed, maxGamesPlayed, !allVersions);
-                } catch (NumberFormatException e){
-                    JOptionPane.showMessageDialog(null, "Min and Max Values Must be Integers");
-                }
-                refreshResultsList();
+                handleSearchButtonPress();
             }
         } else if(arg0.getTarget() instanceof Label && arg0.getTarget().getUserObject() instanceof Robot){
+            //handle label hovers
             Robot currentRobot = (Robot)arg0.getTarget().getUserObject();
             hoveredRobot = currentRobot;
             refreshInfoList();
         }
         return false;
     }
+
+
+    /**
+     * Called when the user presses the search button. 
+     * Will retrieve new robots from the server, and update the view
+     */
+    protected void handleSearchButtonPress() {
+        String name = nameSearchField.getText();
+        String team = teamSearchField.getText();
+        String minWins = minWinsSearchField.getText();
+        String maxWins = maxWinsSearchField.getText();
+        String minLosses = minLossesSearchField.getText();
+        String maxLosses = maxLossesSearchField.getText();
+        String minGamesPlayed = minGamesPlayedSearchField.getText();
+        String maxGamesPlayed = maxGamesPlayedSearchField.getText();
+        boolean allVersions = versionsSearchBox.isChecked();
+        try{
+            this.robotList = this.controller.notifySearch(name, team, minWins, maxWins, minLosses, maxLosses, minGamesPlayed, maxGamesPlayed, !allVersions);
+        } catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Min and Max Values Must be Integers");
+        }
+        refreshResultsList();
+    }
+
+
+    /**
+     * Function to handle check box checks. Will update the data models accordingly, and refresh views
+     * @param checked the box that was checked
+     * @param isChecked the check state of the box
+     * @param selectedRobot the robot associated with this check box
+     */
+    protected void handleCheckBoxEvent(CheckBox checked, boolean isChecked, Robot selectedRobot) {
+        if(checked.getParent() == this.resultsTable){
+            if(isChecked){
+                if(rosterList.size() < controller.getMaxSelectable()){
+                    rosterList.add(selectedRobot);
+                } else {
+                    checked.setChecked(false);
+                }
+            } else {
+                rosterList.remove(selectedRobot);
+            }
+        } else {
+            rosterList.remove(selectedRobot);
+        }
+        refreshRosterList();
+        refreshResultsList();
+    }
     
+    /**
+     * called when the list of robots needs to be updated
+     * Will be called when the user performs does a new search
+     */
     public void refreshResultsList(){
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
@@ -330,12 +363,16 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         Iterator<Robot> it = this.robotList.iterator();
         
         while(it.hasNext()){
+          //set show the robot's name and a check box for each robot in the list
             Robot next = it.next();
             Label nameLabel = new Label(next.getName(), labelStyle);
             CheckBox box = new CheckBox("", checkboxStyle);
+            
             if(this.rosterList.contains(next)){
+                //if the robot is already in the roster, check the box
                 box.setChecked(true);
             } else if( rosterList.size() >= this.controller.getMaxSelectable()){
+                //if we've added the max already, disable all unchecked boxes
                 box.setDisabled(true);
             }
             
@@ -349,8 +386,11 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         }
     }
     
+    /**
+     * called when the current roster list needs to be updated
+     * Will be called when the user selects or removes a robot from the list
+     */
     public void refreshRosterList(){
-                
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
         labelStyle.font = new BitmapFont();   
@@ -359,8 +399,11 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         Iterator<Robot> it = this.rosterList.iterator();
         
         while(it.hasNext()){
+            //set show the robot's name and a check box for each robot in the list
             Robot next = it.next();
             Label nameLabel = new Label(next.getName(), labelStyle);
+            nameLabel.addListener(this);
+            nameLabel.setUserObject(next);
             CheckBox box = new CheckBox("", checkboxStyle);
             box.setUserObject(next);
             box.setChecked(true);
@@ -375,18 +418,22 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         
     }
     
+    /**
+     * Called when the robot's info needs to be updated. Will be called when the user hovers over a new robot
+     */
     public void refreshInfoList(){
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
         labelStyle.font = new BitmapFont();
         
         this.robotInfoTable.clear();
-        Label nameInfoLabel = new Label("Robot Name:", labelStyle);
-        Label winsInfoLabel = new Label("Robot Total Wins:", labelStyle);
-        Label lossesInfoLabel = new Label("Robot Total Losses:", labelStyle);
-        Label healthInfoLabel = new Label("Robot Starting Health:", labelStyle);
-        Label powerInfoLabel = new Label("Robot Damage Per Shot:", labelStyle);
-        Label movementInfoLabel = new Label("Robot Moves Per Turn:", labelStyle);
+        Label nameInfoLabel = new Label("Name:", labelStyle);
+        nameInfoLabel.setAlignment(Align.left);
+        Label winsInfoLabel = new Label("Total Wins:", labelStyle);
+        Label lossesInfoLabel = new Label("Total Losses:", labelStyle);
+        Label healthInfoLabel = new Label("Starting Health:", labelStyle);
+        Label powerInfoLabel = new Label("Damage Per Shot:", labelStyle);
+        Label movementInfoLabel = new Label("Moves Per Turn:", labelStyle);
         
         Label nameRobotLabel = new Label(hoveredRobot.getName(), labelStyle);
         Label winsRobotLabel = new Label(String.valueOf(hoveredRobot.getStats().getWins()), labelStyle);

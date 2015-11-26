@@ -43,12 +43,19 @@ public class ManageRobotController implements PickRobotsDelegate{
     }
 
     @Override
+    /**
+     * This method lets us know the user canceled out of the robot picker, so we pop back to the previous view
+     */
     public void robotsListCancelled() {
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
     }
 
     @Override
+    /**
+     * This method lets us know the user has selected a robot to edit.
+     * We pop back to the previous view, and then push a new edit view to edit it
+     */
     public void robotListFinished(Queue<Robot> listSelected) {
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
