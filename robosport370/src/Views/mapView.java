@@ -13,10 +13,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -64,6 +66,15 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     private Texture projectileTexture;
     private Sprite projectile;
+    
+    // For our explosion animation
+    private Animation explosionAnimation;
+    private TextureAtlas explosionAtlas;
+    private TextureRegion[] explosionFrames;
+    private TextureRegion currentExplosionFrame;
+    private Sprite explosionPos;
+    
+    float stateTime;
 
     // Camera settings
     private int cameraWidth;
@@ -132,6 +143,21 @@ public class mapView extends ScreenAdapter implements EventListener {
         projectile = new Sprite(projectileTexture);
         projectile.setPosition(5000f, 5000f);
 
+        // Setting up the explosion animation        
+        explosionAtlas = new TextureAtlas(Gdx.files.internal("assets/explosion/explosion.pack"),Gdx.files.internal("assets/explosion/"));
+        explosionFrames = new TextureRegion[12];
+        
+        for(int i = 0; i < 12; i++) {
+        	explosionFrames[i] = explosionAtlas.createSprite("explosion", i);
+        }
+        
+        explosionAnimation = new Animation(0.025f, explosionFrames);
+        stateTime = 0f;
+        
+        explosionPos = new Sprite();
+        explosionPos.setX(5000f);
+        explosionPos.setY(5000f);
+        
         // Setting up the camera based on map size
         mapSize = gameVariables.mapSize; 
         mapDiameter = mapSize * 2 - 1;
@@ -143,7 +169,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         cam.position.set(3 * sizeX * mapSize / 4, 5, 0);
         cam.update();
 
-        // Creates out robots
+        // Creates our robots
         this.teamList = new ArrayList<List<Sprite>>();
 
         Iterator<Team> it = teamsInMatch.iterator();
@@ -382,6 +408,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         batch.begin();
         renderTiles();
         renderRobots();
+        renderExplosion();
         renderTesting();
         if(timelineTweenQueue.peek() != null) {
             if(timelineTweenQueue.peek().getTimeline().isFinished()) {
@@ -401,6 +428,12 @@ public class mapView extends ScreenAdapter implements EventListener {
         }
 
         stage.draw();
+    }
+    
+    public void renderExplosion() {
+    	stateTime += Gdx.graphics.getDeltaTime();
+    	currentExplosionFrame = explosionAnimation.getKeyFrame(stateTime, true);
+    	batch.draw(currentExplosionFrame, explosionPos.getX(), explosionPos.getY());
     }
 
     public void renderTesting() {
@@ -422,9 +455,6 @@ public class mapView extends ScreenAdapter implements EventListener {
         if(Gdx.input.isKeyJustPressed(Keys.NUM_6)) {
             moveRobot(1, 1, 6);
         }
-        if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-            fireShot(1, 1, 3, 1);
-        }
     	if(Gdx.input.isKeyJustPressed(Keys.Q)) {
     		fireShot(1, 1, 1, 1);
     	}
@@ -442,6 +472,9 @@ public class mapView extends ScreenAdapter implements EventListener {
     	}
     	if(Gdx.input.isKeyJustPressed(Keys.D)) {
     		fireShot(1, 1, 13, 3);
+    	}
+    	if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+    		destroyRobot(1, 1);
     	}
     }
 
@@ -557,7 +590,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         if(direction == 4) {
             moveY = -sizeY;
         }
-        AudibleTimeline aTimeline = new AudibleTimeline();
+        AudibleTimeline aTimeline = new AudibleTimeline(this);
         aTimeline.setTimeline(Timeline.createSequence()
                 .push(Tween.to(teamList.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
         timelineTweenQueue.add(aTimeline);
@@ -588,7 +621,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     	xTranslate = (float) ((float) 1.1 * sizeX * range * Math.cos(theta) - 2);
     	yTranslate = (float) ((float) sizeY * range * Math.sin(theta) + 5);
     	
-    	AudibleTimeline aTimeline = new AudibleTimeline();
+    	AudibleTimeline aTimeline = new AudibleTimeline(this);
     	aTimeline.setProjectile(projectile);
     	aTimeline.setSource(teamList.get(team).get(robot));
     	Timeline t = Timeline.createSequence()
@@ -599,7 +632,25 @@ public class mapView extends ScreenAdapter implements EventListener {
     }
     
     public void destroyRobot(int team, int robot) {
-    	
+    	AudibleTimeline aTimeline = new AudibleTimeline(this);
+    	aTimeline.setSource(teamList.get(team).get(robot));
+    	aTimeline.setExplosion(explosionPos);
+    	Timeline t = Timeline.createSequence().delay(1f);
+    	aTimeline.setTimeline(t);
+    	timelineTweenQueue.add(aTimeline);
+    }
+    
+    public void setExplosionPosition(Float x, Float y) {
+    	explosionPos.setX(x);
+    	explosionPos.setY(y);
+    }
+    
+    public Float getExplosionXPos() {
+    	return explosionPos.getX();
+    }
+    
+    public Float getExplosionYPos() {
+    	return explosionPos.getY();
     }
 
     @Override
