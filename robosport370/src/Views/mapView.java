@@ -84,6 +84,10 @@ public class mapView extends ScreenAdapter {
     private Table topTable;
     private LabelStyle labelStyle;
     private ScrollPane scrollResults;
+    private Label nameLabel;
+    private Label teamLabel;
+    private Label turnLabel;
+    private Label numLabel;
     
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -179,23 +183,55 @@ public class mapView extends ScreenAdapter {
     labelStyle.font = new BitmapFont();
     
     Label titleLabel = new Label("Current Robot Information: ", labelStyle);
-    Label nameLabel = new Label("Name: ", labelStyle);
-    Label teamLabel = new Label("Team: ", labelStyle);
+    Label nameTitle = new Label("Name: ", labelStyle);
+    Label teamTitle = new Label("Team: ", labelStyle);
+    Label turnTitle = new Label("Turn: ", labelStyle);
+    Label numTitle = new Label("Number: ", labelStyle);
+    nameLabel = new Label("", labelStyle);
+    teamLabel = new Label("", labelStyle);
+    turnLabel = new Label("", labelStyle);
+    numLabel = new Label("", labelStyle);
     bottom.add(titleLabel);
     bottom.row();
+    bottom.add(nameTitle);
     bottom.add(nameLabel);
     bottom.row();
+    bottom.add(teamTitle);
     bottom.add(teamLabel);
-    
-    
-    
+    bottom.row();
+    bottom.add(numTitle);
+    bottom.add(numLabel);
+    bottom.row();
+    bottom.add(turnTitle);
+    bottom.add(turnLabel);
     }
     
+    /**
+     * used to update the console logger
+     * newMessage the latest message to display
+     */
     public void displayMessage(String newMessage){   
         
         Label messageLabel = new Label(newMessage, labelStyle);
         topTable.add(messageLabel);
-        topTable.row();    }
+        topTable.row();   
+    }
+    
+    /**
+     * used to update the current robot's info on the screen
+     * @param robot the robot that is running it's turn
+     */
+    public void updateRobotInfo(Robot robot, int turnNum){
+        nameLabel.setText(robot.getName());
+        long teamNum = robot.getTeamNumber() + 1;
+        teamLabel.setText("Team " + teamNum);
+        numLabel.setText("" + robot.getMemberNumber());
+        if(turnNum == 0){
+            turnLabel.setText("init");
+        } else {
+            turnLabel.setText("" + turnNum);
+        }
+    }
     
     public void createRobots(Team teamToAdd){
     	    Queue<Robot> robotList = teamToAdd.getAllRobots();
@@ -285,7 +321,7 @@ public class mapView extends ScreenAdapter {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         //we want to keep the scroll bar at the bottom when we add new items
 
-        if(scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 450){
+        if(scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 500){
             scrollResults.setScrollPercentY(1);
         }
         stage.draw();

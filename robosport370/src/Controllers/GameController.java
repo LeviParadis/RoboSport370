@@ -87,7 +87,7 @@ public class GameController{
                 int i = 1;
                 while(teamsAlive() > 1){
                     System.out.println("turn: " + i);
-                    executeNextTurn();
+                    executeNextTurn(i);
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
@@ -108,6 +108,7 @@ public class GameController{
             Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
             while(robotIt.hasNext()){
                 Robot nextRobot = robotIt.next();
+                view.updateRobotInfo(nextRobot, 0);
                 try {
                     ForthInterpreter.initRobot(nextRobot, this);
                 } catch (ForthRunTimeException | ForthParseException e) {
@@ -233,7 +234,7 @@ public class GameController{
     /**
      * executes a round of turns
      */
-    public void executeNextTurn(){
+    public void executeNextTurn(int turnNum){
         Iterator<Team> teamIt = this.teams.iterator();
         while(teamIt.hasNext()){
             Team nextTeam = teamIt.next();
@@ -241,6 +242,7 @@ public class GameController{
             Iterator<Robot> robotIt = robotList.iterator();
             while(robotIt.hasNext()){
                 Robot nextRobot = robotIt.next();
+                view.updateRobotInfo(nextRobot, turnNum);
                 try {
                     ForthInterpreter.executeTurn(nextRobot, this);
                 } catch (ForthRunTimeException | ForthParseException e) {
