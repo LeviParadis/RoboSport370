@@ -10,6 +10,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import Views.AddRobotView;
 import Views.mainMenuView;
 import Views.setupView;
+import Views.endView;
 
 public class UIManager extends Game {
     

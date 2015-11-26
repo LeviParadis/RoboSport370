@@ -1,159 +1,161 @@
 package Views;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+
 import Controllers.EndController;
+import Models.Team;
+import Models.Robot;
 
-/**
- * A view for end screen
- * @author Matt
- *
- */
-public class endView extends ScreenAdapter {
-    //controller that called end view
-    final EndController controller;
-    
-    // Constant variables for determining menu option coordinates and dimensions
-    private static final Integer menOpSrcX = 0; //45
-    private static final Integer menOpSrcY = 36;
-    private static final Integer menOpWidth = 150;
-    private static final Integer menOpHeight = 45;
-    
-    // To store the screen dimensions
-    private Integer SCREEN_WIDTH;
-    private Integer SCREEN_HEIGHT;
-    
-    // For ease of use when passing to the controller
-    //private static final int REMATCH = 1;
-    private static final int MAIN_MENU = 1;
-    //private static final int DISPLAY_RESULTS = 3;
-    private static final int EXIT = 2;
-    
-    // For rendering sprites
-    private SpriteBatch batch;
-    
-    // Art for the main menu
-    //private Texture menuArtTexture;
-    //private Sprite menuArtSprite;
-    
-    // Art for the menu options
-    private Texture menuOptionsTexture;
-    //private Sprite menuOptionsRematch;
-    private Sprite menuOptionsMainMenu;
-    //private Sprite menuOptionsDisplayResults;
-    private Sprite menuOptionsExit;
-    
-    // For tracking the active option
-    private spriteMenuHandler menu;
-    
-    private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
-    
-    /**
-     * Constructor for EndView
-     * @param cont the controller creating this view
-     */
-    public endView(final EndController cont) {
-        controller = cont;
+import java.util.Iterator;
+import java.util.List;
 
-        SCREEN_WIDTH = Gdx.graphics.getWidth();
-        SCREEN_HEIGHT = Gdx.graphics.getHeight();
-        
-        batch = new SpriteBatch();
-        
-        //menuArtTexture = new Texture("assets/mainMenu/menu_title.png");
-        //menuArtSprite = new Sprite(menuArtTexture, 280, 126);
-        
-        //menuCreditTexture = new Texture("assets/mainMenu/menu_credits.png");
-        //menuCreditSprite = new Sprite(menuCreditTexture, 295, 75);
-        
-        menuOptionsTexture = new Texture("assets/endMenu/endMenuOptions.png");
-        menuOptionsMainMenu = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*0, menOpWidth, menOpHeight);
-        menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*2, menOpWidth, menOpHeight);
-        //menuOptionsDisplayResults = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*4, menOpWidth, menOpHeight);
-        //menuOptionsExit = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY*6, menOpWidth, menOpHeight
-        
-        
-        menuOptionsMainMenu.setPosition(SCREEN_WIDTH*0.5f-menuOptionsMainMenu.getWidth()/2, SCREEN_HEIGHT*0.45f-30*1f);
-        menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsMainMenu.getWidth()/2, SCREEN_HEIGHT*0.45f-30*2f);
-        //menuOptionsDisplayResults.setPosition(SCREEN_WIDTH*0.5f-menuOptionsRematch.getWidth()/2, SCREEN_HEIGHT*0.45f-30*3f);
-        //menuOptionsExit.setPosition(SCREEN_WIDTH*0.5f-menuOptionsRematch.getWidth()/2, SCREEN_HEIGHT*0.45f-30*4f);
-        
-        // Add in the order for the associated constant variables
-        menu = new spriteMenuHandler(menuOptionsMainMenu);
-        menu.addSprite(menuOptionsExit);
-        //menu.addSprite(menuOptionsDisplayResults);
-        //menu.addSprite(menuOptionsExit);
-    }
+public class endView  extends ScreenAdapter  implements EventListener{
     
+    private EndController controller;
+    private final Stage stage;
+    
+    private TextButton mainMenuButton;
+    private TextButton displayResultsButton;
+    private TextButton exitButton;
+    
+    private List<Team> teamsList;
+
     /**
-     * Checks the relevant key presses and acts appropriately
+     * Set up the buttons for the view
+     * @param controller the manage robot controller to handle the button presses
      */
-    public void handleKeyPresses() {
-        // Checks for which keys have been pressed
-        if(Gdx.input.isKeyJustPressed(Keys.DOWN)) {
-            menu.down();
-        }
+    public endView(EndController controller, List<Team> teams) {
+        this.controller = controller;
+        this.teamsList = teams;
         
-        if(Gdx.input.isKeyJustPressed(Keys.UP)) {
-            menu.up();
-        }
-        if(Gdx.input.isKeyJustPressed(Keys.ENTER)) {
-            switch(menu.getIndex()) {
-            //case REMATCH:
-                //controller.notifyTournament();
-              //  break;
-            case MAIN_MENU:
-                controller.notifyMainMenu();
-                break;
-            //case DISPLAY_RESULTS:
-                //controller.notifyRes();
-              //  break;
-            case EXIT:
-                controller.notifyExit();
-                break;
+        int width = Gdx.graphics.getWidth();
+        int height = Gdx.graphics.getHeight();
+        
+        //set up the stage
+        stage = new Stage();        
+      
+        TextureAtlas blueAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
+        BitmapFont font = new BitmapFont();
+        BitmapFont fontTitle = new BitmapFont();
+        Skin skin = new Skin();
+        skin.addRegions(blueAtlas);
+        
+        //set up the buttons
+        
+        TextButtonStyle textButtonStyle = new TextButtonStyle();
+        textButtonStyle.font = font;
+        textButtonStyle.up = skin.getDrawable("button_02");
+        textButtonStyle.down = skin.getDrawable("button_01");
+        
+        mainMenuButton = new TextButton("Main Menu", textButtonStyle);
+        mainMenuButton.addListener((EventListener) this);
+        
+        displayResultsButton = new TextButton("Display Results", textButtonStyle);
+        displayResultsButton.addListener((EventListener) this);
+        
+        exitButton = new TextButton("Exit Game", textButtonStyle);
+        exitButton.addListener((EventListener) this);
+        
+        //Labels for stats and title
+        LabelStyle titleStyle = new LabelStyle();
+        titleStyle.fontColor = Color.BLACK;
+        titleStyle.font = fontTitle;
+        
+        
+        LabelStyle labelStyle = new LabelStyle();
+        labelStyle.fontColor = Color.BLACK;
+        labelStyle.font = font;
+        
+        Label title = new Label("GAME OVER", titleStyle);
+        title.setFontScaleX(2);
+        title.setFontScaleY(3);
+        title.setPosition(width/2-87, height-50);
+        //Label winningTeam = new Label("Winning Team", labelStyle);
+        //Label survivors = new Label("Surviving Robots: ", labelStyle);
+        //Label damageInflicted = new Label("Winner: ", labelStyle);
+        
+        //need access to team list from gameController
+        Table statsTable = new Table();
+        Iterator<Team> tIt = teamsList.iterator();
+        
+        while (tIt.hasNext()){
+            Team currentTeam = tIt.next();
+            Label teamName = new Label(currentTeam.getTeamName(), labelStyle);
+            Table teamTable = new Table();
+            teamTable.add(teamName);
+            
+            Iterator<Robot> rIt = currentTeam.getAllRobots().iterator();
+            while (rIt.hasNext()) {
+                Robot currentRobot = rIt.next();
+                Label robotName = new Label(currentRobot.getName(), labelStyle);
+                if (currentRobot.isAlive()){
+                    robotName.setColor(Color.GREEN);
+                }
+                else {
+                    robotName.setColor(Color.RED);
+                }
+                teamTable.row();
+                teamTable.add(robotName);
             }
+            statsTable.add(teamTable);    
         }
+        
+        //set up the table
+        Table table = new Table();
+        table.setFillParent(true);
+        //table.add(displayResultsButton).width(500).height(75).padBottom(25);
+        //table.row();
+        table.add(statsTable);
+        table.add(mainMenuButton).width(500).height(75).padBottom(25);
+        table.row();
+        table.add(exitButton).width(500).height(75).padBottom(25);
+        stage.addActor(title);
+        stage.addActor(table);
     }
-    
-    /**
-     * Called every frame
-     */
-    @Override
+
     public void render(float delta) {   
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        batch.begin();
-        
-        handleKeyPresses();
-
-        // Draw the title screen at the middle of the screen, centered
-        //menuArtSprite.setPosition(SCREEN_WIDTH*0.5f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.5f);
-        //menuArtSprite.draw(batch);
-        
-        // Draw the credits at the bottom right of the screen
-        //menuCreditSprite.setPosition(SCREEN_WIDTH-menuCreditSprite.getWidth(), 0f);
-        //menuCreditSprite.draw(batch);
-        
-        // Draw the options
-        //menuOptionsRematch.draw(batch);
-        menuOptionsMainMenu.draw(batch);
-        //menuOptionsDisplayResults.draw(batch);
-        menuOptionsExit.draw(batch);
-        
-        //font.draw(batch, "GAME OVER", SCREEN_WIDTH*0.55f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.9f);
-        //font.draw(batch, "MAIN MENU", SCREEN_WIDTH*0.55f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.8f);
-       // font.draw(batch, "EXIT", SCREEN_WIDTH*0.55f-menuArtSprite.getWidth()/2, SCREEN_HEIGHT*0.7f);
-        
-        batch.end();
+        stage.draw();
+    }
+    
+    @Override
+    /**
+     * We use this to handle button presses
+     */
+    public boolean handle(Event arg0) {
+        if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
+            TextButton sender = (TextButton)arg0.getTarget();
+           if(sender == mainMenuButton){
+               controller.notifyMainMenuPressed();
+           } else if (sender == displayResultsButton){
+               controller.notifyDisplayResultsButtonPressed();
+           } else if (sender == exitButton){
+               controller.notifyExitButtonPressed();
+           }
+        }
+        return false;
+    }
+    
+    /**
+     * set this screen to receive buttons whenever it becomes active
+     */
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
     }
     
     /**
@@ -161,20 +163,7 @@ public class endView extends ScreenAdapter {
      */
     @Override
     public void dispose() {
-        //menuArtTexture.dispose(); 
-        //menuCreditTexture.dispose();
-        menuOptionsTexture.dispose();
-        
-        batch.dispose();
+        this.stage.dispose();
     }
-    
-    public static void main(String[] args) {
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "RobotSport370";
-        config.height = 800;
-        config.width = 1280;
-        new LwjglApplication(new EndController(), config);
-        
-        
-    }
+ 
 }

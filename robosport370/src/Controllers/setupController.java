@@ -24,6 +24,8 @@ import Views.setupView;
 import Views.mapView;
 import Views.teamCreationView;
 import Views.EditTeamView;
+import Views.endView;
+
 
 /**
  * @author Corey
@@ -93,7 +95,11 @@ public List<Team> selectedTeams;
 	 * gets called when the Main Menu view selects exit
 	 */
 	public void notifyExit(){
-	    Gdx.app.exit();
+	    //Gdx.app.exit();
+	    EndController cont = new EndController();
+	    endView view = new endView(cont, this.selectedTeams);
+	    UIManager manager = UIManager.sharedInstance();
+	    manager.pushScreen(view);
 	}
 	/**
 	 * gets called when Setup view selects return
