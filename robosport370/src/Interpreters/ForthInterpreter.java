@@ -148,7 +148,7 @@ public class ForthInterpreter {
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
             
-            controller.displayNewAction(nextItem.toString(), false);
+            controller.displayNewAction(nextItem.toString());
             
             //find what kind of word it is, and handle appropriately
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
@@ -336,7 +336,7 @@ public class ForthInterpreter {
                 ForthSystemCommands.identify(forthStack, robot, controller);  
                 break;
             case MAIL_SEND:
-                ForthSystemCommands.sendMail(forthStack);
+                ForthSystemCommands.sendMail(forthStack, robot, controller);
                 break;
             case MAIL_CHECK:
                 ForthSystemCommands.checkMail(forthStack, robot);

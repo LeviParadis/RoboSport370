@@ -99,7 +99,7 @@ public class ForthSystemCommands {
         ForthWord first;
         first = forthStack.pop();
         String consoleString = first.forthStringEncoding();
-        controller.displayNewAction("pringing message: " + consoleString, false);
+        controller.displayNewAction("pringing message: " + consoleString);
         System.out.println(consoleString);
     }
 
@@ -131,14 +131,14 @@ public class ForthSystemCommands {
      * @param forthStack     the stack for the currently running forth program
      * @throws ForthRunTimeException     thrown if an expected value is found that leaves the program unrunnable
      */
-    protected static void sendMail(Stack<ForthWord> forthStack) throws ForthRunTimeException {
+    protected static void sendMail(Stack<ForthWord> forthStack, Robot sender, GameController controller) throws ForthRunTimeException {
         ForthWord first;
         ForthWord second;
         first = forthStack.pop();
         second = forthStack.pop();
         if((first instanceof ForthIntegerLiteral || first instanceof ForthBoolLiteral || first instanceof ForthStringLiteral) && second instanceof ForthIntegerLiteral){
-            int memberNumber = (int)((ForthIntegerLiteral)second).getValue();
-           // TODO: After game controller is set up
+            int recieverNumber = (int)((ForthIntegerLiteral)second).getValue();
+            controller.sendMail(sender, recieverNumber, first);
         } else {
             throw new ForthRunTimeException("attempting to send mailbox without the proper stack format");
         }

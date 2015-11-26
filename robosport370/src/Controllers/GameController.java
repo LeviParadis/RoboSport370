@@ -138,6 +138,11 @@ public class GameController{
         return livingNum;
     }
    
+    /**
+     * Called when the user pushed the fast forward button. 
+     * Finds the current speed state, and switches to the next one
+     * @return the new state, for updating ui elements
+     */
     public GameSpeed switchGameSpeed(){
         switch(this.speedMultiplier){
             case GAME_SPEED_1X:
@@ -381,12 +386,12 @@ public class GameController{
      * Robots must be on the same team, and the forth word must be either an int, a string, or a boolean
      * Called by the forth interpreter
      * @param sender  the robot sending the message
-     * @param receiver the robot receiving the message
+     * @param receiverNumber the member number of the robot to recieve the message (on the same team)
      * @param value the value to send
      * @return a bool indicating whether the operation was a success. 
-     *         Will fail if robots aren't on the same team, if the receiver is destroyed, or if the receiver's mailbox is full
+     *         Will fail if the receiverNumber is invalid, if the receiver is destroyed, or if the receiver's mailbox is full
      */
-    public boolean sendMail(Robot sender, Robot receiver, ForthWord value){
+    public boolean sendMail(Robot sender, int receiverNumber, ForthWord value){
         return false;
     }
 
@@ -397,7 +402,7 @@ public class GameController{
      * @param newActionMessage the latest action being run by a robot
      * @param lowPriority a flag indicating how important the message is. Low priority messages could be only shown in debug mode, for example
      */
-    public void displayNewAction(String newActionMessage, boolean lowPriority){
+    public void displayNewAction(String newActionMessage){
         this.view.displayMessage(newActionMessage);
     }
     
