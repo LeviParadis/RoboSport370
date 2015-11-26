@@ -231,7 +231,7 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
                         health++;
                     }
                     
-                    this.controller.notifyAddRobot(name, team, forth, movesLeft, firePower, health);
+                    this.controller.notifyDone(name, team, forth, movesLeft, firePower, health);
             } else if (sender == this.backButton){
                     this.controller.notifyCancel();
             }
