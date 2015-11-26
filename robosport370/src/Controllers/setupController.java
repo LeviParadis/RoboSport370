@@ -13,7 +13,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import Interfaces.ListRobotsDelegate;
+import Interfaces.PickRobotsDelegate;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
@@ -23,7 +23,7 @@ import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
 import Views.teamCreationView;
-import Views.EditTeamView;
+import Views.PickRobotsView;
 import Views.endView;
 
 
@@ -33,7 +33,7 @@ import Views.endView;
  * setupController handles the main menu and setup screens while interfacing with the models
  *
  */
-public class setupController implements ListRobotsDelegate {
+public class setupController implements PickRobotsDelegate {
 	private Music introMusic;
 	public int mapSize;
 	public boolean isTournament,isSimulation;
@@ -85,8 +85,8 @@ public List<Team> selectedTeams;
 	}
 	
 	public void notifyNewTeam() {
-        EditTeamController cont = new EditTeamController(4, 4, this);
-        EditTeamView view = new EditTeamView(cont);
+        PickRobotsController cont = new PickRobotsController(4, 4, this);
+        PickRobotsView view = new PickRobotsView(cont);
         UIManager manager = UIManager.sharedInstance();
         manager.pushScreen(view);
     }
@@ -95,20 +95,17 @@ public List<Team> selectedTeams;
 	 * gets called when the Main Menu view selects exit
 	 */
 	public void notifyExit(){
-	    //Gdx.app.exit();
-	    EndController cont = new EndController();
-	    endView view = new endView(cont, this.selectedTeams);
-	    UIManager manager = UIManager.sharedInstance();
-	    manager.pushScreen(view);
+	    Gdx.app.exit();
 	}
 	/**
 	 * gets called when Setup view selects return
 	 */
 	public void notifyReturn(){
-    UIManager manager = UIManager.sharedInstance();
-    manager.popScreen();
-    this.selectedTeams.clear();
+	    UIManager manager = UIManager.sharedInstance();
+	    manager.popScreen();
+	    this.selectedTeams.clear();
 	}
+	
 	/**
      * gets called when Setup view selects return
      */
@@ -172,9 +169,12 @@ public void robotsListCancelled() {
 
 @Override
 public void robotListFinished(Queue<Robot> listSelected) {
+    
+    Team newTeam = new Team(listSelected, this.selectedTeams.size());
+    this.selectedTeams.add(newTeam);
+    
     UIManager manager = UIManager.sharedInstance();
     manager.popScreen();
-    System.out.println(listSelected);
 }
 
 

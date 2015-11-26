@@ -12,8 +12,10 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
@@ -88,32 +90,20 @@ public class JsonInterpreter {
             try {
                 JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
                 Robot newRobot = robotFromJSON(json);
+                
+                JSONObject json2 = (JSONObject) parser.parse(new FileReader("resources/RobotExample2.JSON"));
+                Robot newRobot2 = robotFromJSON(json2);
+                
+                JSONObject json3 = (JSONObject) parser.parse(new FileReader("resources/RobotExample3.JSON"));
+                Robot newRobot3 = robotFromJSON(json3);
+                
+                JSONObject json4 = (JSONObject) parser.parse(new FileReader("resources/RobotExample4.JSON"));
+                Robot newRobot4 = robotFromJSON(json4);
                 Queue<Robot> list = new LinkedList<Robot>();
                 list.add(newRobot);
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
-                list.add(newRobot.clone());
+                list.add(newRobot2);
+                list.add(newRobot3);
+                list.add(newRobot4);
                 return list;
             } catch (IOException | ParseException e) {
                 return null;
@@ -233,9 +223,8 @@ public class JsonInterpreter {
      * @param serialNumber the serial number of the robot we want to retire
      * @return a bool indicating whether the retire action was a success
      */
-    public static boolean retireRobot(long serialNumber){
+    public static void retireRobot(long serialNumber) throws RuntimeException{
       //TODO: implement
-        return true;
     }
     
     
@@ -322,7 +311,7 @@ public class JsonInterpreter {
     /**
      * @return a formated JSON object from all the stats from a robot
      */
-    private JSONObject statsToJSON(RobotGameStats stats){
+    private static JSONObject statsToJSON(RobotGameStats stats){
         JSONObject root = new JSONObject();
         root.put(JSONConstants.LOSSES, stats.getLosses());
         root.put(JSONConstants.WINS, stats.getWins());
@@ -336,6 +325,34 @@ public class JsonInterpreter {
         return root;
     }
     
+    public static JSONArray forthCodeToJson(Set<String> vars, HashMap<String, String> words){
+        JSONArray forthArr = new JSONArray();
+        
+        Iterator<String> varIt = vars.iterator();
+        while(varIt.hasNext()){
+            String varName = varIt.next();
+            JSONObject newVar = new JSONObject();
+            newVar.put(JSONConstants.FORTH_VAR, varName);
+            forthArr.add(newVar);
+        }
+        
+        Set<String> allWordKeys = words.keySet();
+        Iterator<String> wordIt = allWordKeys.iterator();
+        while(wordIt.hasNext()){
+            String wordName = wordIt.next();
+            String wordValue = words.get(wordName);
+            JSONObject newWord = new JSONObject();
+            newWord.put(JSONConstants.FORTH_WORD_NAME, wordName);
+            newWord.put(JSONConstants.FORTH_WORD_BODY, wordValue);
+            JSONObject wordOuter = new JSONObject();
+            wordOuter.put(JSONConstants.FORTH_WORD, newWord);
+            forthArr.add(wordOuter);
+        }
+        
+
+        return forthArr;
+        
+    }
 
     
 

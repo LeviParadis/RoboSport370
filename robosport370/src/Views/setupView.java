@@ -404,4 +404,13 @@ this.updateTeamTable(new LinkedList<Team>());
         this.stage.dispose();
     }
     
+    /**
+     * set this screen to receive buttons whenever it becomes active.
+     * Also, refresh the list of teams
+     */
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        this.updateTeamTable(controller.selectedTeams);   
+    }
+    
 }

@@ -72,18 +72,11 @@ public class ForthPointerLiteral implements ForthWord {
         return this.value;
     }
     
-    @Override
+    
     /**
      *  @return the string value that is printed by forth in the  console
      */
-    public String consoleFormat() {
-        return this.forthStringEncoding();
-    }
-    
-    /**
-     * @return the string value that appears in the developer's console
-     */
     public String toString(){
-        return "var:" + forthStringEncoding();
+        return "pushing variable to the stack: " + forthStringEncoding();
     }
 }

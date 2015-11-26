@@ -27,12 +27,13 @@ public class UIManager extends Game {
     
 
     public UIManager() {
-        // TODO Auto-generated constructor stub
     }
 
     @Override
+    /**
+     * Set up initial values. It should initially load an instance of the main menu and it's view
+     */
     public void create() {
-        // TODO Auto-generated method stub
         setupController initialController = new setupController();
         mainMenuView initialView = new mainMenuView(initialController);
          

@@ -70,25 +70,30 @@ public class endView  extends ScreenAdapter  implements EventListener{
         exitButton = new TextButton("Exit Game", textButtonStyle);
         exitButton.addListener((EventListener) this);
         
-        //Labels for stats and title
+        //LabelsStyles for screen
         LabelStyle titleStyle = new LabelStyle();
         titleStyle.fontColor = Color.BLACK;
         titleStyle.font = fontTitle;
-        
         
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
         labelStyle.font = font;
         
+        LabelStyle aliveStyle = new LabelStyle();
+        aliveStyle.fontColor = Color.GREEN;
+        aliveStyle.font = font;
+        
+        LabelStyle deadStyle = new LabelStyle();
+        deadStyle.fontColor = Color.RED;
+        deadStyle.font = font;
+        
+        //title label
         Label title = new Label("GAME OVER", titleStyle);
         title.setFontScaleX(2);
         title.setFontScaleY(3);
         title.setPosition(width/2-87, height-50);
-        //Label winningTeam = new Label("Winning Team", labelStyle);
-        //Label survivors = new Label("Surviving Robots: ", labelStyle);
-        //Label damageInflicted = new Label("Winner: ", labelStyle);
         
-        //need access to team list from gameController
+        //Add teams and there robots (color coded: green is alive, red is dead) to screen
         Table statsTable = new Table();
         Iterator<Team> tIt = teamsList.iterator();
         
@@ -96,35 +101,36 @@ public class endView  extends ScreenAdapter  implements EventListener{
             Team currentTeam = tIt.next();
             Label teamName = new Label(currentTeam.getTeamName(), labelStyle);
             Table teamTable = new Table();
-            teamTable.add(teamName);
+            teamTable.add(teamName).padBottom(10);
             
             Iterator<Robot> rIt = currentTeam.getAllRobots().iterator();
             while (rIt.hasNext()) {
                 Robot currentRobot = rIt.next();
-                Label robotName = new Label(currentRobot.getName(), labelStyle);
                 if (currentRobot.isAlive()){
-                    robotName.setColor(Color.GREEN);
+                    Label robotName = new Label(currentRobot.getName(), aliveStyle);
+                    teamTable.row();
+                    teamTable.add(robotName).padBottom(5).width(40);
                 }
                 else {
-                    robotName.setColor(Color.RED);
+                    Label robotName = new Label(currentRobot.getName(), deadStyle);
+                    teamTable.row();
+                    teamTable.add(robotName).padBottom(5);
                 }
-                teamTable.row();
-                teamTable.add(robotName);
             }
-            statsTable.add(teamTable);    
+            statsTable.add(teamTable).padLeft(25).padRight(25);    
         }
         
-        //set up the table
-        Table table = new Table();
-        table.setFillParent(true);
-        //table.add(displayResultsButton).width(500).height(75).padBottom(25);
-        //table.row();
-        table.add(statsTable);
-        table.add(mainMenuButton).width(500).height(75).padBottom(25);
-        table.row();
-        table.add(exitButton).width(500).height(75).padBottom(25);
+        
+        //set up the master table
+        Table masterTable = new Table();
+        masterTable.setFillParent(true);
+        masterTable.add(statsTable).padBottom(25);
+        masterTable.row();
+        masterTable.add(mainMenuButton).width(500).height(75).padBottom(25);
+        masterTable.row();
+        masterTable.add(exitButton).width(500).height(75).padBottom(25);
         stage.addActor(title);
-        stage.addActor(table);
+        stage.addActor(masterTable);
     }
 
     public void render(float delta) {   

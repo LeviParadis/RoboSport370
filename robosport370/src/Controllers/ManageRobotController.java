@@ -2,12 +2,13 @@ package Controllers;
 
 import java.util.Queue;
 
-import Interfaces.ListRobotsDelegate;
+import Interfaces.PickRobotsDelegate;
 import Models.Robot;
 import Views.AddRobotView;
-import Views.EditTeamView;
+import Views.EditRobotView;
+import Views.PickRobotsView;
 
-public class ManageRobotController implements ListRobotsDelegate{
+public class ManageRobotController implements PickRobotsDelegate{
 
     public ManageRobotController() {
     }
@@ -35,24 +36,36 @@ public class ManageRobotController implements ListRobotsDelegate{
      * The edit button was pressed. Push the screen to edit existing robots
      */
     public void notifyEditButtonPressed() {
-        EditTeamController nextController = new EditTeamController(2, 6, this);
-        EditTeamView nextView = new EditTeamView(nextController);
+        PickRobotsController nextController = new PickRobotsController(1, 1, this);
+        PickRobotsView nextView = new PickRobotsView(nextController);
         
         UIManager manager = UIManager.sharedInstance();
         manager.pushScreen(nextView);
     }
 
     @Override
+    /**
+     * This method lets us know the user canceled out of the robot picker, so we pop back to the previous view
+     */
     public void robotsListCancelled() {
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
     }
 
     @Override
+    /**
+     * This method lets us know the user has selected a robot to edit.
+     * We pop back to the previous view, and then push a new edit view to edit it
+     */
     public void robotListFinished(Queue<Robot> listSelected) {
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
-        System.out.println(listSelected);
+        Robot selected = listSelected.peek();
+        EditRobotController cont = new EditRobotController(selected);
+        EditRobotView view = new EditRobotView(cont, selected);
+           
+        manager.pushScreen(view);
+        
     }
 
 }

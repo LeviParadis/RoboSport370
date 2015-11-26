@@ -57,17 +57,10 @@ public class ForthIntegerLiteral implements ForthWord {
     }
 
     /**
-     * @return the string value that appears in the developer's console
+     * @return the string value that is printed by forth in the  console
      */
     public String toString(){
-        return "int:" + forthStringEncoding();
+        return "pusing int to stack: "  + forthStringEncoding();
     }
     
-    @Override
-    /**
-     *  @return the string value that is printed by forth in the  console
-     */
-    public String consoleFormat() {
-        return this.forthStringEncoding();
-    }
 }
