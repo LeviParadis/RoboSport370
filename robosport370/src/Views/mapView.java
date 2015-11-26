@@ -91,6 +91,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     private Label turnLabel;
     private Label numLabel;
     private TextButton pauseBtn;
+    private TextButton speedBtn;
     
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -162,7 +163,8 @@ public class mapView extends ScreenAdapter implements EventListener {
     
     pauseBtn = new TextButton("Pause", buttonStyle);
     pauseBtn.addListener(this);
-    TextButton speedBtn = new TextButton("FastForward", buttonStyle);
+    speedBtn = new TextButton("FastForward", buttonStyle);
+    speedBtn.addListener(this);
     
     Table master = new Table();
     master.setSize(WINDOW_WIDTH/3, WINDOW_HEIGHT);
@@ -325,7 +327,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         //we want to keep the scroll bar at the bottom when we add new items
 
-        if(scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 500){
+        if(!controller.isPaused && (scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 500)){
             scrollResults.setScrollPercentY(1);
         }
         stage.draw();
@@ -502,7 +504,15 @@ public class mapView extends ScreenAdapter implements EventListener {
             //handle button presses
             TextButton sender = (TextButton)arg0.getTarget();
             if(sender == this.pauseBtn){
-               System.out.println("pause");
+                if(this.controller.isPaused){
+                    this.controller.resume();
+                    pauseBtn.setText("Pause");
+                } else {
+                    this.controller.pause();
+                    pauseBtn.setText("Play");
+                }
+            } else if (sender == this.speedBtn){
+                System.out.println("fast fwd");
             }
         }
         return false;

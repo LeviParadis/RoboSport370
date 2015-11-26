@@ -137,6 +137,14 @@ public class ForthInterpreter {
                 return;
             }
             
+            do{
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while(controller.isPaused);
+            
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
             

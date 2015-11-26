@@ -35,6 +35,8 @@ public class GameController{
     
     private mapView view;
     
+    public boolean isPaused;
+    
     
     private Thread executionThread;
     
@@ -137,19 +139,14 @@ public class GameController{
      * puts the game into a paused state
      */
     public void pause(){
-        try {
-            this.executionThread.wait();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.isPaused = true;
     }
     
     /**
      * resumes the game from the paused state
      */
     public void resume(){
-        this.executionThread.notify();
+        this.isPaused = false;
     }
     
     /**
