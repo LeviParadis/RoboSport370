@@ -166,9 +166,12 @@ public void robotsListCancelled() {
 
 @Override
 public void robotListFinished(Queue<Robot> listSelected) {
+    
+    Team newTeam = new Team(listSelected, this.selectedTeams.size());
+    this.selectedTeams.add(newTeam);
+    
     UIManager manager = UIManager.sharedInstance();
     manager.popScreen();
-    System.out.println(listSelected);
 }
 
 
