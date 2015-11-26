@@ -2,12 +2,12 @@ package Controllers;
 
 import java.util.Queue;
 
-import Interfaces.ListRobotsDelegate;
+import Interfaces.PickRobotsDelegate;
 import Models.Robot;
 import Views.AddRobotView;
-import Views.EditTeamView;
+import Views.PickRobotsView;
 
-public class ManageRobotController implements ListRobotsDelegate{
+public class ManageRobotController implements PickRobotsDelegate{
 
     public ManageRobotController() {
     }
@@ -35,8 +35,8 @@ public class ManageRobotController implements ListRobotsDelegate{
      * The edit button was pressed. Push the screen to edit existing robots
      */
     public void notifyEditButtonPressed() {
-        EditTeamController nextController = new EditTeamController(2, 6, this);
-        EditTeamView nextView = new EditTeamView(nextController);
+        PickRobotsController nextController = new PickRobotsController(2, 6, this);
+        PickRobotsView nextView = new PickRobotsView(nextController);
         
         UIManager manager = UIManager.sharedInstance();
         manager.pushScreen(nextView);

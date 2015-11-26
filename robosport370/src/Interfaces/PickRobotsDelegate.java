@@ -4,7 +4,7 @@ import java.util.Queue;
 
 import Models.Robot;
 
-public interface ListRobotsDelegate {
+public interface PickRobotsDelegate {
     
     
     void robotsListCancelled();

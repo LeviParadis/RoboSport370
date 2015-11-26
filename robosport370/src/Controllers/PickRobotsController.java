@@ -2,20 +2,20 @@ package Controllers;
 
 import javax.swing.JOptionPane;
 
-import Interfaces.ListRobotsDelegate;
+import Interfaces.PickRobotsDelegate;
 
 import java.util.Queue;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 
-public class EditTeamController {
+public class PickRobotsController {
     
     private int minSelection;
     private int maxSelection;
     
-    private ListRobotsDelegate delegate;
+    private PickRobotsDelegate delegate;
 
-    public EditTeamController(int minSelection, int maxSelection, ListRobotsDelegate delegate) {
+    public PickRobotsController(int minSelection, int maxSelection, PickRobotsDelegate delegate) {
         this.minSelection = minSelection;
         this.maxSelection = maxSelection;
         this.delegate = delegate;

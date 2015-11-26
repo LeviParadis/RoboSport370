@@ -23,7 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
-import Controllers.EditTeamController;
+import Controllers.PickRobotsController;
 import Models.Robot;
 
 import java.util.Iterator;
@@ -32,7 +32,7 @@ import java.util.Queue;
 
 import javax.swing.JOptionPane;
 
-public class EditTeamView extends ScreenAdapter implements EventListener {
+public class PickRobotsView extends ScreenAdapter implements EventListener {
     
     private final Stage stage;
     private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
@@ -55,7 +55,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
     private Queue<Robot> rosterList;
     private Robot hoveredRobot;
 
-    private EditTeamController controller;
+    private PickRobotsController controller;
     
     
     private TextField nameSearchField;
@@ -73,7 +73,7 @@ public class EditTeamView extends ScreenAdapter implements EventListener {
      * Set up the controller
      * @param controller the controller we are setting up
      */
-    public EditTeamView(EditTeamController controller) {
+    public PickRobotsView(PickRobotsController controller) {
         robotList = new LinkedList<Robot>();
         rosterList = new LinkedList<Robot>();
         

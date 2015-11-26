@@ -13,7 +13,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import Interfaces.ListRobotsDelegate;
+import Interfaces.PickRobotsDelegate;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
@@ -23,7 +23,7 @@ import Views.mainMenuView;
 import Views.setupView;
 import Views.mapView;
 import Views.teamCreationView;
-import Views.EditTeamView;
+import Views.PickRobotsView;
 
 /**
  * @author Corey
@@ -31,7 +31,7 @@ import Views.EditTeamView;
  * setupController handles the main menu and setup screens while interfacing with the models
  *
  */
-public class setupController implements ListRobotsDelegate {
+public class setupController implements PickRobotsDelegate {
 	private Music introMusic;
 	public int mapSize;
 	public boolean isTournament,isSimulation;
@@ -83,8 +83,8 @@ public List<Team> selectedTeams;
 	}
 	
 	public void notifyNewTeam() {
-        EditTeamController cont = new EditTeamController(4, 4, this);
-        EditTeamView view = new EditTeamView(cont);
+        PickRobotsController cont = new PickRobotsController(4, 4, this);
+        PickRobotsView view = new PickRobotsView(cont);
         UIManager manager = UIManager.sharedInstance();
         manager.pushScreen(view);
     }
