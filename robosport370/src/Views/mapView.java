@@ -90,7 +90,6 @@ public class mapView extends ScreenAdapter implements EventListener {
     private LabelStyle redLabelStyle;
     private LabelStyle blueLabelStyle;
     private LabelStyle purpleLabelStyle;
-    private ScrollPane scrollResults;
     private Label nameLabel;
     private Label teamLabel;
     private Label turnLabel;
@@ -100,6 +99,9 @@ public class mapView extends ScreenAdapter implements EventListener {
     private  Label movesLabel;
     private  Label healthLabel;
     private  Label strengthLabel;
+    
+    private ArrayList<String> consoleList;
+    private ArrayList<ConsoleMessageType> consoleTypeList;
 
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -159,8 +161,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
         Skin skin = new Skin();
         skin.addRegions(atlas);
-        ScrollPaneStyle scrollStyle = new ScrollPaneStyle(); 
-        scrollStyle.vScrollKnob = skin.getDrawable("slider_back_ver");
+
 
         TextButtonStyle buttonStyle = new TextButtonStyle();
         buttonStyle.font = new BitmapFont();
@@ -178,12 +179,10 @@ public class mapView extends ScreenAdapter implements EventListener {
         master.setSize(WINDOW_WIDTH/3, WINDOW_HEIGHT);
         master.setPosition(WINDOW_WIDTH-(WINDOW_WIDTH/3), 0);
         topTable = new Table();
+        topTable.clearListeners();
         Table bottom = new Table();
 
-        scrollResults = new ScrollPane(topTable, scrollStyle);
-        scrollResults.setFadeScrollBars(false);
-
-        master.add(scrollResults);
+        master.add(topTable);
         master.row();
         master.add(speedBtn);
         master.add(pauseBtn);
@@ -196,7 +195,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         blackLabelStyle = new LabelStyle();
         blackLabelStyle.fontColor = Color.BLACK;
         blackLabelStyle.font = font;
-
+        
         blueLabelStyle = new LabelStyle();
         blueLabelStyle.fontColor = Color.BLUE;
         blueLabelStyle.font = font;
@@ -208,7 +207,6 @@ public class mapView extends ScreenAdapter implements EventListener {
         purpleLabelStyle = new LabelStyle();
         purpleLabelStyle.fontColor = Color.PURPLE;
         purpleLabelStyle.font = font;
-
 
 
         Label titleLabel = new Label("Current Robot Information: ", blackLabelStyle);
@@ -248,6 +246,10 @@ public class mapView extends ScreenAdapter implements EventListener {
         bottom.row();
         bottom.add(movesTitle);
         bottom.add(movesLabel);
+        
+        this.consoleList = new ArrayList<String>();
+        this.consoleTypeList = new ArrayList<ConsoleMessageType>();
+        this.updateConsoleTable();
     }
 
     /**
@@ -255,24 +257,42 @@ public class mapView extends ScreenAdapter implements EventListener {
      * newMessage the latest message to display
      */
     public void displayMessage(String newMessage, ConsoleMessageType type){  
-        LabelStyle style;
-        switch(type){
-        case CONSOLE_ERROR:
-            style = redLabelStyle;
-            break;
-        case CONSOLE_ROBOT_MESSAGE:
-            style = purpleLabelStyle;
-            break;
-        case CONSOLE_SIMULATOR_MESSAGE:
-            style = blueLabelStyle;
-            break;
-        default:
-            style = blackLabelStyle;
-            break;
+        this.consoleList.add(newMessage);
+        this.consoleTypeList.add(type);
+        this.updateConsoleTable();   
+    }
+    
+    private void updateConsoleTable(){
+        this.topTable.clear();
+        int size = this.consoleList.size();
+        for(int i=size-21; i<size; i++){
+            String message;
+            LabelStyle style;
+            try{
+                message =this.consoleList.get(i);
+                ConsoleMessageType type = this.consoleTypeList.get(i);
+                switch(type){
+                case CONSOLE_ERROR:
+                    style = redLabelStyle;
+                    break;
+                case CONSOLE_ROBOT_MESSAGE:
+                    style = purpleLabelStyle;
+                    break;
+                case CONSOLE_SIMULATOR_MESSAGE:
+                    style = blueLabelStyle;
+                    break;
+                default:
+                    style = blackLabelStyle;
+                    break;
+                }
+            }catch(IndexOutOfBoundsException e){
+                message = " ";
+                style = blackLabelStyle;
+            }
+            Label messageLabel = new Label(message, style);
+            this.topTable.add(messageLabel);
+            this.topTable.row();
         }
-        Label messageLabel = new Label(newMessage, style);
-        topTable.add(messageLabel);
-        topTable.row();   
     }
 
     /**
@@ -365,11 +385,6 @@ public class mapView extends ScreenAdapter implements EventListener {
         projectile.draw(batch);
         batch.end();
 
-        //we want to keep the scroll bar at the bottom when we add new items
-        if(!controller.isPaused() && (scrollResults.getScrollPercentY() > 0.8 || topTable.getHeight() < 500)){
-            scrollResults.setScrollPercentY(1);
-        }
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
 
