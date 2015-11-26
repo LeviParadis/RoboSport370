@@ -1,8 +1,8 @@
 {
     "script" :  {
-        "serial" : 11111,
+        "serial" : 33333,
         "team" : "C3",
-        "name" : "Robot 1",
+        "name" : "Robot 3",
         "version" : 2,
         "matches" : 43,
         "wins" : 12,
