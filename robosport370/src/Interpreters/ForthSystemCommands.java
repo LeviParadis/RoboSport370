@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.Stack;
 
 import Controllers.GameController;
+import Enums.ConsoleMessageType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Interfaces.ForthWord;
@@ -99,7 +100,7 @@ public class ForthSystemCommands {
         ForthWord first;
         first = forthStack.pop();
         String consoleString = first.forthStringEncoding();
-        controller.displayNewAction("pringing message: " + consoleString);
+        controller.displayNewAction("pringing message: " + consoleString, ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
         System.out.println(consoleString);
     }
 

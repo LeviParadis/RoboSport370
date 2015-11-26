@@ -32,6 +32,7 @@ import com.badlogic.gdx.utils.Array;
 
 import Controllers.GameController;
 import Controllers.gameVariables;
+import Enums.ConsoleMessageType;
 import Enums.GameSpeed;
 import Models.Robot;
 import Models.Team;
@@ -85,7 +86,10 @@ public class mapView extends ScreenAdapter implements EventListener {
     
     private Stage stage;
     private Table topTable;
-    private LabelStyle labelStyle;
+    private LabelStyle blackLabelStyle;
+    private LabelStyle redLabelStyle;
+    private LabelStyle blueLabelStyle;
+    private LabelStyle purpleLabelStyle;
     private ScrollPane scrollResults;
     private Label nameLabel;
     private Label teamLabel;
@@ -185,19 +189,34 @@ public class mapView extends ScreenAdapter implements EventListener {
     master.add(bottom).padTop(300);
     stage.addActor(master);
     
-    labelStyle = new LabelStyle();
-    labelStyle.fontColor = Color.BLACK;
-    labelStyle.font = new BitmapFont();
+    BitmapFont font = new BitmapFont();
     
-    Label titleLabel = new Label("Current Robot Information: ", labelStyle);
-    Label nameTitle = new Label("Name: ", labelStyle);
-    Label teamTitle = new Label("Team: ", labelStyle);
-    Label turnTitle = new Label("Turn: ", labelStyle);
-    Label numTitle = new Label("Number: ", labelStyle);
-    nameLabel = new Label("", labelStyle);
-    teamLabel = new Label("", labelStyle);
-    turnLabel = new Label("", labelStyle);
-    numLabel = new Label("", labelStyle);
+    blackLabelStyle = new LabelStyle();
+    blackLabelStyle.fontColor = Color.BLACK;
+    blackLabelStyle.font = font;
+    
+    blueLabelStyle = new LabelStyle();
+    blueLabelStyle.fontColor = Color.BLUE;
+    blueLabelStyle.font = font;
+    
+    redLabelStyle = new LabelStyle();
+    redLabelStyle.fontColor = Color.RED;
+    redLabelStyle.font = font;
+    
+    purpleLabelStyle = new LabelStyle();
+    purpleLabelStyle.fontColor = Color.PURPLE;
+    purpleLabelStyle.font = font;
+
+    
+    Label titleLabel = new Label("Current Robot Information: ", blackLabelStyle);
+    Label nameTitle = new Label("Name: ", blackLabelStyle);
+    Label teamTitle = new Label("Team: ", blackLabelStyle);
+    Label turnTitle = new Label("Turn: ", blackLabelStyle);
+    Label numTitle = new Label("Number: ", blackLabelStyle);
+    nameLabel = new Label("", blackLabelStyle);
+    teamLabel = new Label("", blackLabelStyle);
+    turnLabel = new Label("", blackLabelStyle);
+    numLabel = new Label("", blackLabelStyle);
     bottom.add(titleLabel);
     bottom.row();
     bottom.add(nameTitle);
@@ -217,9 +236,23 @@ public class mapView extends ScreenAdapter implements EventListener {
      * used to update the console logger
      * newMessage the latest message to display
      */
-    public void displayMessage(String newMessage){   
-        
-        Label messageLabel = new Label(newMessage, labelStyle);
+    public void displayMessage(String newMessage, ConsoleMessageType type){  
+        LabelStyle style;
+        switch(type){
+        case CONSOLE_ERROR:
+            style = redLabelStyle;
+            break;
+        case CONSOLE_ROBOT_MESSAGE:
+            style = purpleLabelStyle;
+            break;
+        case CONSOLE_SIMULATOR_MESSAGE:
+            style = blueLabelStyle;
+            break;
+        default:
+            style = blackLabelStyle;
+            break;
+        }
+        Label messageLabel = new Label(newMessage, style);
         topTable.add(messageLabel);
         topTable.row();   
     }

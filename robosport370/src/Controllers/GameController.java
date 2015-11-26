@@ -13,7 +13,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 
+import Enums.ConsoleMessageType;
 import Enums.GameSpeed;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
@@ -101,7 +103,7 @@ public class GameController{
                     executeNextTurn(i);
                     i++;
                 }
-                view.displayMessage("done");
+                view.displayMessage("done", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             }
           };
 
@@ -274,17 +276,20 @@ public class GameController{
      * executes a round of turns
      */
     public void executeNextTurn(int turnNum){
+        view.displayMessage("Turn " + turnNum, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
         Iterator<Team> teamIt = this.teams.iterator();
         while(teamIt.hasNext()){
             Team nextTeam = teamIt.next();
+            view.displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             Queue<Robot> robotList = nextTeam.getLivingRobots();
             Iterator<Robot> robotIt = robotList.iterator();
             while(robotIt.hasNext()){
                 Robot nextRobot = robotIt.next();
+                view.displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
                 view.updateRobotInfo(nextRobot, turnNum);
                 try {
+                    Thread.sleep(delayDuration * 3);
                     ForthInterpreter.executeTurn(nextRobot, this);
-                    Thread.sleep(delayDuration * 5);
                 } catch (ForthRunTimeException | ForthParseException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -400,10 +405,10 @@ public class GameController{
      * Will be called by the forth interpreter to show new actions for display in the interface
      * Will be called anytime the robot does anything, so the user can be updated as to what is happening
      * @param newActionMessage the latest action being run by a robot
-     * @param lowPriority a flag indicating how important the message is. Low priority messages could be only shown in debug mode, for example
+     * @param type the type of message to display
      */
-    public void displayNewAction(String newActionMessage){
-        this.view.displayMessage(newActionMessage);
+    public void displayNewAction(String newActionMessage, ConsoleMessageType type){
+        this.view.displayMessage(newActionMessage, type);
     }
     
     /**
