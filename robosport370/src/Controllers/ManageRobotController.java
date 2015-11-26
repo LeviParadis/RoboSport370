@@ -35,7 +35,7 @@ public class ManageRobotController implements PickRobotsDelegate{
      * The edit button was pressed. Push the screen to edit existing robots
      */
     public void notifyEditButtonPressed() {
-        PickRobotsController nextController = new PickRobotsController(2, 6, this);
+        PickRobotsController nextController = new PickRobotsController(1, 1, this);
         PickRobotsView nextView = new PickRobotsView(nextController);
         
         UIManager manager = UIManager.sharedInstance();
@@ -52,7 +52,10 @@ public class ManageRobotController implements PickRobotsDelegate{
     public void robotListFinished(Queue<Robot> listSelected) {
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
-        System.out.println(listSelected);
+        if(listSelected.size() == 1){
+            //TODO: Add edit robot screen
+           System.out.println("Done");
+        }
     }
 
 }
