@@ -17,6 +17,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -42,7 +44,7 @@ import aurelienribon.tweenengine.TweenManager;
  * @author Corey
  *
  */
-public class mapView extends ScreenAdapter {
+public class mapView extends ScreenAdapter implements EventListener {
 	// The controller which called the view
 	private final GameController controller;
 	
@@ -88,6 +90,7 @@ public class mapView extends ScreenAdapter {
     private Label teamLabel;
     private Label turnLabel;
     private Label numLabel;
+    private TextButton pauseBtn;
     
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -157,8 +160,9 @@ public class mapView extends ScreenAdapter {
     
     //put lists in scroll panes, so we can scroll to see all entries
     
-    TextButton pause = new TextButton("Pause", buttonStyle);
-    TextButton speed = new TextButton("FastForward", buttonStyle);
+    pauseBtn = new TextButton("Pause", buttonStyle);
+    pauseBtn.addListener(this);
+    TextButton speedBtn = new TextButton("FastForward", buttonStyle);
     
     Table master = new Table();
     master.setSize(WINDOW_WIDTH/3, WINDOW_HEIGHT);
@@ -172,8 +176,8 @@ public class mapView extends ScreenAdapter {
     
     master.add(scrollResults);
     master.row();
-    master.add(speed);
-    master.add(pause);
+    master.add(speedBtn);
+    master.add(pauseBtn);
     master.row();
     master.add(bottom).padTop(300);
     stage.addActor(master);
@@ -490,5 +494,17 @@ public class mapView extends ScreenAdapter {
      */
     public void show() {
         Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public boolean handle(Event arg0) {
+        if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
+            //handle button presses
+            TextButton sender = (TextButton)arg0.getTarget();
+            if(sender == this.pauseBtn){
+               System.out.println("pause");
+            }
+        }
+        return false;
     }
 }
