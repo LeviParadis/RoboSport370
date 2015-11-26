@@ -137,7 +137,8 @@ public void notifyContinue(){
     try{
         new GameController(this.selectedTeams);
     } catch (RuntimeException e){
-        JOptionPane.showMessageDialog(null, e.getMessage());
+        System.out.println(e.getMessage());
+        JOptionPane.showMessageDialog(null, e);
     }
 }
 	/**
