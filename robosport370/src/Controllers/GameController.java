@@ -33,11 +33,12 @@ public class GameController{
     /** The map that holds the information for calculations and the size*/
     private Map gameMap;
     
+    private mapView view;
+    
     
     private Thread executionThread;
     
-    /** Stores the type of map view */
-    mapView view;
+
     
     /** how long it takes for each animation to complete in milliseconds */
     int animationSpeed = 100;
@@ -52,6 +53,11 @@ public class GameController{
         teams = new ArrayList<Team>();
 
         gameMap = new Map();
+        
+        this.view = new mapView(this, allTeams);
+        
+        UIManager manager = UIManager.sharedInstance();
+        manager.pushScreen(this.view);
         
         
         
@@ -91,7 +97,7 @@ public class GameController{
                     System.out.println("turn: " + i);
                     executeNextTurn();
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -344,6 +350,7 @@ public class GameController{
      */
     public void displayNewAction(String newActionMessage, boolean lowPriority){
         System.out.println(newActionMessage);
+        this.view.displayMessage(newActionMessage);
     }
     
     /**

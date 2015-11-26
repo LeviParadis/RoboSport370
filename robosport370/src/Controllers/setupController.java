@@ -135,11 +135,8 @@ public void notifyDeleteTeam(){
 
 public void notifyContinue(){
     try{
-        GameController game = new GameController(this.selectedTeams);
-        mapView map = new mapView(game, this.selectedTeams);
-        
-         UIManager manager = UIManager.sharedInstance();
-         manager.pushScreen(map);
+        new GameController(this.selectedTeams);
+
 
     } catch (RuntimeException e){
         JOptionPane.showMessageDialog(null, e.getMessage());

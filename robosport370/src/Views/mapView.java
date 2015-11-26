@@ -19,8 +19,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.Array;
 
 import Controllers.GameController;
@@ -76,6 +81,8 @@ public class mapView extends ScreenAdapter {
     private SpriteBatch batch;
     
     private Stage stage;
+    private Table topTable;
+    private LabelStyle labelStyle;
     
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -131,17 +138,43 @@ public class mapView extends ScreenAdapter {
     
     
     //add table to sides
+  //set up scroll bar style
+    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
+    Skin skin = new Skin();
+    skin.addRegions(atlas);
+    ScrollPaneStyle scrollStyle = new ScrollPaneStyle(); 
+    scrollStyle.vScrollKnob = skin.getDrawable("slider_back_ver");
+    scrollStyle.hScrollKnob = skin.getDrawable("slider_back_hor");
+
+    TextButtonStyle buttonStyle = new TextButtonStyle();
+    buttonStyle.font = new BitmapFont();
+    buttonStyle.up = skin.getDrawable("button_02");
+    buttonStyle.down = skin.getDrawable("button_01");
+    
+    //put lists in scroll panes, so we can scroll to see all entries
+    
+    TextButton pause = new TextButton("Pause", buttonStyle);
+    TextButton speed = new TextButton("FastForward", buttonStyle);
+    
     Table master = new Table();
     master.setSize(WINDOW_WIDTH/3, WINDOW_HEIGHT);
     master.setPosition(WINDOW_WIDTH-(WINDOW_WIDTH/3), 0);
-    Table top = new Table();
+    topTable = new Table();
+    topTable.setHeight(50);
     Table bottom = new Table();
-    master.add(top);
+    
+    ScrollPane scrollResults = new ScrollPane(topTable, scrollStyle);
+    scrollResults.setFadeScrollBars(false);
+    
+    master.add(scrollResults);
     master.row();
-    master.add(bottom);
+    master.add(speed);
+    master.add(pause);
+    master.row();
+    master.add(bottom).padTop(300);
     stage.addActor(master);
     
-    LabelStyle labelStyle = new LabelStyle();
+    labelStyle = new LabelStyle();
     labelStyle.fontColor = Color.BLACK;
     labelStyle.font = new BitmapFont();
     
@@ -154,6 +187,17 @@ public class mapView extends ScreenAdapter {
     bottom.row();
     bottom.add(teamLabel);
     
+    
+    
+    }
+    
+    public void displayMessage(String newMessage){   
+        /*
+        Label messageLabel = new Label(newMessage, labelStyle);
+        topTable.clear();
+        topTable.row();
+        topTable.add(messageLabel);
+        */
     }
     
     public void createRobots(Team teamToAdd){
@@ -170,7 +214,6 @@ public class mapView extends ScreenAdapter {
             counter++;
     	    }
     	    this.teamList.add(spriteList);
-        
     }
     
     /**
@@ -242,6 +285,7 @@ public class mapView extends ScreenAdapter {
         tweenManager.update(delta);
         projectile.draw(batch);
         batch.end();
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
     
@@ -401,5 +445,12 @@ public class mapView extends ScreenAdapter {
     @Override
     public void dispose() {
         batch.dispose();
+    }
+    
+    /**
+     * set this screen to receive buttons whenever it becomes active
+     */
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
     }
 }
