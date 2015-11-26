@@ -83,10 +83,12 @@ public List<Team> selectedTeams;
 	}
 	
 	public void notifyNewTeam() {
-        PickRobotsController cont = new PickRobotsController(4, 4, this);
-        PickRobotsView view = new PickRobotsView(cont);
-        UIManager manager = UIManager.sharedInstance();
-        manager.pushScreen(view);
+        if(this.selectedTeams.size() < 6){
+            PickRobotsController cont = new PickRobotsController(4, 4, this);
+            PickRobotsView view = new PickRobotsView(cont);
+            UIManager manager = UIManager.sharedInstance();
+            manager.pushScreen(view);
+        }
     }
 	
 	/**
