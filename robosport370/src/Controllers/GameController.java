@@ -43,7 +43,10 @@ public class GameController{
 
     
     /** how long it takes for each animation to complete in milliseconds */
-    int animationSpeed = 100;
+    public int animationSpeed = 100;
+    
+    /** how long it waits in between actions in milliseconds */
+    public int delayDuration = 500;
     
     /**
      * initializes the teams and ??sets their position on the map??
@@ -88,15 +91,10 @@ public class GameController{
                 
                 int i = 1;
                 while(teamsAlive() > 1){
-                    System.out.println("turn: " + i);
                     executeNextTurn(i);
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     i++;
                 }
+                view.displayMessage("done");
             }
           };
 
@@ -114,7 +112,6 @@ public class GameController{
                 try {
                     ForthInterpreter.initRobot(nextRobot, this);
                 } catch (ForthRunTimeException | ForthParseException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -242,7 +239,11 @@ public class GameController{
                 view.updateRobotInfo(nextRobot, turnNum);
                 try {
                     ForthInterpreter.executeTurn(nextRobot, this);
+                    Thread.sleep(delayDuration * 5);
                 } catch (ForthRunTimeException | ForthParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -357,14 +358,7 @@ public class GameController{
      * @param lowPriority a flag indicating how important the message is. Low priority messages could be only shown in debug mode, for example
      */
     public void displayNewAction(String newActionMessage, boolean lowPriority){
-        try {
-            Thread.sleep(1000);
-            System.out.println(newActionMessage);
-            this.view.displayMessage(newActionMessage);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.view.displayMessage(newActionMessage);
     }
     
     /**

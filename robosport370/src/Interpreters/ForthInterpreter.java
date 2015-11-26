@@ -139,7 +139,7 @@ public class ForthInterpreter {
             
             do{
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(controller.delayDuration);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
