@@ -428,7 +428,6 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         
         this.robotInfoTable.clear();
         Label nameInfoLabel = new Label("Name:", labelStyle);
-        nameInfoLabel.setAlignment(Align.left);
         Label winsInfoLabel = new Label("Total Wins:", labelStyle);
         Label lossesInfoLabel = new Label("Total Losses:", labelStyle);
         Label healthInfoLabel = new Label("Starting Health:", labelStyle);
