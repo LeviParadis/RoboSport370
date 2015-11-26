@@ -121,13 +121,18 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         checkboxStyle = new CheckBoxStyle();
         checkboxStyle.checkboxOn = skin.getDrawable("checkbox_on");
         checkboxStyle.checkboxOff = skin.getDrawable("checkbox_off");
+        checkboxStyle.checkboxOffDisabled = inactiveSkin.getDrawable("checkbox_off");
+        checkboxStyle.checkboxOnDisabled = inactiveSkin.getDrawable("checkbox_on");
         checkboxStyle.fontColor = Color.BLACK;
         checkboxStyle.font = font;
              
         
         //set up the title
         String titleString;
-        if(controller.getMinimumSelectable() == controller.getMinimumSelectable()){
+        
+        if(controller.getMaxSelectable() == 1){
+            titleString = "Select a Robot"; 
+        } else if(controller.getMinimumSelectable() == controller.getMinimumSelectable()){
             titleString = "Select " + controller.getMinimumSelectable() + " Robots";
         } else {
             titleString = "Select " + controller.getMinimumSelectable() + " - "  + controller.getMinimumSelectable() + " Robots";
@@ -164,7 +169,7 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         
         Label searchTitle = new Label("Search", labelStyle);
         Label resultsTitle = new Label("Robot List", labelStyle);
-        Label rosterTitle = new Label("Current Roster", labelStyle);
+        Label rosterTitle = new Label("Selected List", labelStyle);
         Label infoTitle = new Label("Robot Info", labelStyle);
         
         ScrollPaneStyle scrollStyle = new ScrollPaneStyle(); 
@@ -330,7 +335,10 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
             CheckBox box = new CheckBox("", checkboxStyle);
             if(this.rosterList.contains(next)){
                 box.setChecked(true);
+            } else if( rosterList.size() >= this.controller.getMaxSelectable()){
+                box.setDisabled(true);
             }
+            
             box.setUserObject(next);
             box.addListener(this);
             nameLabel.setUserObject(next);
@@ -342,9 +350,7 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
     }
     
     public void refreshRosterList(){
-        
-        System.out.println(this.rosterList);
-        
+                
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.fontColor = Color.BLACK;
         labelStyle.font = new BitmapFont();   
