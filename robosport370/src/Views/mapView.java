@@ -9,12 +9,18 @@ import java.util.Queue;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Array;
 
 import Controllers.GameController;
@@ -69,6 +75,8 @@ public class mapView extends ScreenAdapter {
 	// For rendering sprites
     private SpriteBatch batch;
     
+    private Stage stage;
+    
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
     
@@ -78,6 +86,8 @@ public class mapView extends ScreenAdapter {
      */
     public mapView(final GameController controller, List<Team> teamsInMatch) {
     	this.controller = controller;
+    
+    this.stage = new Stage();
     	
     	WINDOW_WIDTH = Gdx.graphics.getWidth();
     	WINDOW_HEIGHT = Gdx.graphics.getHeight();
@@ -118,6 +128,32 @@ public class mapView extends ScreenAdapter {
     	Tween.registerAccessor(Sprite.class, new SpriteAccessor());
     	timelineTweenQueue = new LinkedList<AudibleTimeline>();
     	batch = new SpriteBatch();
+    
+    
+    //add table to sides
+    Table master = new Table();
+    master.setSize(WINDOW_WIDTH/3, WINDOW_HEIGHT);
+    master.setPosition(WINDOW_WIDTH-(WINDOW_WIDTH/3), 0);
+    Table top = new Table();
+    Table bottom = new Table();
+    master.add(top);
+    master.row();
+    master.add(bottom);
+    stage.addActor(master);
+    
+    LabelStyle labelStyle = new LabelStyle();
+    labelStyle.fontColor = Color.BLACK;
+    labelStyle.font = new BitmapFont();
+    
+    Label titleLabel = new Label("Current Robot Information: ", labelStyle);
+    Label nameLabel = new Label("Name: ", labelStyle);
+    Label teamLabel = new Label("Team: ", labelStyle);
+    bottom.add(titleLabel);
+    bottom.row();
+    bottom.add(nameLabel);
+    bottom.row();
+    bottom.add(teamLabel);
+    
     }
     
     public void createRobots(Team teamToAdd){
@@ -206,6 +242,7 @@ public class mapView extends ScreenAdapter {
         tweenManager.update(delta);
         projectile.draw(batch);
         batch.end();
+        stage.draw();
     }
     
     public void renderTesting() {
