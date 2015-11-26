@@ -12,8 +12,10 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
@@ -309,7 +311,7 @@ public class JsonInterpreter {
     /**
      * @return a formated JSON object from all the stats from a robot
      */
-    private JSONObject statsToJSON(RobotGameStats stats){
+    private static JSONObject statsToJSON(RobotGameStats stats){
         JSONObject root = new JSONObject();
         root.put(JSONConstants.LOSSES, stats.getLosses());
         root.put(JSONConstants.WINS, stats.getWins());
@@ -323,6 +325,34 @@ public class JsonInterpreter {
         return root;
     }
     
+    public static JSONArray forthCodeToJson(Set<String> vars, HashMap<String, String> words){
+        JSONArray forthArr = new JSONArray();
+        
+        Iterator<String> varIt = vars.iterator();
+        while(varIt.hasNext()){
+            String varName = varIt.next();
+            JSONObject newVar = new JSONObject();
+            newVar.put(JSONConstants.FORTH_VAR, varName);
+            forthArr.add(newVar);
+        }
+        
+        Set<String> allWordKeys = words.keySet();
+        Iterator<String> wordIt = allWordKeys.iterator();
+        while(wordIt.hasNext()){
+            String wordName = wordIt.next();
+            String wordValue = words.get(wordName);
+            JSONObject newWord = new JSONObject();
+            newWord.put(JSONConstants.FORTH_WORD_NAME, wordName);
+            newWord.put(JSONConstants.FORTH_WORD_BODY, wordValue);
+            JSONObject wordOuter = new JSONObject();
+            wordOuter.put(JSONConstants.FORTH_WORD, newWord);
+            forthArr.add(wordOuter);
+        }
+        
+
+        return forthArr;
+        
+    }
 
     
 

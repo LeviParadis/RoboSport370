@@ -1,5 +1,12 @@
 package Views;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -11,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 import Controllers.AddRobotController;
 import Controllers.EditRobotController;
+import Interpreters.JsonInterpreter;
 import Models.Robot;
 
 public class EditRobotView extends AddRobotView{
@@ -48,6 +56,20 @@ public class EditRobotView extends AddRobotView{
         this.stage.addActor(retireButton);
         
         //set fields to start at the robot's stats
+        
+        //set the forth code field
+        Set<String> vars = robot.getAllForthVariables();
+        Set<String> wordNames = robot.getAllForthWords();
+        HashMap<String, String> fullWords = new  HashMap<String, String>();
+        Iterator<String> it = wordNames.iterator();
+        while(it.hasNext()){
+            String wordName = it.next();
+            String wordValue = robot.getForthWord(wordName);
+            fullWords.put(wordName, wordValue);
+        }
+        JSONArray json = JsonInterpreter.forthCodeToJson(vars, fullWords);
+        this.forthField.setText(json.toJSONString());
+       
         
         
         //for the health and power stats, we know that the base health is 1,
