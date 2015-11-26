@@ -5,6 +5,7 @@ import java.util.Queue;
 import Interfaces.PickRobotsDelegate;
 import Models.Robot;
 import Views.AddRobotView;
+import Views.EditRobotView;
 import Views.PickRobotsView;
 
 public class ManageRobotController implements PickRobotsDelegate{
@@ -59,10 +60,12 @@ public class ManageRobotController implements PickRobotsDelegate{
     public void robotListFinished(Queue<Robot> listSelected) {
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
-        if(listSelected.size() == 1){
-            //TODO: Add edit robot screen
-           System.out.println("Done");
-        }
+        Robot selected = listSelected.peek();
+        EditRobotController cont = new EditRobotController(selected);
+        EditRobotView view = new EditRobotView(cont, selected);
+           
+        manager.pushScreen(view);
+        
     }
 
 }

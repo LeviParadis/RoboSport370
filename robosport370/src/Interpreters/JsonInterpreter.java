@@ -221,9 +221,8 @@ public class JsonInterpreter {
      * @param serialNumber the serial number of the robot we want to retire
      * @return a bool indicating whether the retire action was a success
      */
-    public static boolean retireRobot(long serialNumber){
+    public static void retireRobot(long serialNumber) throws RuntimeException{
       //TODO: implement
-        return true;
     }
     
     

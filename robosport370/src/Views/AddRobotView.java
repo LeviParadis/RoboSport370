@@ -31,17 +31,18 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
     private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
     private static final TextureAtlas commonAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-commons.atlas"));
     
-    private CheckBox power1;
-    private CheckBox power2;
-    private CheckBox power3;
-    private CheckBox health1;
-    private CheckBox health2;
-    private CheckBox health3;
+    protected CheckBox power1;
+    protected CheckBox power2;
+    protected CheckBox power3;
+    protected CheckBox health1;
+    protected CheckBox health2;
+    protected CheckBox health3;
     private TextButton confirmButton;
     private TextButton backButton;
-    private TextField nameField;
-    private TextField teamField;
-    private TextArea forthField;
+    protected TextField nameField;
+    protected TextField teamField;
+    protected TextArea forthField;
+    protected Label titleLabel;
 
     private AddRobotController controller;
     
@@ -173,7 +174,7 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         
         
         //set up the title
-        Label titleLabel = new Label("Create a Robot", labelStyle);
+        titleLabel = new Label("Create a Robot", labelStyle);
         titleLabel.setPosition(width/2 - 100, height-50);
         titleLabel.setFontScale(2);
         
