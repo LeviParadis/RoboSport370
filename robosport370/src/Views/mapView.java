@@ -102,6 +102,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     
     private ArrayList<String> consoleList;
     private ArrayList<ConsoleMessageType> consoleTypeList;
+    private boolean consoleUpdatesAvailable;
 
     // TODO For future fonts
     //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
@@ -249,7 +250,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         
         this.consoleList = new ArrayList<String>();
         this.consoleTypeList = new ArrayList<ConsoleMessageType>();
-        this.updateConsoleTable();
+        this.consoleUpdatesAvailable = true;
     }
 
     /**
@@ -258,9 +259,17 @@ public class mapView extends ScreenAdapter implements EventListener {
      */
     public void displayMessage(String newMessage, ConsoleMessageType type){  
         this.consoleList.add(newMessage);
-        this.consoleTypeList.add(type);  
+        this.consoleTypeList.add(type); 
+        //we mark the table as needing updates, but we don't acyually update the table ourselves
+        //we want to leave all UI updating to the main thread, otherwise there may be crashes
+        //the main thread will mark this bool as false once it updates the table
+        this.consoleUpdatesAvailable = true;
     }
     
+    /**
+     * Called by by the render function to update the table when updates are available
+     * Rebuilds the table using the latest console data
+     */
     private void updateConsoleTable(){
         this.topTable.clear();
         int size = this.consoleList.size();
@@ -292,6 +301,7 @@ public class mapView extends ScreenAdapter implements EventListener {
             this.topTable.add(messageLabel);
             this.topTable.row();
         }
+        this.consoleUpdatesAvailable = false;
     }
 
     /**
@@ -361,7 +371,6 @@ public class mapView extends ScreenAdapter implements EventListener {
         }
     }
     
-    private float counter = 0;
 
     public void render(float delta) {   
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -385,11 +394,10 @@ public class mapView extends ScreenAdapter implements EventListener {
         tweenManager.update(delta);
         projectile.draw(batch);
         batch.end();
-        
-        counter = counter + delta;
-        if(counter > 0.03){
+
+        //if there is a new console message, update the console table
+        if(this.consoleUpdatesAvailable){
             this.updateConsoleTable();
-            counter = 0;
         }
 
         stage.draw();
