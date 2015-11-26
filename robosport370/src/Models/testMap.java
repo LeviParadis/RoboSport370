@@ -21,33 +21,51 @@ public class testMap {
 	    
 	    public testMap(){
 	        
+	        int inity = 0;
+	        int ydepth = 0;
+	        int newydepth = mapSize-1;
 	    	xPosMax = this.mapSize;
 	    	yPosMax = this.mapSize;
 	    	xPosMin = -this.mapSize;
 	    	yPosMin = -this.mapSize;
 	    	
-	        int xPos = -(mapDiameter/2);
-	        int yPos = (mapSize-2)/2 -1;
+	        int xPos = -(mapSize-1);
+	        int yPos = inity;
 	        
 	        int count = 0;
 
-	        for(int x = 0; x < mapDiameter; x++){
+	        for(int left = 0; left < mapDiameter; left++){
 	        	for(int y = 0; y < height; y++) {
-	        		tiles[x][y] = new Tile(xPos, yPos);	
-	        		yPos++;
+	        	    if(left > ((mapDiameter-1)/2)+1){
+	        	       
+	        	        tiles[left][y] = new Tile(xPos, yPos);    
+	        	        yPos--;
+	        	    }else{
+	        	        if(height > mapDiameter) height--;
+	        	        tiles[left][y] = new Tile(xPos, yPos);
+	                    
+	                    yPos--;
+	        	    }
 	        		
-	        		 System.out.print("(" + tiles[x][y].getXCoord() +
-		                		"," + tiles[x][y].getYCoord() + ")");
-		                count++;
+	        		System.out.print("( " + tiles[left][y].getXCoord() +
+	                		"," + tiles[left][y].getYCoord() + ")    ");
+	        		
+	                count++;
+	        	}	       
+	        	if(left == ((mapDiameter-1)/2)){
+//	        	    height--;
 	        	}
-	        	xPos++;
-	        	if(mapDiameter/(x+1) >= 2){
-	        		height++;
+	        	if(left >= ((mapDiameter-1)/2)){
+	        	    xPos++;
+	                yPos = mapSize-1;
+	                height--;
+	        	}else{
+	        	    ydepth++;
+	        	    xPos++;
+	                yPos = ydepth;
+	                height++;    
 	        	}
-	        	else{
-	        		height--;
-	        	}
-	        	 System.out.println();
+	        	System.out.println();
 	        }
 	        
 	        System.out.println(count);
