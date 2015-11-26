@@ -100,7 +100,7 @@ public class ForthSystemCommands {
         ForthWord first;
         first = forthStack.pop();
         String consoleString = first.forthStringEncoding();
-        controller.displayMessage("pringing message: " + consoleString, ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
+        controller.displayMessage("printing message: " + consoleString, ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
     }
 
     /**

@@ -204,7 +204,7 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         Label minWinsSearchLabel = new Label("Min Wins:", labelStyle); 
         Label maxWinsSearchLabel = new Label("Max Wins:", labelStyle); 
         Label minLossesSearchLabel = new Label("Min Losses:", labelStyle); 
-        Label maxLossesSearchLabel = new Label("Max Losees:", labelStyle); 
+        Label maxLossesSearchLabel = new Label("Max Losses:", labelStyle); 
         Label minGamesPlayedSearchLabel = new Label("Min Matches:", labelStyle); 
         Label maxGamesPlayedSearchLabel = new Label("Max Matches:", labelStyle); 
         Label allVersionsSearchLabel = new Label("All Versions:", labelStyle); 
