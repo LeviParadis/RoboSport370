@@ -111,9 +111,11 @@ public class GameController{
     }
     
     private void initRobots(){
+        view.displayMessage("Init", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
         Iterator<Team> it = this.teams.iterator();
         while(it.hasNext()){
             Team nextTeam = it.next();
+            view.displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
             while(robotIt.hasNext()){
                 Robot nextRobot = robotIt.next();
