@@ -228,8 +228,23 @@ public class mapView extends ScreenAdapter {
     	if(Gdx.input.isKeyJustPressed(Keys.NUM_6)) {
         	moveRobot(1, 1, 6);
         }
-    	if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-    		fireShot(1, 1, 3, 1);
+    	if(Gdx.input.isKeyJustPressed(Keys.Q)) {
+    		fireShot(1, 1, 1, 1);
+    	}
+    	if(Gdx.input.isKeyJustPressed(Keys.W)) {
+    		fireShot(1, 1, 1, 2);
+    	}
+    	if(Gdx.input.isKeyJustPressed(Keys.E)) {
+    		fireShot(1, 1, 1, 3);
+    	}
+    	if(Gdx.input.isKeyJustPressed(Keys.A)) {
+    		fireShot(1, 1, 5, 1);
+    	}
+    	if(Gdx.input.isKeyJustPressed(Keys.S)) {
+    		fireShot(1, 1, 9, 2);
+    	}
+    	if(Gdx.input.isKeyJustPressed(Keys.D)) {
+    		fireShot(1, 1, 13, 3);
     	}
     }
     
@@ -351,15 +366,43 @@ public class mapView extends ScreenAdapter {
     	timelineTweenQueue.add(aTimeline);
     }
     
-    public void fireShot(int team1, int robot1, int team2, int robot2) {
+    /**
+     * Displays an animation of a shot being fired from robot on team
+     * to a relative position at direction and range
+     * @param team the team number of the robot
+     * @param robot the robot number in the team
+     * @param direction the number of the direction (0 is north, increment clockwise)
+     * @param range a range from 0 to 3
+     */
+    public void fireShot(int team, int robot, int direction, int range) {
+    	// Getting the xy coordinates based of the direction and range
+    	Float xTranslate;
+    	Float yTranslate;
+    	
+    	double theta;
+    	// In case we fire on ourselves
+    	if(range == 0) {
+    		theta = 0;
+    	}
+    	else{
+    		theta = (float) -direction/((float) range*6) * 2 * Math.PI + Math.PI/2;
+    	}
+    	
+    	xTranslate = (float) ((float) 1.1 * sizeX * range * Math.cos(theta) - 2);
+    	yTranslate = (float) ((float) sizeY * range * Math.sin(theta) + 5);
+    	
     	AudibleTimeline aTimeline = new AudibleTimeline();
     	aTimeline.setProjectile(projectile);
-    	aTimeline.setSource(teamList.get(team1).get(robot1));
+    	aTimeline.setSource(teamList.get(team).get(robot));
     	Timeline t = Timeline.createSequence()
     			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, 0.5f)
-    					.target(teamList.get(team2).get(robot2).getX(), teamList.get(team2).get(robot2).getY()));
+    					.targetRelative(xTranslate, yTranslate));
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
+    }
+    
+    public void destroyRobot(int team, int robot) {
+    	
     }
     
     @Override
