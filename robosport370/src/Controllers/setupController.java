@@ -136,8 +136,6 @@ public void notifyDeleteTeam(){
 public void notifyContinue(){
     try{
         new GameController(this.selectedTeams);
-
-
     } catch (RuntimeException e){
         JOptionPane.showMessageDialog(null, e.getMessage());
     }

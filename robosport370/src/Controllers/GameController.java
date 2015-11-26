@@ -61,37 +61,25 @@ public class GameController{
      * @param hexSize the size of the map on one side
      */
     public GameController(List<Team> allTeams) throws RuntimeException{
-        
-        this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
-        
-        teams = new ArrayList<Team>();
-
-        gameMap = new Map();
-        
-        this.view = new mapView(this, allTeams);
-        
-        UIManager manager = UIManager.sharedInstance();
-        manager.pushScreen(this.view);
-        
-        
-        
-//        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
-//        introMusic.setLooping(true);
-//        introMusic.setVolume(0.6f);
-//        introMusic.play();
-
         if(allTeams == null){
             throw new RuntimeException("There must be teams added to begin the game");
-     
-  //      } else if(allTeams.size() != 2 && allTeams.size() != 3 && allTeams.size() != 6){
-  //          throw new RuntimeException("You must select either 2, 3, or 6 teams");
-        } else {
-            Iterator<Team> it = allTeams.iterator();
-            while(it.hasNext()){
-                Team nextTeam = it.next();
-                teams.add((int) nextTeam.getTeamNumber(), nextTeam);
-            }
+        } else if(allTeams.size() != 2 && allTeams.size() != 3 && allTeams.size() != 6){
+            throw new RuntimeException("You must select either 2, 3, or 6 teams");
         }
+        
+        this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
+        gameMap = new Map();
+        this.view = new mapView(this, allTeams);
+   
+        teams = new ArrayList<Team>();
+        Iterator<Team> it = allTeams.iterator();
+        while(it.hasNext()){
+            Team nextTeam = it.next();
+            teams.add((int) nextTeam.getTeamNumber(), nextTeam);
+        }
+
+        UIManager manager = UIManager.sharedInstance();
+        manager.pushScreen(this.view);
         
         this.executionThread = new Thread(){
             public void run(){
@@ -106,7 +94,6 @@ public class GameController{
                displayMessage("done", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             }
           };
-
           executionThread.start();
     }
     
