@@ -1,6 +1,5 @@
 package Models;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,6 +7,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
 
 
 /**
@@ -336,5 +336,18 @@ public class Robot implements Cloneable{
         return result;
         
     }
+    
+    public RobotGameStats getStats(){
+        return this.stats;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Robot){
+            Robot other = (Robot)obj;
+            long sn = other.getSerialNumber();
+            return (sn == this.getSerialNumber());
+        }
+        return false;
+    }
 }

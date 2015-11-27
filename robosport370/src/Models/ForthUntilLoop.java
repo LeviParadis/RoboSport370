@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthUntilLoop implements ForthWord {
 
@@ -41,19 +42,11 @@ public class ForthUntilLoop implements ForthWord {
         return formatedString + " until";
     }
 
-    @Override
     /**
      *  @return the string value that is printed by forth in the  console
      */
-    public String consoleFormat() {
-        return "until_loop";
-    }
-    
-    /**
-     * @return the string value that appears in the developer's console
-     */
     public String toString(){
-        return consoleFormat();
+        return "encountered until loop";
     }
 
 }

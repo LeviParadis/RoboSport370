@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthConditional implements ForthWord {
     
@@ -76,19 +77,12 @@ public class ForthConditional implements ForthWord {
         return formatedString + " then";
     }
 
-    @Override
+
     /**
-     *  @return the string value that is printed by forth in the  console
-     */
-    public String consoleFormat() {
-        return "if_statement";
-    }
-    
-    /**
-     * @return the string value that appears in the developer's console
+     * @return the string value that is printed by forth in the  console
      */
     public String toString(){
-        return forthStringEncoding();
+        return "encountered a conditional";
     }
 
 }

@@ -1,4 +1,4 @@
-package Models;
+package Interfaces;
 
 public interface ForthWord {
     /**
@@ -8,5 +8,5 @@ public interface ForthWord {
     /**
      *  @return the string value that is printed by forth in the  console
      */
-    public String consoleFormat();
+    public String toString();
 }

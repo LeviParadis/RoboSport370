@@ -47,6 +47,7 @@ public class GameController extends Game{
 
         gameMap = new Map();
         
+    public GameController(List<Team> allTeams) throws RuntimeException{
         if(allTeams == null){
             throw new RuntimeException("There must be teams added to begin the game");
      

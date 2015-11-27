@@ -1,12 +1,16 @@
 package Views;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -16,8 +20,13 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter.Particle;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
 import Controllers.setupController;
+import Models.Team;
 
 /**
  * A GUI view for the setup screen
@@ -51,9 +60,9 @@ public class setupView extends ScreenAdapter {
 	private static final Integer menOpWidth = 190;
 	private static final Integer menOpHeight = 30;
 	private Sprite addTeam;
-		private Integer teamIndex;
-		private HashMap<Integer, hideableSprite> teamMap;
-		private myTextInputListener listener;
+	private Integer teamIndex;
+	private HashMap<Integer, hideableSprite> teamMap;
+	private myTextInputListener listener;
 	private Sprite deleteTeam;
 	private Sprite mapToggle;
 	private Sprite debugToggle;
@@ -89,6 +98,9 @@ public class setupView extends ScreenAdapter {
 	private Sprite yellowPanel;
 	private Sprite greenPanel;
 	
+private Stage stage;
+private Table teamList;
+
 	private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
 
 	/**
@@ -98,6 +110,8 @@ public class setupView extends ScreenAdapter {
 	public setupView(final setupController cont) {
 		// Initailizing the controller, constants, and batch
 		controller = cont;
+
+stage = new Stage();
 		
 		SCREEN_WIDTH = Gdx.graphics.getWidth();
         SCREEN_HEIGHT = Gdx.graphics.getHeight();
@@ -130,6 +144,8 @@ public class setupView extends ScreenAdapter {
 		continueSprite.setPosition(SCREEN_WIDTH*0.2f, SCREEN_HEIGHT*0.55f);
 		returnSprite.setPosition(SCREEN_WIDTH*0.2f, SCREEN_HEIGHT*0.5f);
 		
+
+
 		// Giving the team sprites and positions
 		teamIndex = 0;
 		listener = new myTextInputListener();
@@ -185,6 +201,12 @@ public class setupView extends ScreenAdapter {
 		bluePanel.setPosition(SCREEN_WIDTH*0.18f, SCREEN_HEIGHT*0.45f);
 		yellowPanel.setPosition(SCREEN_WIDTH*0.6f, SCREEN_HEIGHT*0.48f);
 		greenPanel.setPosition(SCREEN_WIDTH*0.6f, SCREEN_HEIGHT*0.2f);
+
+this.teamList = new Table();
+teamList.setPosition(880, SCREEN_HEIGHT-285);
+teamList.setFillParent(false);
+this.stage.addActor(teamList);
+this.updateTeamTable(new LinkedList<Team>());
     }
 	
     /**
@@ -207,6 +229,8 @@ public class setupView extends ScreenAdapter {
         font.draw(batch, "Teams", SCREEN_WIDTH*0.65f, SCREEN_HEIGHT*0.9f);
 
         batch.end();
+        
+      stage.draw();
     }   
     
     /**
@@ -247,12 +271,36 @@ public class setupView extends ScreenAdapter {
     // TODO All of these funtions either do or may require functions call to the controller
     public void addTeam() {
         
-        controller.notifyAddTeam();
+        controller.notifyNewTeam();
+        this.updateTeamTable(controller.selectedTeams);
 
     }
     
     public void deleteTeam() {
         controller.notifyDeleteTeam();
+        this.updateTeamTable(controller.selectedTeams);
+    }
+    
+    public void updateTeamTable(List<Team> teams){
+        LabelStyle labelStyle = new LabelStyle();
+        labelStyle.fontColor = Color.BLACK;
+        labelStyle.font = font;
+        
+        this.teamList.clear();
+        
+        Iterator<Team> it = teams.iterator();
+        while(it.hasNext()){
+            Team next = it.next();
+            Label newLabel = new Label(next.getTeamName(), labelStyle);
+            this.teamList.add(newLabel).width(50).padBottom(3);
+            this.teamList.row();
+        } 
+        
+        if(teams.isEmpty()){
+            Label newLabel = new Label("No Teams", labelStyle);
+            this.teamList.add(newLabel).width(50).padBottom(3);
+            this.teamList.row();
+        }
     }
     
     public void toggleMapSize() {
@@ -353,13 +401,16 @@ public class setupView extends ScreenAdapter {
     	setupOptions.dispose();
     	setupdecor.dispose();
         batch.dispose();
+        this.stage.dispose();
     }
     
-	public static void main(String[] args) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = "RobotSport370";
-		config.height = 800;
-		config.width = 1280;
-		new LwjglApplication(new setupController(), config);
-	}
+    /**
+     * set this screen to receive buttons whenever it becomes active.
+     * Also, refresh the list of teams
+     */
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        this.updateTeamTable(controller.selectedTeams);   
+    }
+    
 }
