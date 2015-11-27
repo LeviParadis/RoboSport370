@@ -6,7 +6,12 @@ The RoboSport370 Project is a group project made by a team of 5 in CMPT 370,
 a computer science software engineering class offered by the University of 
 Saskatchewan. The project’s purpose is to simulate a battle between robots 
 that have had their AI written in forth code. The simulation is developed to 
-work with any forth code so long as it meets the RoboSport370 Standards. 
+work with any forth code so long as it meets the RoboSport370 Standards.
+
+The RoboSport program also uses the RobotLibrarian as a module
+the RobotLibrarian is an online server capable of storing and searching through
+JSON files that contain information about Robots.
+
 The Latest Version
 --------------------------
 Details of the latest version can be found in the implementation document.
