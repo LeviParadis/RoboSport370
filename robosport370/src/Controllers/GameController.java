@@ -346,6 +346,7 @@ public class GameController {
                     bestList = thisOption;
                 }
             }
+            bestList.add(current);
             return bestList;
         }
     }
