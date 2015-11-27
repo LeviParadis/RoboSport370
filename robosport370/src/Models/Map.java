@@ -100,7 +100,7 @@ public class Map {
     }
     
     /**
-     * returns the direction coordinates given the game direction (0,1,2,3...)
+     * returns the direction coordinates with range 1 given the game direction (0,1,2,3...)
      * @param Direction the direction in game format (0,1,2,3...)
      * @return returns the type DIrection with x and y coordinates
      */

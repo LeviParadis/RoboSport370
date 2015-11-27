@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -59,6 +60,46 @@ public class GameController extends Game{
                 this.nextTeamIdx.add(nextTeam);
             }
         }
+        
+        int numTeams = allTeams.size();
+        int size = gameMap.getMapSize();
+        Point[] teamInitPoints = new Point[6];
+        
+//        position 
+        if(numTeams == 2){
+            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teamInitPoints[1] = new Point(size-1, (size-1)/2);
+        }
+        else if(numTeams == 3){
+            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teamInitPoints[1] = new Point((size-1)/2, size-1);
+            teamInitPoints[2] = new Point((size-1)/2, -((size-1)/2));
+            
+        }
+        else if(numTeams == 6){
+            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teamInitPoints[1] = new Point(-((size-1)/2), (size-1)/2);
+            teamInitPoints[2] = new Point((size-1)/2, size-1);
+            teamInitPoints[3] = new Point(size-1, (size-1)/2);
+            teamInitPoints[4] = new Point((size-1)/2, -((size-1)/2));
+            teamInitPoints[5] = new Point(-((size-1)/2), -(size-1));
+        }
+        else{
+            throw new RuntimeException("there must be 2,3, or 6 teams for a tournament");
+        }
+        Iterator<Team> iter = teams.iterator();
+        for(int l = 0; l < teamInitPoints.length; l++){
+            Team tempTeam = teams.get(l);
+            Queue<Robot> robots = tempTeam.getAllRobots();
+            for(int i = 0; i < robots.size(); i++){
+                Robot tempRobot = robots.remove();
+                tempRobot.setXPosition((int) teamInitPoints[l].getX());
+                tempRobot.setYPosition((int) teamInitPoints[l].getY());
+                robots.add(tempRobot);
+            }
+        }
+        
+        
         
         //TODO // GameLog gameLog = new GameLog();
     }
@@ -249,6 +290,7 @@ public class GameController extends Game{
     
     @Override
     public void create() {
+        
         this.setScreen(new mapView(this));
     }
     
