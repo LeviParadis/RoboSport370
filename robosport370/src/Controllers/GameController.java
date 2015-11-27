@@ -61,7 +61,17 @@ public class GameController extends Game{
             }
         }
         
-        int numTeams = allTeams.size();
+        initRobotPositions(); // add robots to map at starting positions      
+        
+        
+        //TODO // GameLog gameLog = new GameLog();
+    }
+    
+    /**
+     * Adds the robot teams to their starting positions on the map
+     */
+    private void initRobotPositions(){
+        int numTeams = teams.size();
         int size = gameMap.getMapSize();
         Point[] teamInitPoints = new Point[6];
         
@@ -87,7 +97,6 @@ public class GameController extends Game{
         else{
             throw new RuntimeException("there must be 2,3, or 6 teams for a tournament");
         }
-        Iterator<Team> iter = teams.iterator();
         for(int l = 0; l < teamInitPoints.length; l++){
             Team tempTeam = teams.get(l);
             Queue<Robot> robots = tempTeam.getAllRobots();
@@ -99,11 +108,7 @@ public class GameController extends Game{
             }
         }
         
-        
-        
-        //TODO // GameLog gameLog = new GameLog();
     }
-
     
     /**
      * puts the game into a paused state
