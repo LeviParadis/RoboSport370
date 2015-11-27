@@ -28,6 +28,7 @@ import Models.Team;
 import Models.Tile;
 import Models.Map;
 import Models.Map.DIRECTION;
+import Views.endView;
 import Views.mapView;
 
 public class GameController{
@@ -55,6 +56,8 @@ public class GameController{
     
     /** how long it waits in between actions in milliseconds */
     private int delayDuration = 500;
+    
+    private static int TURN_LIMIT = 2;
     
     /**
      * initializes the teams and ??sets their position on the map??
@@ -88,11 +91,12 @@ public class GameController{
                 initRobots();
                 
                 int i = 1;
-                while(teamsAlive() > 1){
+                while(teamsAlive() > 1 && i < TURN_LIMIT){
                     executeNextTurn(i);
                     i++;
                 }
                displayMessage("done", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+               this.join();
             }
           };
           executionThread.start();
@@ -187,10 +191,14 @@ public class GameController{
     }
     
     /**
-     * ends game stops all game threads from running and calls the endgame controller
+     * calls the endgame controller
      */
     public void endGame(){
         //TODO new EndController();
+        UIManager manager = UIManager.sharedInstance();
+        EndController cont = new EndController();
+        endView endView = new endView(cont, teams);
+        manager.pushScreen(endView);
     }
     
 
