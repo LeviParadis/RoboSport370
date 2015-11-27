@@ -3,7 +3,7 @@ import Controllers.gameVariables;
 import Models.Map.DIRECTION;
 
 public class Map {
-    boolean test = false;
+    boolean test = true;
     private int mapDiameter = gameVariables.mapSize *2 -1;
     private int height = gameVariables.mapSize;
     private int mapSize = gameVariables.mapSize;
@@ -27,6 +27,7 @@ public class Map {
         int count = 0;
 
         for(int left = 0; left < mapDiameter; left++){
+        	
             for(int y = 0; y < height; y++) {
                 if(left > ((mapDiameter-1)/2)+1){
                    
@@ -39,8 +40,8 @@ public class Map {
                     yPos--;
                 }
                 if(test){
-                    System.out.print("( " + tiles[left][y].getXCoord() +
-                            "," + tiles[left][y].getYCoord() + ") ");                    
+                    System.out.print("(" + tiles[left][y].getXCoord() +
+                            "," + tiles[left][y].getYCoord() + ")");                    
                 }
                 
                 count++;
@@ -70,8 +71,22 @@ public class Map {
      * @return the distance as an integer
      */
     public int calcDistance(Tile cur, Tile dest){
-        return (int) Math.sqrt( (Math.pow(dest.getXCoord()- cur.getXCoord(),2)) + 
-        		(Math.pow(dest.getYCoord()- cur.getYCoord(),2)));
+    	if (cur.getXCoord() == dest.getXCoord()){
+    		return Math.abs(dest.getYCoord() - cur.getYCoord());    	  		  
+  	  	}
+  	  	else if (cur.getYCoord() == dest.getYCoord()){
+  	  		return Math.abs(dest.getXCoord() - cur.getXCoord());    	  		  
+  	  	}
+  	  	else{
+  	  		int dx = Math.abs(dest.getXCoord() - cur.getXCoord());
+  	  		int dy = Math.abs(dest.getYCoord() - cur.getYCoord());
+  	  		if (cur.getYCoord() < dest.getYCoord()){
+  	  			return (int) (dx + dy - (Math.ceil(dx / 2.0))-1);
+  	  		}
+  	  		else{
+  	  			return (int) (dx + dy - (Math.floor(dx / 2.0))-1); 					  
+  	  		}
+  	  	}
     }
     
     public enum DIRECTION{
@@ -181,6 +196,10 @@ public class Map {
     }
     
     public static void main(String[] args){
-        new Map();   
+        Map test = new Map();   
+        Tile one = new Tile(-1, -1);
+        Tile two = new Tile(3, 4);
+        System.out.println(test.calcDistance(one, two));
+        
     }
 } 
