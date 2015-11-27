@@ -9,8 +9,8 @@ that have had their AI written in forth code. The simulation is developed to
 work with any forth code so long as it meets the RoboSport370 Standards. 
 The Latest Version
 --------------------------
-Details of the latest can be found in the implementation document.
-The project is currently in an early beta stage. 
+Details of the latest version can be found in the implementation document.
+The project is currently in an early beta stage.
 
 Documentation
 -------------------------
