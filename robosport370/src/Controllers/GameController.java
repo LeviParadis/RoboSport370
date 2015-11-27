@@ -298,37 +298,38 @@ public class GameController {
     }
 
 
-    public LinkedList<Tile> findBestPath(Tile current, Tile destination, int numMoves,  		Tile[][] allTiles){
-		        LinkedList<Tile> temp = new LinkedList<>();
-		        int movesLeft = numMoves;
-		        DIRECTION dir = gameMap.findDirection(current, destination);
+    public LinkedList<Tile> findBestPath(Tile current, Tile destination, int numMoves, Tile[][] allTiles){
+		        
+        LinkedList<Tile> temp = new LinkedList<>();
+        int movesLeft = numMoves;
+        DIRECTION dir = gameMap.findDirection(current, destination);
+
+
+        boolean atLeastOne;
+        //go straight
+        int x = current.getXCoord()+dir.getXCoord() ;
+        int y  = current.getYCoord()+dir.getYCoord();
+
+        if(allTiles[x][y].getCost() > movesLeft){
+            atLeastOne = false;
+        }else{
+            //If distance is 3 only possible direction is straight and on Plains
+            if(gameMap.calcDistance(current, destination) == numMoves){
 		
-		
-		        boolean atLeastOne;
-		        //go straight
-		        int x = current.getXCoord()+dir.getXCoordinate() ;
-		        int y  = current.getYCoord()+dir.getYCoordinate();
-		
-		        if(allTiles[x][y].getCost() > movesLeft){
-		            atLeastOne = false;
-		        }else{
-		            //If distance is 3 only possible direction is straight and on Plains
-		            if(gameMap.calcDistance(current, destination) == numMoves){
-				
-		            }
-		        }
+            }
+        }
     	
     	return null;
     }
 
-    public int moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft) throws RuntimeException{
+    public int moveRobot(Robot robotToMove, int TeamNumber, int range, int direction, int movesLeft) throws RuntimeException{
            
       int newX;
       int newY;
 
-      DIRECTION dir = gameMap.getDirection(Direction);
-      newX = dir.getXCoordinate();
-      newY = dir.getYCoordinate();
+      Point dir = gameMap.getDirection(direction, range);
+      newX = (int) dir.getX();
+      newY = (int) dir.getY();
         
       newX = newX*range;
       newY = newY*range;
@@ -392,8 +393,8 @@ public class GameController {
         
         DIRECTION dir = gameMap.getDirection(direction);
         
-        int xPos = dir.getXCoordinate()*range;
-        int yPos = dir.getYCoordinate()*range;
+        int xPos = dir.getXCoord()*range;
+        int yPos = dir.getYCoord()*range;
         
         LinkedList<Robot> robots = allTiles[xPos][yPos].getRobots();
         

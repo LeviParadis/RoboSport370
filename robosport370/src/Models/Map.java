@@ -1,4 +1,6 @@
 package Models;
+import java.awt.Point;
+
 import Controllers.gameVariables;
 import Models.Map.DIRECTION;
 
@@ -105,13 +107,37 @@ public class Map {
             this.yCoordinate = yCoordinate;
         }
         
-        public int getXCoordinate(){
-           
+        public int getXCoord(){
             return xCoordinate;
         }
-        public int getYCoordinate(){
+        public int getYCoord(){
             return yCoordinate;            
         }
+    }
+    
+    public enum SIDE_VECTORS{
+        SIDE_ZERO(1,0),
+        SIDE_ONE(0,-1),
+        SIDE_TWO(-1,-1),
+        SIDE_THREE(-1,0),
+        SIDE_FOUR(0,1),
+        SIDE_FIVE(1,1);
+        
+        private final int xCoordinate;
+        private final int yCoordinate;
+        
+        SIDE_VECTORS(int xCoordinate, int yCoordinate){
+            this.xCoordinate = xCoordinate;
+            this.yCoordinate = yCoordinate;
+        }
+        
+        public int getXCoord(){  
+            return xCoordinate;
+        }
+        public int getYCoord(){
+            return yCoordinate;            
+        }
+        
     }
     
     /**
@@ -119,30 +145,59 @@ public class Map {
      * @param Direction the direction in game format (0,1,2,3...)
      * @return returns the type DIrection with x and y coordinates
      */
-    public DIRECTION getDirection(int Direction){
+    public Point getDirection(int direction, int range){
         
-        if(Direction == 0){
-            return DIRECTION.NORTH;
-           
+        int side = direction/range;
+        
+        int depthSide = direction % range;
+        
+        int retX, retY;
+        
+        int x = 0,y = 0,sideX = 0,sideY = 0;
+        
+
+        if(side == 0){
+           y = DIRECTION.NORTH.getYCoord(); 
+           x = DIRECTION.NORTH.getXCoord();
+           sideX = SIDE_VECTORS.SIDE_ZERO.getXCoord();
+           sideY = SIDE_VECTORS.SIDE_ZERO.getYCoord();
+          
         }
-        else if(Direction == 1){
-            return DIRECTION.NORTH_EAST;
+        else if(side == 1){
+            y = DIRECTION.NORTH_EAST.getYCoord();
+            x = DIRECTION.NORTH_EAST.getXCoord();
+            sideX = SIDE_VECTORS.SIDE_ONE.getXCoord();
+            sideY = SIDE_VECTORS.SIDE_ONE.getYCoord();
         }
-        else if(Direction == 2){
-            return DIRECTION.SOUTH_EAST;
+        else if(side == 2){
+            y = DIRECTION.SOUTH_EAST.getYCoord();
+            x = DIRECTION.SOUTH_EAST.getXCoord();
+            sideX = SIDE_VECTORS.SIDE_TWO.getXCoord();
+            sideY = SIDE_VECTORS.SIDE_TWO.getYCoord();
         }
-        else if(Direction == 3){
-            return DIRECTION.SOUTH;
+        else if(side == 3){
+            y = DIRECTION.SOUTH.getYCoord();
+            x = DIRECTION.SOUTH.getXCoord();
+            sideX = SIDE_VECTORS.SIDE_THREE.getXCoord();
+            sideY = SIDE_VECTORS.SIDE_THREE.getYCoord();
         }
-        else if(Direction == 4){
-            return DIRECTION.SOUTH_WEST;
+        else if(side == 4){
+            y = DIRECTION.SOUTH_WEST.getYCoord();
+            x = DIRECTION.SOUTH_WEST.getXCoord();
+            sideX = SIDE_VECTORS.SIDE_FOUR.getXCoord();
+            sideY = SIDE_VECTORS.SIDE_FOUR.getYCoord();
         }
-        else if(Direction == 5){
-            return DIRECTION.NORTH_WEST;
+        else if(side == 5){
+            y = DIRECTION.NORTH_WEST.getYCoord();
+            x = DIRECTION.NORTH_WEST.getXCoord();
+            sideX = SIDE_VECTORS.SIDE_FIVE.getXCoord();
+            sideY = SIDE_VECTORS.SIDE_FIVE.getYCoord();
         }
-        else{
-            throw new RuntimeException("The provided direction is not valid");
-        }
+        
+        retX = range * x + depthSide * sideX;
+        retY = range * y + depthSide * sideY;
+        
+        return new Point(retX, retY);
         
        
     }
@@ -159,7 +214,7 @@ public class Map {
     	
     	DIRECTION toRet = null;
     	for(DIRECTION dir: DIRECTION.values()){
-    		if(dir.getXCoordinate() == xCoord && dir.getYCoordinate() == yCoord){
+    		if(dir.getXCoord() == xCoord && dir.getYCoord() == yCoord){
     			toRet = dir;
     		}
     	}
