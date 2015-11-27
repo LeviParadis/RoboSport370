@@ -3,13 +3,17 @@ package Controllers;
 import javax.swing.JOptionPane;
 
 import Interpreters.JsonInterpreter;
+import Models.Robot;
 
-public class AddRobotController {
+public class EditRobotController extends AddRobotController {
 
-    public AddRobotController() {
-        
+    private Robot editing;
+    
+    public EditRobotController(Robot input) {
+        this.editing = input;
     }
-
+    
+    @Override
     /**
      * Called when the user presses the confirm button
      * @param name the text in the name field at the time of the button press
@@ -22,6 +26,21 @@ public class AddRobotController {
     public void notifyDone(String name, String team, String forth, int movesLeft, int firePower, int health){
         try{
             JsonInterpreter.registerRobot(name, team, firePower, health, movesLeft, forth);
+            JsonInterpreter.reviseRobot(editing.getSerialNumber(), firePower, health, movesLeft, forth);
+            UIManager manager = UIManager.sharedInstance();
+            manager.popScreen();
+        } catch (RuntimeException e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    
+    /**
+     * Called when the user pressed the retire button
+     * Tells the Json Interpreter to retire the selected robot
+     */
+    public void notifyRetire(){
+        try{
+            JsonInterpreter.retireRobot(editing.getSerialNumber());
             UIManager manager = UIManager.sharedInstance();
             manager.popScreen();
         } catch (RuntimeException e){
@@ -37,4 +56,6 @@ public class AddRobotController {
         UIManager manager = UIManager.sharedInstance();
         manager.popScreen();
     }
+    
+
 }

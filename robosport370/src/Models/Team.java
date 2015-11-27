@@ -2,6 +2,7 @@ package Models;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 
 public class Team {
@@ -76,9 +77,14 @@ public class Team {
         return teamNumber;
     }
     
-    public Robot getTeamMember(int memberNumber){
+    public Robot getTeamMember(int memberNumber) throws IndexOutOfBoundsException{
         Robot[] array = (Robot[]) this.robotList.toArray();
-        return array[memberNumber];
+        int size = array.length;
+        if(memberNumber >= size || memberNumber < 0){
+            throw new IndexOutOfBoundsException();
+        } else {
+            return array[memberNumber];
+        }
     }
     
     /**
@@ -98,8 +104,7 @@ public class Team {
      * @return the team's name in a format for display
      */
     public String getTeamName(){
-        int oneHigher = (this.teamNumber + 1);
-        return "Team " + oneHigher;
+        return "Team " + this.teamNumber;
 
     }
     

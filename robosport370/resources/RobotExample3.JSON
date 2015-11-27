@@ -1,0 +1,43 @@
+{
+    "script" :  {
+        "serial" : 33333,
+        "team" : "C3",
+        "name" : "Robot 3",
+        "version" : 2,
+        "matches" : 43,
+        "wins" : 12,
+        "losses" : 38,
+        "executions" : 55,
+        "lived" : 10,
+        "died" : 45,
+        "health" : 2,
+        "absorbed" : 93,
+        "firepower" : 3,
+        "damages" : 17,
+        "kills" : 12,
+        "movement" : 1,
+        "distance" : 0,
+        "code" : [  {"variable" : "maxRange"},
+                    {"word" :      {   "name" : "init",
+                                        "comment" : "( -- )",
+                                        "body" : "3 maxRange !"
+                                    }
+                    },
+                    {"word" :       {   "name" : "hexesPerRange",
+                                        "comment" : "( -- i)",
+                                        "body" : "6"
+                                    }
+                    },
+                    {"word" :       {   "name" : "turn2",
+                                        "comment" : "( -- )",
+                                        "body" : "maxRange ? 1 - random 1 + dup hexesPerRange * 1 - random swap shoot! .\"testing testing \""
+                                    }
+                    },
+                    {"word" :       {   "name" : "turn",
+                                        "comment" : "( -- )",
+                                        "body" :  "1 1 move! 1 1 shoot!"
+                                    }
+                    }
+                ]
+    }
+}
