@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,7 +32,7 @@ import Models.Map.DIRECTION;
 import Views.endView;
 import Views.mapView;
 
-public class GameController{
+public class GameController {
     
     /** All of the teams to be run in the simulation.*/
     private ArrayList<Team> teams;
@@ -57,7 +58,9 @@ public class GameController{
     /** how long it waits in between actions in milliseconds */
     private int delayDuration = 500;
     
-    private static int TURN_LIMIT = 2;
+    private static int TURN_LIMIT = 500;
+    
+    private boolean gameComplete;
     
     /**
      * initializes the teams and ??sets their position on the map??
@@ -71,6 +74,7 @@ public class GameController{
             throw new RuntimeException("You must select either 2, 3, or 6 teams");
         }
         
+        this.gameComplete = false;
         this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
         gameMap = new Map();
         this.view = new mapView(this, allTeams);
@@ -96,7 +100,7 @@ public class GameController{
                     i++;
                 }
                displayMessage("done", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
-               this.join();
+               gameComplete = true;
             }
           };
           executionThread.start();
@@ -454,6 +458,12 @@ public class GameController{
      */
     public int rangeBetweenRobots(Robot from, Robot to){
         return 0;
+    }
+
+    public void checkGameComplete(){
+        if(this.gameComplete){
+            this.endGame();
+        }
     }
     
 

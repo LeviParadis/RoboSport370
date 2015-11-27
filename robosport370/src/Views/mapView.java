@@ -428,6 +428,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         }
 
         stage.draw();
+        this.controller.checkGameComplete();
     }
     
     public void renderExplosion() {
