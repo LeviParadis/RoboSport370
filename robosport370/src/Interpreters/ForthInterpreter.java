@@ -138,12 +138,11 @@ public class ForthInterpreter {
                 return;
             }
             
-            
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
-            
+
             controller.displayMessage(nextItem.toString(), ConsoleMessageType.CONSOLE_ACTION);
-            
+
             //find what kind of word it is, and handle appropriately
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
                 //literals are pushed to the stack

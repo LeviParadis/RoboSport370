@@ -60,7 +60,7 @@ public class ForthIntegerLiteral implements ForthWord {
      * @return the string value that is printed by forth in the  console
      */
     public String toString(){
-        return "pusing int to stack: "  + forthStringEncoding();
+        return "pushing int to stack: "  + forthStringEncoding();
     }
     
 }
