@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -17,7 +18,7 @@ import Models.Map;
 import Models.Map.DIRECTION;
 import Views.mapView;
 
-public class GameController extends Game{
+public class GameController{
     
     /** All of the teams to be run in the simulation.*/
     private ArrayList<Team> teams;
@@ -40,13 +41,7 @@ public class GameController extends Game{
      * @param allTeams an array that contains all of the teams playing the match
      * @param hexSize the size of the map on one side
      */
-    public GameController(Queue<Team> allTeams) throws RuntimeException{
-        
-        teams = new ArrayList<Team>();
-        this.nextTeamIdx = new LinkedList<Team>();
-
-        gameMap = new Map();
-        
+   
     public GameController(List<Team> allTeams) throws RuntimeException{
         if(allTeams == null){
             throw new RuntimeException("There must be teams added to begin the game");
@@ -291,14 +286,9 @@ public class GameController extends Game{
      * Called every frame
      */
     public void render(){
-        super.render();
+        this.render();
     }
     
-    @Override
-    public void create() {
-        
-        this.setScreen(new mapView(this));
-    }
     
     public static void main(String[] args){
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
@@ -313,7 +303,7 @@ public class GameController extends Game{
             teamList.add(newTeam);
         }
         
-        new LwjglApplication(new GameController(teamList), config);
+       
     }
 
 }
