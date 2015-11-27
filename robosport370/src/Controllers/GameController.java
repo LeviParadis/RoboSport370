@@ -1,35 +1,22 @@
 package Controllers;
 
 import java.awt.Point;
-import java.lang.Thread.UncaughtExceptionHandler;
+import java.security.AllPermission;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Queue;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.graphics.Color;
-
 import Enums.ConsoleMessageType;
 import Enums.GameSpeed;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Interfaces.ForthWord;
 import Interpreters.ForthInterpreter;
-import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
 import Models.Tile;
 import Models.Map;
-import Models.Map.DIRECTION;
 import Views.endView;
 import Views.mapView;
 
@@ -104,6 +91,7 @@ public class GameController {
                gameComplete = true;
             }
           };
+          initRobotPositions();
           executionThread.start();
     }
     
@@ -139,21 +127,32 @@ public class GameController {
 //        position 
         if(numTeams == 2){
             teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teams.get(0).setTeamDirection(-3);
             teamInitPoints[1] = new Point(size-1, (size-1)/2);
+            teams.get(1).setTeamDirection(0);
         }
         else if(numTeams == 3){
             teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teams.get(0).setTeamDirection(-3);
             teamInitPoints[1] = new Point((size-1)/2, size-1);
+            teams.get(1).setTeamDirection(1);
             teamInitPoints[2] = new Point((size-1)/2, -((size-1)/2));
+            teams.get(2).setTeamDirection(-1);
             
         }
         else if(numTeams == 6){
             teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teams.get(0).setTeamDirection(-3);
             teamInitPoints[1] = new Point(-((size-1)/2), (size-1)/2);
+            teams.get(1).setTeamDirection(-2);
             teamInitPoints[2] = new Point((size-1)/2, size-1);
+            teams.get(2).setTeamDirection(-1);
             teamInitPoints[3] = new Point(size-1, (size-1)/2);
+            teams.get(3).setTeamDirection(0);
             teamInitPoints[4] = new Point((size-1)/2, -((size-1)/2));
+            teams.get(4).setTeamDirection(1);
             teamInitPoints[5] = new Point(-((size-1)/2), -(size-1));
+            teams.get(5).setTeamDirection(2);
         }
         else{
             throw new RuntimeException("there must be 2,3, or 6 teams for a tournament");
@@ -360,56 +359,73 @@ public class GameController {
         return sum;
     }
     
-    public int moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft) throws RuntimeException{
+    public int moveRobot(Robot robotToMove, int TeamNumber, int range, int direction, int movesLeft) throws RuntimeException{
            
       int newX;
       int newY;
-
+      Tile[][] tiles = gameMap.getTiles();
+      Tile curTile = tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()];
+      
       Point dir = gameMap.getDirection(direction, range);
+      
+      Tile dest = tiles[(int) dir.getX()][(int) dir.getY()];
       newX = (int) dir.getX();
       newY = (int) dir.getY();
         
       newX = newX*range;
       newY = newY*range;
       
-      //TODO add the team specific direction here
-      if(newY > gameMap.getMaxY() || newY < gameMap.getMinY()){
-          throw new RuntimeException("can't go off the edge in the Y coordinate");
-      }
-      if(newX > gameMap.getMaxX() || newX < gameMap.getMinY()){
-          throw new RuntimeException("can't go off the edge in the X coordinate");
+      List<Tile> bestPath = findBestPath( curTile, dest, movesLeft);
+      
+      Iterator<Tile> iter = bestPath.iterator();
+      
+      while(iter.hasNext()){
+          Tile temp = iter.next();
+          
+          //TODO
+          tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].removeRobot(robotToMove);
+          
+          robotToMove.setXPosition(newX);
+          robotToMove.setYPosition(newY);
+          
+          tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].addRobot(robotToMove);
+          view.moveRobot(robotToMove.getTeamNumber(), robotToMove.getMemberNumber(), direction);
+          
       }
       
-//      for(int i = 0; i < teams.size(); i++){
-//          Team temp = teams.get(i);
-//          if(teams.get(i).getTeamNumber() == TeamNumber){
-//              if(temp.getTeamDirection() == 5){
-//                  newX = newX
-//              }
-//              newX = newX+teams.get(i).getTeamDirection();
-//              
-//          }
+      
+      
+      
+      
+      
+    //TODO add the team specific direction here
+      
+//      if(newY > gameMap.getMaxY() || newY < gameMap.getMinY()){
+//          throw new RuntimeException("can't go off the edge in the Y coordinate");
 //      }
-       
-      Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
-       
-      Tile[][] allTiles = this.gameMap.getTiles();
-      
-      if(movesLeft < allTiles[newX][newY].getCost()){
-          throw new RuntimeException("There are not enough moves left to go there");
-      }
-      //Removing the robot from it's current tile
-      allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
-       
-      if(movesLeft < range){
-          throw new RuntimeException("range to move cannot be higher than the amount of moves remaining");
-      }
-      
-      temp.setXPosition(newX);
-      temp.setYPosition(newY);
-        
-      //Adding the robot to the new tile
-      allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
+//      if(newX > gameMap.getMaxX() || newX < gameMap.getMinY()){
+//          throw new RuntimeException("can't go off the edge in the X coordinate");
+//      }
+//       
+//      Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
+//       
+//      Tile[][] allTiles = this.gameMap.getTiles();
+//      
+//      if(movesLeft < allTiles[newX][newY].getCost()){
+//          throw new RuntimeException("There are not enough moves left to go there");
+//      }
+//      //Removing the robot from it's current tile
+//      allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
+//       
+//      if(movesLeft < range){
+//          throw new RuntimeException("range to move cannot be higher than the amount of moves remaining");
+//      }
+//      
+//      temp.setXPosition(newX);
+//      temp.setYPosition(newY);
+//        
+//      //Adding the robot to the new tile
+//      allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
     return 0;
         
    }
@@ -429,10 +445,10 @@ public class GameController {
             return;
         }
         
-        DIRECTION dir = gameMap.getDirection(direction);
+        Point dir = gameMap.getDirection(direction, range);
         
-        int xPos = dir.getXCoord()*range;
-        int yPos = dir.getYCoord()*range;
+        int xPos = (int) (dir.getX()*range);
+        int yPos = (int) (dir.getY()*range);
         
         LinkedList<Robot> robots = allTiles[xPos][yPos].getRobots();
         
@@ -441,8 +457,10 @@ public class GameController {
         while(iter.hasNext()){
             Robot temp = iter.next();
             temp.inflictDamage(shooter.getStrength());
+            view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
             if(temp.getHealth() <= 0){
                 temp.destroy();
+                view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
                 robots.remove(temp);
 
             }
