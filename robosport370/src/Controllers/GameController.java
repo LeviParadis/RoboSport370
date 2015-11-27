@@ -386,7 +386,8 @@ public class GameController {
         Tile[][] allTiles = this.gameMap.getTiles();
         
         if(range > 3){
-            throw new RuntimeException("cannot shoot farther then range 3");
+            this.displayMessage("cannot shoot farther then range 3", ConsoleMessageType.CONSOLE_ERROR);
+            return;
         }
         
         DIRECTION dir = gameMap.getDirection(direction);
