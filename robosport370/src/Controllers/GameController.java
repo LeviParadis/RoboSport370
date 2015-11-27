@@ -123,7 +123,7 @@ public class GameController {
     private void initRobotPositions(){
         int numTeams = teams.size();
         int size = gameMap.getMapSize();
-        Point[] teamInitPoints = new Point[6];
+        Point[] teamInitPoints = new Point[numTeams];
         
 //        position 
         if(numTeams == 2){
