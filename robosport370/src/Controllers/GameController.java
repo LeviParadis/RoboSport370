@@ -365,9 +365,9 @@ public class GameController {
       int newX;
       int newY;
 
-      DIRECTION dir = gameMap.getDirection(Direction);
-      newX = dir.getXCoordinate();
-      newY = dir.getYCoordinate();
+      Point dir = gameMap.getDirection(direction, range);
+      newX = (int) dir.getX();
+      newY = (int) dir.getY();
         
       newX = newX*range;
       newY = newY*range;
@@ -431,8 +431,8 @@ public class GameController {
         
         DIRECTION dir = gameMap.getDirection(direction);
         
-        int xPos = dir.getXCoordinate()*range;
-        int yPos = dir.getYCoordinate()*range;
+        int xPos = dir.getXCoord()*range;
+        int yPos = dir.getYCoord()*range;
         
         LinkedList<Robot> robots = allTiles[xPos][yPos].getRobots();
         
