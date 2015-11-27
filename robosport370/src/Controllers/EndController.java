@@ -12,7 +12,7 @@ public class EndController extends Game {
     endView view;
   
     public void create() {
-
+        this.setScreen(new endView(this, teams));
     }
     
     /**
