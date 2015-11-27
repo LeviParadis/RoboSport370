@@ -298,29 +298,68 @@ public class GameController {
     }
 
 
-    public LinkedList<Tile> findBestPath(Tile current, Tile destination, int numMoves,  		Tile[][] allTiles){
-		        LinkedList<Tile> temp = new LinkedList<>();
-		        int movesLeft = numMoves;
-		        DIRECTION dir = gameMap.findDirection(current, destination);
-		
-		
-		        boolean atLeastOne;
-		        //go straight
-		        int x = current.getXCoord()+dir.getXCoordinate() ;
-		        int y  = current.getYCoord()+dir.getYCoordinate();
-		
-		        if(allTiles[x][y].getCost() > movesLeft){
-		            atLeastOne = false;
-		        }else{
-		            //If distance is 3 only possible direction is straight and on Plains
-		            if(gameMap.calcDistance(current, destination) == numMoves){
-				
-		            }
-		        }
-    	
-    	return null;
+    public  List<Tile> findBestPath(Tile current, Tile destination, int movesAvailable){
+        int currentX = current.getXCoord();
+        int currentY = current.getYCoord();
+        
+        Tile[][] allTiles = this.gameMap.getTiles();
+        
+        List<List<Tile>> options = new  LinkedList<List<Tile>>();
+        
+        //iterate through all neighbour tiles
+        for (int newX = currentX-1; newX<currentX+1; newX++ ){
+            for(int newY = currentY-1; newY<currentY+1; newY++ ){
+                if(newX != currentX && newY != currentY){
+                    Tile neighbourTile = allTiles[newX][newY];
+                    //find the cost to reach this neighbout
+                    int cost = neighbourTile.getCost();
+                    //if we found the destination, return a new list with the destination in it
+                    if(neighbourTile == destination){
+                       LinkedList<Tile> result = new LinkedList<Tile>();
+                       result.add(neighbourTile);
+                       return result;
+                    //if the neighbour isnt the destination but it is reachable, recurse to the neighbour
+                    } else if(cost <= movesAvailable){
+                        List<Tile> neighbourResult = findBestPath(neighbourTile, destination, movesAvailable - cost);
+                        //if the neighbour was able to find a path, add it to the list of options
+                        if(neighbourResult != null){
+                            options.add(neighbourResult);
+                        }
+                    }
+                }
+            }
+        }
+        
+        //now we have a list of paths that reach the destination. Look through them all to find the best option
+        if(options.size()==0){
+            //if there are no options, this path is a dead end
+            return null;
+        } else {
+            int bestPath = Integer.MAX_VALUE;
+            List<Tile> bestList = null;
+            Iterator<List<Tile>> it = options.iterator();
+            while(it.hasNext()){
+                List<Tile> thisOption = it.next();
+                int cost = sizeOfPath(thisOption);
+                if(cost < bestPath){
+                    bestPath = cost;
+                    bestList = thisOption;
+                }
+            }
+            return bestList;
+        }
     }
 
+    private int sizeOfPath(List<Tile> list){
+        int sum = 0;
+        Iterator<Tile> it = list.iterator();
+        while(it.hasNext()){
+            Tile next = it.next();
+            sum = next.getCost() + sum;
+        }
+        return sum;
+    }
+    
     public int moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft) throws RuntimeException{
            
       int newX;
