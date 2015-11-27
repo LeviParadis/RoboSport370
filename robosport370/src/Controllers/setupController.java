@@ -24,7 +24,6 @@ import Views.setupView;
 import Views.mapView;
 import Views.teamCreationView;
 import Views.PickRobotsView;
-import Views.endView;
 
 
 /**
@@ -85,10 +84,13 @@ public List<Team> selectedTeams;
 	}
 	
 	public void notifyNewTeam() {
-        PickRobotsController cont = new PickRobotsController(4, 4, this);
-        PickRobotsView view = new PickRobotsView(cont);
-        UIManager manager = UIManager.sharedInstance();
-        manager.pushScreen(view);
+
+        if(this.selectedTeams.size() < 6){
+            PickRobotsController cont = new PickRobotsController(4, 4, this);
+            PickRobotsView view = new PickRobotsView(cont);
+            UIManager manager = UIManager.sharedInstance();
+            manager.pushScreen(view);
+        }
     }
 	
 	/**
@@ -138,13 +140,9 @@ public void notifyDeleteTeam(){
 
 public void notifyContinue(){
     try{
-        GameController game = new GameController(this.selectedTeams);
-        mapView map = new mapView(game, this.selectedTeams);
-        
-         UIManager manager = UIManager.sharedInstance();
-         manager.pushScreen(map);
-
+        new GameController(this.selectedTeams);
     } catch (RuntimeException e){
+        System.out.println(e);
         JOptionPane.showMessageDialog(null, e.getMessage());
     }
 }

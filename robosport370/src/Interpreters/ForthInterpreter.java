@@ -11,6 +11,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import Controllers.GameController;
+import Enums.ConsoleMessageType;
 import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
@@ -137,10 +138,18 @@ public class ForthInterpreter {
                 return;
             }
             
+<<<<<<< HEAD
+=======
+            
+>>>>>>> refs/remotes/origin/master
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
             
+<<<<<<< HEAD
             controller.displayNewAction(nextItem.toString(), false);
+=======
+            controller.displayMessage(nextItem.toString(), ConsoleMessageType.CONSOLE_ACTION);
+>>>>>>> refs/remotes/origin/master
             
             //find what kind of word it is, and handle appropriately
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
@@ -328,7 +337,7 @@ public class ForthInterpreter {
                 ForthSystemCommands.identify(forthStack, robot, controller);  
                 break;
             case MAIL_SEND:
-                ForthSystemCommands.sendMail(forthStack);
+                ForthSystemCommands.sendMail(forthStack, robot, controller);
                 break;
             case MAIL_CHECK:
                 ForthSystemCommands.checkMail(forthStack, robot);
