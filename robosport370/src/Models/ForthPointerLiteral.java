@@ -10,7 +10,7 @@ public class ForthPointerLiteral implements ForthWord {
     
     /**
      * construct a new forth variable pointer
-     * @param value  the pointer's name
+     * @param pointerName the name of the pointer
      * @param r the robot running the program, so the variable can be verified
      * @throws ForthParseException  thrown if the string doesn't represent one of the robot's variables
      */
@@ -58,7 +58,8 @@ public class ForthPointerLiteral implements ForthWord {
 
     /**
      * @param wordString a plain text string
-     * @return whether or not the string represents a variable pointer
+     * @param robot The robot we are checkng
+     * @return boolean whether or not the string represents a variable pointer
      */
     public static boolean isThisKind(String wordString, Robot robot){
         return (robot.getForthVariable(wordString) != null);

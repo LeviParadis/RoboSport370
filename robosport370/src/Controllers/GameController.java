@@ -65,7 +65,6 @@ public class GameController {
     /**
      * initializes the teams and ??sets their position on the map??
      * @param allTeams an array that contains all of the teams playing the match
-     * @param hexSize the size of the map on one side
      */
     public GameController(List<Team> allTeams) throws RuntimeException{
         if(allTeams == null){
@@ -226,6 +225,8 @@ public class GameController {
     /**
      * 
      * @param robotSN the S/N of the robot that we need info about
+     * @param xPos the x coordinate of the robot
+     * @param yPos the y position of the robot
      * @return a queue with the required info in the order
      * 1: Team Number int
      * 2: Robot health int
@@ -268,12 +269,14 @@ public class GameController {
      * @param teamNum the number that represents the team that the robot
      * to be played is on
      * @param robotNum the s/n of the robot who's turn it is
+     * @return Robot returns a Robot object
      */
     public Robot getRobot(int teamNum, int robotNum) throws IndexOutOfBoundsException{
         return teams.get(teamNum).getTeamMember(robotNum);
     }
     
     /**
+     * @param turnNum the current turn the controller is on
      * executes a round of turns
      */
     public void executeNextTurn(int turnNum){
@@ -380,7 +383,7 @@ public class GameController {
      * Will return up to 4 robots, in a range up to 3 spaces
      * Called by the ForthInterpreter
      * @param r the robot asking for closest robots
-     * @return
+     * @return List a list of robots
      */
     public List<Robot> getClosest(Robot r) {
         return new LinkedList<Robot>();
@@ -446,6 +449,7 @@ public class GameController {
      * Tells us the direction between two robots
      * @param from the robot to start from
      * @param to the robot we are finding the direction to
+     * @return int 
      */
     public int directionBetweenRobots(Robot from, Robot to){
         return 0;
@@ -455,6 +459,7 @@ public class GameController {
      * Tells us the range between two robots
      * @param from the robot to start from
      * @param to the robot we are finding the range to
+     * @return int
      */
     public int rangeBetweenRobots(Robot from, Robot to){
         return 0;

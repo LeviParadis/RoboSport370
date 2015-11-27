@@ -37,6 +37,7 @@ public class endView  extends ScreenAdapter  implements EventListener{
     /**
      * Set up the buttons for the view
      * @param controller the manage robot controller to handle the button presses
+     * @param teams The the teams that will displayed on the end view
      */
     public endView(EndController controller, List<Team> teams) {
         this.controller = controller;

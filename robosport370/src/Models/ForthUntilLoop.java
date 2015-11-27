@@ -15,6 +15,7 @@ public class ForthUntilLoop implements ForthWord {
     /**
      * constructs a do loop
      * @param commandList the list of commands to be repeated in the loop
+     * @throws ForthParseException throws when forth code is not properly formatted
      */
     public ForthUntilLoop(Queue<ForthWord> commandList) throws ForthParseException {
         commands = commandList; 

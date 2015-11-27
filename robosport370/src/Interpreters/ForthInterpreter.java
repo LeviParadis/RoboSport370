@@ -66,7 +66,7 @@ public class ForthInterpreter {
     /**
      * Run's a robot's forth init logic
      * @param robot             the robot we are setting up
-     * @param GameController    the controller that controls the game
+     * @param controller the controller that controls the game
      * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
      * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */
@@ -94,8 +94,7 @@ public class ForthInterpreter {
     /**
      * Run's a robot's forth turn logic
      * @param robot             the robot we are setting up
-     * @param GameController    the controller that controls the game
-     * @param delaySeconds      the amount of time to wait in between commands
+     * @param controller    the controller that controls the game
      * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
      * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */

@@ -121,6 +121,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     /**
      * Creates a mapView screen
      * @param controller the controller creating this screen
+     * @param teamsInMatch The number of teams in the current game
      */
     public mapView(final GameController controller, List<Team> teamsInMatch) {
         this.controller = controller;
@@ -281,7 +282,8 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     /**
      * used to update the console logger
-     * newMessage the latest message to display
+     * @param newMessage the latest message to display
+     * @param type Type of Console Message
      */
     public void displayMessage(String newMessage, ConsoleMessageType type){  
         this.consoleList.add(newMessage);
@@ -333,6 +335,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     /**
      * used to update the current robot's info on the screen
      * @param robot the robot that is running it's turn
+     * @param turnNum The turn number the controller is on
      */
     public void updateRobotInfo(Robot robot, int turnNum){
         nameLabel.setText(robot.getName());
@@ -367,6 +370,7 @@ public class mapView extends ScreenAdapter implements EventListener {
      * Sets a robot's initial position based on team size and team
      * @param teamNum the team number
      * @param s the robot sprite
+     * @param numTeams The number of teams the game will have
      */
 
     public void setRobotStartingPosition(int teamNum, Sprite s, int numTeams) {
@@ -508,7 +512,6 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     /**
      * This function finds a index (0 through 3) based on map position
-     * @param tile the tile being chosen
      * @param i the current column
      * @param j the current height
      * @return the index based of the current map tile

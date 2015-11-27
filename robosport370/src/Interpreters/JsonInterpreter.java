@@ -210,7 +210,7 @@ public class JsonInterpreter {
      * @param newHealth the new health value
      * @param newMovement the new number of moves per turn
      * @param newForthCode the new forth code
-     * @return a bool indicating whether the revision was a success
+     * @return boolean indicating whether the revision was a success
      */
     public static boolean reviseRobot(long serialNumber, 
             long newFirepower, long newHealth, long newMovement, String newForthCode){
@@ -221,7 +221,6 @@ public class JsonInterpreter {
     /**
      * retires a robot
      * @param serialNumber the serial number of the robot we want to retire
-     * @return a bool indicating whether the retire action was a success
      */
     public static void retireRobot(long serialNumber) throws RuntimeException{
       //TODO: implement
@@ -232,7 +231,7 @@ public class JsonInterpreter {
      * updates a robot's stats on the server
      * @param serialNumber the serial number of the robot to update
      * @param currentStats the stats we want to update
-     * @return
+     * @return boolean if stats were updated
      */
     public static boolean updateStats(long serialNumber, RobotGameStats currentStats){
       //TODO: implement

@@ -16,7 +16,6 @@ public class Team {
     /**
      * Default Constructor
      * @param robots a list of robots to make up the team
-     * @param name   the team's name
      * @param uniqueNumber a number assigned to this team by the simulator for id purposes
      */
     public Team(Queue<Robot> robots, int uniqueNumber){ 
@@ -90,7 +89,7 @@ public class Team {
     /**
 
      * Sets which part of the map that the team starts on
-     * @param dir
+     * @param dir the direction to se the team
      */
     public void setTeamDirection(int dir){
         this.teamStartDirection = dir;
