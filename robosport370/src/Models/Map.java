@@ -71,8 +71,22 @@ public class Map {
      * @return the distance as an integer
      */
     public int calcDistance(Tile cur, Tile dest){
-        return (int) Math.sqrt( (Math.pow(dest.getXCoord()- cur.getXCoord(),2)) + 
-        		(Math.pow(dest.getYCoord()- cur.getYCoord(),2)));
+    	if (cur.getXCoord() == dest.getXCoord()){
+    		return Math.abs(dest.getYCoord() - cur.getYCoord());    	  		  
+  	  	}
+  	  	else if (cur.getYCoord() == dest.getYCoord()){
+  	  		return Math.abs(dest.getXCoord() - cur.getXCoord());    	  		  
+  	  	}
+  	  	else{
+  	  		int dx = Math.abs(dest.getXCoord() - cur.getXCoord());
+  	  		int dy = Math.abs(dest.getYCoord() - cur.getYCoord());
+  	  		if (cur.getYCoord() < dest.getYCoord()){
+  	  			return (int) (dx + dy - (Math.ceil(dx / 2.0))-1);
+  	  		}
+  	  		else{
+  	  			return (int) (dx + dy - (Math.floor(dx / 2.0))-1); 					  
+  	  		}
+  	  	}
     }
     
     public enum DIRECTION{
@@ -182,6 +196,10 @@ public class Map {
     }
     
     public static void main(String[] args){
-        new Map();   
+        Map test = new Map();   
+        Tile one = new Tile(-1, -1);
+        Tile two = new Tile(3, 4);
+        System.out.println(test.calcDistance(one, two));
+        
     }
 } 
