@@ -28,7 +28,7 @@ public class ForthLoopNumber implements ForthWord {
      *  @return the string value that is printed by forth in the  console
      */
     public String toString(){
-        return "pusing loop iteration number to the stack";
+        return "pushing loop iteration number to the stack";
     }
 
 

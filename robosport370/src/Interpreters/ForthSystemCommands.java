@@ -101,6 +101,7 @@ public class ForthSystemCommands {
         first = forthStack.pop();
         String consoleString = first.forthStringEncoding();
         controller.displayMessage("printing message: " + consoleString, ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
+
     }
 
     /**

@@ -25,6 +25,7 @@ import Views.mapView;
 import Views.teamCreationView;
 import Views.PickRobotsView;
 
+
 /**
  * @author Corey
  * @author Levi
@@ -83,6 +84,7 @@ public List<Team> selectedTeams;
 	}
 	
 	public void notifyNewTeam() {
+
         if(this.selectedTeams.size() < 6){
             PickRobotsController cont = new PickRobotsController(4, 4, this);
             PickRobotsView view = new PickRobotsView(cont);
@@ -101,10 +103,11 @@ public List<Team> selectedTeams;
 	 * gets called when Setup view selects return
 	 */
 	public void notifyReturn(){
-    UIManager manager = UIManager.sharedInstance();
-    manager.popScreen();
-    this.selectedTeams.clear();
+	    UIManager manager = UIManager.sharedInstance();
+	    manager.popScreen();
+	    this.selectedTeams.clear();
 	}
+	
 	/**
      * gets called when Setup view selects return
      */

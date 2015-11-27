@@ -1,0 +1,33 @@
+
+EndViewOptions.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+endOptionsMainMenuSelect
+  rotate: false
+  xy: 1, 6
+  size: 121, 23
+  orig: 121, 23
+  offset: 0, 0
+  index: -1
+endOptionsMainMenu
+  rotate: false
+  xy: 124, 6
+  size: 85, 23
+  orig: 85, 23
+  offset: 0, 0
+  index: -1
+endOptionsExitSelect
+  rotate: false
+  xy: 211, 1
+  size: 74, 28
+  orig: 74, 28
+  offset: 0, 0
+  index: -1
+endOptionsExit
+  rotate: false
+  xy: 287, 5
+  size: 41, 24
+  orig: 41, 24
+  offset: 0, 0
+  index: -1

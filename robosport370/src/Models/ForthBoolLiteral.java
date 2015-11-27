@@ -66,7 +66,7 @@ public class ForthBoolLiteral implements ForthWord {
      *  @return the string value that is printed by forth in the  console
      */
     public String toString(){
-        return "pusing bool to stack: " + forthStringEncoding();
+        return "pushing bool to stack: " + forthStringEncoding();
     }
 
 }
