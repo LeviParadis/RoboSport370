@@ -148,8 +148,6 @@ public class endView  extends ScreenAdapter  implements EventListener{
             TextButton sender = (TextButton)arg0.getTarget();
            if(sender == mainMenuButton){
                controller.notifyMainMenuPressed();
-           } else if (sender == displayResultsButton){
-               controller.notifyDisplayResultsButtonPressed();
            } else if (sender == exitButton){
                controller.notifyExitButtonPressed();
            }

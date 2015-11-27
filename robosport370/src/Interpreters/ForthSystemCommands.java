@@ -5,10 +5,7 @@ import java.util.Random;
 import java.util.Stack;
 
 import Controllers.GameController;
-<<<<<<< HEAD
-=======
 import Enums.ConsoleMessageType;
->>>>>>> refs/remotes/origin/master
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Interfaces.ForthWord;
@@ -103,12 +100,8 @@ public class ForthSystemCommands {
         ForthWord first;
         first = forthStack.pop();
         String consoleString = first.forthStringEncoding();
-<<<<<<< HEAD
-        controller.displayNewAction("pringing message: " + consoleString, false);
-        System.out.println(consoleString);
-=======
         controller.displayMessage("printing message: " + consoleString, ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
->>>>>>> refs/remotes/origin/master
+
     }
 
     /**
@@ -602,30 +595,6 @@ public class ForthSystemCommands {
             if(shotAvailable){
                 controller.shootAtSpace(robot, ir, id);
             } else {
-<<<<<<< HEAD
-                System.out.println("attempted shot, but shot was already used");
-            }
-        } else {
-            throw new ForthRunTimeException("shoot command called without two ints on top of the stack");
-        }
-    }
-
-
-    protected static int move(Stack<ForthWord> forthStack, Robot robot, GameController controller, int movesAvailable)
-            throws ForthRunTimeException {
-        //moves the robot to the space at range ir direction id, provided they have enough movesLeft;
-            //( id ir -- )
-            ForthWord first = forthStack.pop();
-            ForthWord second = forthStack.pop();
-            if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                int firstInt = (int)((ForthIntegerLiteral)first).getValue();
-                int secondInt = (int)((ForthIntegerLiteral)second).getValue();
-                try {
-                    int cost = controller.moveRobot(robot, (int)robot.getTeamNumber(), firstInt, secondInt, movesAvailable);
-                    return cost;
-                } catch (RuntimeException e){
-                    throw e;
-=======
                 controller.displayMessage("Shot already used", ConsoleMessageType.CONSOLE_ERROR);
             }
         } else {
@@ -651,7 +620,6 @@ public class ForthSystemCommands {
                     controller.displayMessage("Not enough moves left to move to space", ConsoleMessageType.CONSOLE_ERROR);
                     //we couldn't move, so don't use any moves up
                     return 0;
->>>>>>> refs/remotes/origin/master
                 }
             } else {
                 throw new ForthRunTimeException("move command called without two ints on top of the stack");

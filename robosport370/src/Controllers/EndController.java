@@ -7,13 +7,10 @@ import Views.endView;
 
 
 
-public class EndController extends Game {
+public class EndController {
     //loggerController controller;
     endView view;
   
-    public void create() {
-        this.setScreen(new endView(this, teams));
-    }
     
     /**
      * gets called when the exit button is pressed
@@ -30,10 +27,5 @@ public class EndController extends Game {
         manager.pushScreen(new mainMenuView(new setupController()));
     }
     
-    /**
-     * gets called when the display button is pressed
-     */
-    public void notifyDisplayResultsButtonPressed(){
-        System.out.println("RESULTS");
-    }    
+
 }
