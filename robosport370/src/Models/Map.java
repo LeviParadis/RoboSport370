@@ -3,7 +3,7 @@ import Controllers.gameVariables;
 import Models.Map.DIRECTION;
 
 public class Map {
-    boolean test = false;
+    boolean test = true;
     private int mapDiameter = gameVariables.mapSize *2 -1;
     private int height = gameVariables.mapSize;
     private int mapSize = gameVariables.mapSize;
@@ -27,6 +27,7 @@ public class Map {
         int count = 0;
 
         for(int left = 0; left < mapDiameter; left++){
+        	
             for(int y = 0; y < height; y++) {
                 if(left > ((mapDiameter-1)/2)+1){
                    
@@ -39,8 +40,8 @@ public class Map {
                     yPos--;
                 }
                 if(test){
-                    System.out.print("( " + tiles[left][y].getXCoord() +
-                            "," + tiles[left][y].getYCoord() + ") ");                    
+                    System.out.print("(" + tiles[left][y].getXCoord() +
+                            "," + tiles[left][y].getYCoord() + ")");                    
                 }
                 
                 count++;

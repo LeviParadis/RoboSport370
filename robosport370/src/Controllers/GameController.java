@@ -261,6 +261,7 @@ public class GameController extends Game{
      * @param hexPos is the position that the robot is firing towards
      */
     public void shootAtSpace(Robot shooter, int range, int Direction){
+    	//direction/(range*6) * 2pi - pi/2
         Tile[][] allTiles = this.gameMap.getTiles();
         
         if(range > 3){
