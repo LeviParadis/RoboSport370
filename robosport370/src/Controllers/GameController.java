@@ -74,8 +74,6 @@ public class GameController {
             teams.add((int) nextTeam.getTeamNumber(), nextTeam);
         }
 
-        UIManager manager = UIManager.sharedInstance();
-        manager.pushScreen(this.view);
         
         this.executionThread = new Thread(){
             public void run(){
@@ -93,6 +91,9 @@ public class GameController {
           };
           initRobotPositions();
           executionThread.start();
+          
+          UIManager manager = UIManager.sharedInstance();
+          manager.pushScreen(this.view);
     }
     
     private void initRobots(){
