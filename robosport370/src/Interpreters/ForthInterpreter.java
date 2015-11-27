@@ -11,10 +11,12 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import Controllers.GameController;
+import Enums.ConsoleMessageType;
 import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Exceptions.LeaveLoopException;
+import Interfaces.ForthWord;
 import Models.ForthBoolLiteral;
 import Models.ForthConditional;
 import Models.ForthCustomWord;
@@ -26,7 +28,6 @@ import Models.ForthPointerLiteral;
 import Models.ForthStringLiteral;
 import Models.ForthSystemWord;
 import Models.ForthUntilLoop;
-import Models.ForthWord;
 import Models.Robot;
 
 public class ForthInterpreter {
@@ -38,7 +39,6 @@ public class ForthInterpreter {
     public static final String TURN_WORD = "turn";
     public static final String STACK_EXCEPTION_ERROR = "attempted to pop off an empty stack";
     
-    public static boolean isPaused;
     
     //indicates whether the current robot has used it's shot. Reset on every execution
     private static boolean shotAvailable;
@@ -64,22 +64,6 @@ public class ForthInterpreter {
 
     
     /**
-     * pauses the forth program.
-     *  If this method is callled, the running turn won't progress until resume is called
-     */
-    public static void pause(){
-        isPaused = true;
-    }
-    
-    /**
-     * resumes the forth program.
-     *  If the program was previously paused, it will be resumed
-     */
-    public static void resume(){
-        isPaused = false;
-    }
-    
-    /**
      * Run's a robot's forth init logic
      * @param robot             the robot we are setting up
      * @param GameController    the controller that controls the game
@@ -90,7 +74,6 @@ public class ForthInterpreter {
         //robot should not move or shoot in it's init method
         shotAvailable = false;
         movesAvailable = 0;
-        isPaused = false;
         
         //find logic string
         String logicString = robot.getForthWord(INIT_WORD);
@@ -120,7 +103,6 @@ public class ForthInterpreter {
       //set initial values for shot and moves available
         movesAvailable = robot.getMovesPerTurn();
         shotAvailable = true;
-        isPaused = false;
         
       //find logic string
         String logicString = robot.getForthWord(TURN_WORD);
@@ -156,17 +138,11 @@ public class ForthInterpreter {
                 return;
             }
             
-            //implement a delay so the user can actually watch the match
-            //the delay will be looped if the interpreter is paused, so no more instructions will be run
-            do{
-                //TODO: add in delay when game controller is implemented
-                //float speed = GameController.getSpeed()
-                //Thread.sleep(speed);
-            } while(isPaused);
-            
             
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
+            
+            controller.displayMessage(nextItem.toString(), ConsoleMessageType.CONSOLE_ACTION);
             
             //find what kind of word it is, and handle appropriately
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
@@ -334,42 +310,27 @@ public class ForthInterpreter {
                 ForthSystemCommands.memberNumber(forthStack, robot);
                 break;
             case CONSOLE:
-                ForthSystemCommands.console(forthStack);
+                ForthSystemCommands.console(forthStack, controller);
                 break;
             case RANDOM:
                 ForthSystemCommands.random(forthStack);
                 break;
             case SHOOT:
-                //fires the robot’s weapon at the space at range ir and direction id;
-                //( id ir -- )
-                if(shotAvailable){
-                    //TODO: After game controller is set up   
-                } else {
-                    System.out.println("attempted shot, but shot was already used");
-                }
+                ForthSystemCommands.shoot(forthStack, robot, controller, shotAvailable);
+                shotAvailable = false;
                 break;
             case MOVE:
-              //moves the robot to the space at range ir direction id, provided they have enough movesLeft;
-                //( id ir -- )
-                if(movesAvailable > 0){
-                    movesAvailable--;
-                  //TODO: After game controller is set up
-                } else {
-                    System.out.println("attempted to move, but already moved " + robot.getMovesPerTurn() + " times");
-                }
+                int moveCost = ForthSystemCommands.move(forthStack, robot, controller, (int)movesAvailable);
+                movesAvailable = movesAvailable - moveCost;
                 break;
             case SCAN:
-                //scans for the nearest robots, and reports how many targets visible, up to four.
-                //( -- i )
-              //TODO: After game controller is set up
+                ForthSystemCommands.scan(forthStack, robot, controller);
                 break;
             case IDENTIFY:
-                //identifies the given target, giving its team number (it), range (ir), direction (id), and health (ih).
-                // ( i -- it ir id ih )
-              //TODO: After game controller is set up
+                ForthSystemCommands.identify(forthStack, robot, controller);  
                 break;
             case MAIL_SEND:
-                ForthSystemCommands.sendMail(forthStack);
+                ForthSystemCommands.sendMail(forthStack, robot, controller);
                 break;
             case MAIL_CHECK:
                 ForthSystemCommands.checkMail(forthStack, robot);
@@ -378,9 +339,7 @@ public class ForthInterpreter {
                 ForthSystemCommands.recieveMail(forthStack, robot);
                 break;
             case HEX:
-                //returns the population of the given hex
-                // ( id ir -- )
-                //TODO: After game controller is set up
+                ForthSystemCommands.hex(forthStack, robot, controller);
                 break;
             case VAR_CHECK:
                 ForthSystemCommands.checkVariable(forthStack, robot);
@@ -447,7 +406,5 @@ public class ForthInterpreter {
       }
   
    }
-    
-    
     
 }

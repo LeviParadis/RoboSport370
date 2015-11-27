@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import Interfaces.ForthWord;
+
 public class ForthDoLoop implements ForthWord {
 
     private Queue<ForthWord> commands;
@@ -39,18 +41,11 @@ public class ForthDoLoop implements ForthWord {
         return formatedString + " loop";
     }
 
-    @Override
+    
     /**
      *  @return the string value that is printed by forth in the  console
      */
-    public String consoleFormat() {
-        return "do_loop";
-    }
-    
-    /**
-     * @return the string value that appears in the developer's console
-     */
     public String toString(){
-        return consoleFormat();
+        return "encountered do loop";
     }
 }

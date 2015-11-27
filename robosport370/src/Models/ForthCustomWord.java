@@ -1,6 +1,7 @@
 package Models;
 
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthCustomWord implements ForthWord {
     private String value;
@@ -52,20 +53,12 @@ public class ForthCustomWord implements ForthWord {
         return this.value;
     }
     
-    @Override
-    /**
-     *  @return the string value that is printed by forth in the  console
-     */
-    public String consoleFormat(){
-       return this.value; 
-    }
-
 
     /**
-     * @return the string value that appears in the developer's console
+     * @return the string value that is printed by forth in the  console
      */
     public String toString(){
-        return "custom:" + forthStringEncoding();
+        return "performing custom function: " + forthStringEncoding();
     }
 
 }

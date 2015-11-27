@@ -1,6 +1,7 @@
 package Models;
 
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthElsePlaceholder implements ForthWord {
 
@@ -24,16 +25,9 @@ public class ForthElsePlaceholder implements ForthWord {
         return "else";
     }
 
-    @Override
-    /**
-     *  @return the string value that is printed by forth in the  console
-     */
-    public String consoleFormat() {
-        return forthStringEncoding();
-    }
     
     /**
-     * @return the string value that appears in the developer's console
+     *  @return the string value that is printed by forth in the  console
      */
     public String toString(){
         return forthStringEncoding();

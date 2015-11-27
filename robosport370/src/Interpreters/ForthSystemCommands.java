@@ -1,15 +1,18 @@
 package Interpreters;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import Controllers.GameController;
+import Enums.ConsoleMessageType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
 import Models.ForthBoolLiteral;
 import Models.ForthIntegerLiteral;
 import Models.ForthPointerLiteral;
 import Models.ForthStringLiteral;
-import Models.ForthWord;
 import Models.Robot;
 
 public class ForthSystemCommands {
@@ -93,11 +96,11 @@ public class ForthSystemCommands {
      * 
      * @param forthStack     the stack for the currently running forth program
      */
-    protected static void console(Stack<ForthWord> forthStack) {
+    protected static void console(Stack<ForthWord> forthStack, GameController controller) {
         ForthWord first;
         first = forthStack.pop();
-        String consoleString = first.consoleFormat();
-        System.out.println(consoleString);
+        String consoleString = first.forthStringEncoding();
+        controller.displayMessage("printing message: " + consoleString, ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
     }
 
     /**
@@ -128,14 +131,14 @@ public class ForthSystemCommands {
      * @param forthStack     the stack for the currently running forth program
      * @throws ForthRunTimeException     thrown if an expected value is found that leaves the program unrunnable
      */
-    protected static void sendMail(Stack<ForthWord> forthStack) throws ForthRunTimeException {
+    protected static void sendMail(Stack<ForthWord> forthStack, Robot sender, GameController controller) throws ForthRunTimeException {
         ForthWord first;
         ForthWord second;
         first = forthStack.pop();
         second = forthStack.pop();
         if((first instanceof ForthIntegerLiteral || first instanceof ForthBoolLiteral || first instanceof ForthStringLiteral) && second instanceof ForthIntegerLiteral){
-            int memberNumber = (int)((ForthIntegerLiteral)second).getValue();
-           // TODO: After game controller is set up
+            int recieverNumber = (int)((ForthIntegerLiteral)second).getValue();
+            controller.sendMail(sender, recieverNumber, first);
         } else {
             throw new ForthRunTimeException("attempting to send mailbox without the proper stack format");
         }
@@ -577,6 +580,97 @@ public class ForthSystemCommands {
         second = forthStack.pop();
         forthStack.push(first);
         forthStack.push(second);
+    }
+    
+    protected static void shoot(Stack<ForthWord> forthStack, Robot robot, GameController controller, boolean shotAvailable)
+            throws ForthRunTimeException {
+        //fires the robot’s weapon at the space at range ir and direction id;
+        //( id ir -- )
+        ForthWord first = forthStack.pop();
+        ForthWord second = forthStack.pop();
+        if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
+            int ir = (int)((ForthIntegerLiteral)first).getValue();
+            int id = (int)((ForthIntegerLiteral)second).getValue();
+            if(shotAvailable){
+                controller.shootAtSpace(robot, ir, id);
+            } else {
+                controller.displayMessage("Shot already used", ConsoleMessageType.CONSOLE_ERROR);
+            }
+        } else {
+            throw new ForthRunTimeException("shoot command called without two ints on top of the stack");
+        }
+    }
+
+
+    protected static int move(Stack<ForthWord> forthStack, Robot robot, GameController controller, int movesAvailable)
+            throws ForthRunTimeException {
+        //moves the robot to the space at range ir direction id, provided they have enough movesLeft;
+            //( id ir -- )
+            ForthWord first = forthStack.pop();
+            ForthWord second = forthStack.pop();
+            if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
+                int firstInt = (int)((ForthIntegerLiteral)first).getValue();
+                int secondInt = (int)((ForthIntegerLiteral)second).getValue();
+                try {
+                    int cost = controller.moveRobot(robot, (int)robot.getTeamNumber(), firstInt, secondInt, movesAvailable);
+                    return cost;
+                } catch (RuntimeException e){
+                    //we don't have enough moves left. Display an error, and attempt the next command
+                    controller.displayMessage("Not enough moves left to move to space", ConsoleMessageType.CONSOLE_ERROR);
+                    //we couldn't move, so don't use any moves up
+                    return 0;
+                }
+            } else {
+                throw new ForthRunTimeException("move command called without two ints on top of the stack");
+            }
+    }
+
+
+    protected static void scan(Stack<ForthWord> forthStack, Robot robot, GameController controller) {
+        //scans for the nearest robots, and reports how many targets visible, up to four.
+        //( -- i )
+        List<Robot> result = controller.getClosest(robot);
+        ForthIntegerLiteral count = new ForthIntegerLiteral(result.size());
+        forthStack.push(count);
+    }
+
+
+    protected static void identify(Stack<ForthWord> forthStack, Robot robot, GameController controller)
+            throws ForthRunTimeException {
+        //identifies the given target, giving its team number (it), range (ir), direction (id), and health (ih).
+        // ( i -- it ir id ih )
+        ForthWord first = forthStack.pop();
+        if(first instanceof ForthIntegerLiteral){
+            List<Robot> result = controller.getClosest(robot);
+            Robot selected = result.get((int)((ForthIntegerLiteral) first).getValue());
+            long health = selected.getHealth();
+            long teamNum = selected.getTeamNumber();
+            int range = controller.rangeBetweenRobots(robot, selected);
+            int direction = controller.directionBetweenRobots(robot, selected);
+            forthStack.push(new ForthIntegerLiteral(health));
+            forthStack.push(new ForthIntegerLiteral(range));
+            forthStack.push(new ForthIntegerLiteral(direction));
+            forthStack.push(new ForthIntegerLiteral(teamNum));
+        } else {
+            throw new ForthRunTimeException("identify command called without an int on top of the stack");
+        }
+    }
+
+
+    protected static void hex(Stack<ForthWord> forthStack, Robot robot, GameController controller)
+            throws ForthRunTimeException {
+        //returns the population of the given hex
+        // ( id ir -- i)
+        ForthWord first = forthStack.pop();
+        ForthWord second = forthStack.pop();
+        if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
+            int dir = (int)((ForthIntegerLiteral) second).getValue();
+            int range = (int)((ForthIntegerLiteral) first).getValue();
+            int pop = controller.populationAtPosition(robot, dir, range);
+            forthStack.push(new ForthIntegerLiteral(pop));
+        } else {
+            throw new ForthRunTimeException("hex command called without two ints on top of the stack");
+        }
     }
     
 }

@@ -1,6 +1,7 @@
 package Models;
 
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthBoolLiteral implements ForthWord {
 
@@ -62,18 +63,10 @@ public class ForthBoolLiteral implements ForthWord {
     }
     
     /**
-     * @return the string value that appears in the developer's console
-     */
-    public String toString(){
-        return "bool:" + forthStringEncoding();
-    }
-    
-    /**
      *  @return the string value that is printed by forth in the  console
      */
-    @Override
-    public String consoleFormat() {
-        return this.forthStringEncoding();
+    public String toString(){
+        return "pusing bool to stack: " + forthStringEncoding();
     }
 
 }

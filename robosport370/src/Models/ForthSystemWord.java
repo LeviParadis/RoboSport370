@@ -2,6 +2,7 @@ package Models;
 
 import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
 
 public class ForthSystemWord implements ForthWord {
 
@@ -126,18 +127,11 @@ public class ForthSystemWord implements ForthWord {
     }
     
     /**
-     * @return the string value that appears in the developer's console
-     */
-    public String toString(){
-        return "system:" + forthStringEncoding();
-    }
-
-    @Override
-    /**
      *  @return the string value that is printed by forth in the  console
      */
-    public String consoleFormat() {
-        return this.forthStringEncoding();
+    public String toString(){
+        return "performing action: " + forthStringEncoding();
     }
+
 
 }

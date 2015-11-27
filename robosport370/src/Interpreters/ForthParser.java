@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Exceptions.ForthParseException;
-
+import Interfaces.ForthWord;
 import Models.ForthCustomWord;
 import Models.ForthDoLoop;
 import Models.ForthElsePlaceholder;
@@ -18,7 +18,6 @@ import Models.ForthPointerLiteral;
 import Models.ForthStringLiteral;
 import Models.ForthSystemWord;
 import Models.ForthUntilLoop;
-import Models.ForthWord;
 import Models.Robot;
 
 public class ForthParser {

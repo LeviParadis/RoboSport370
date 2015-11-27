@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -13,9 +14,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 
+import Enums.ConsoleMessageType;
+import Enums.GameSpeed;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
 import Interpreters.ForthInterpreter;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
@@ -25,81 +30,94 @@ import Models.Map;
 import Models.Map.DIRECTION;
 import Views.mapView;
 
-public class GameController extends Game{
+public class GameController{
     
     /** All of the teams to be run in the simulation.*/
     private ArrayList<Team> teams;
     /** The map that holds the information for calculations and the size*/
     private Map gameMap;
     
+    private mapView view;
+    
+    private boolean isPaused;
+    
     
     private Thread executionThread;
     
-    /** Stores the type of map view */
-    mapView view;
+
+    /**
+     * setting this enum will automatically change the animation speed and the delay duration
+     */
+    private GameSpeed speedMultiplier;
     
     /** how long it takes for each animation to complete in milliseconds */
-    int animationSpeed = 100;
+    private int animationSpeed = 100;
+    
+    /** how long it waits in between actions in milliseconds */
+    private int delayDuration = 500;
     
     /**
      * initializes the teams and ??sets their position on the map??
      * @param allTeams an array that contains all of the teams playing the match
      * @param hexSize the size of the map on one side
      */
-    public GameController(Queue<Team> allTeams) throws RuntimeException{
-        
-        teams = new ArrayList<Team>();
-
-        gameMap = new Map();
-        
-        
-        
-//        introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
-//        introMusic.setLooping(true);
-//        introMusic.setVolume(0.6f);
-//        introMusic.play();
-
+    public GameController(List<Team> allTeams) throws RuntimeException{
         if(allTeams == null){
             throw new RuntimeException("There must be teams added to begin the game");
-     
         } else if(allTeams.size() != 2 && allTeams.size() != 3 && allTeams.size() != 6){
-            throw new RuntimeException("Not a valid number of teams");
-        } else {
-            Iterator<Team> it = allTeams.iterator();
-            while(it.hasNext()){
-                Team nextTeam = it.next();
-                teams.add((int) nextTeam.getTeamNumber(), nextTeam);
-                //init robots
-                Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
-                while(robotIt.hasNext()){
-                    Robot nextRobot = robotIt.next();
-                    try {
-                        ForthInterpreter.initRobot(nextRobot, this);
-                    } catch (ForthRunTimeException | ForthParseException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
+            throw new RuntimeException("You must select either 2, 3, or 6 teams");
         }
+        
+        this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
+        gameMap = new Map();
+        this.view = new mapView(this, allTeams);
+   
+        teams = new ArrayList<Team>();
+        Iterator<Team> it = allTeams.iterator();
+        while(it.hasNext()){
+            Team nextTeam = it.next();
+            teams.add((int) nextTeam.getTeamNumber(), nextTeam);
+        }
+
+        UIManager manager = UIManager.sharedInstance();
+        manager.pushScreen(this.view);
         
         this.executionThread = new Thread(){
             public void run(){
+                //init robots
+                initRobots();
+                
                 int i = 1;
                 while(teamsAlive() > 1){
-                    System.out.println("turn: " + i);
-                    executeNextTurn();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    executeNextTurn(i);
                     i++;
                 }
+               displayMessage("done", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             }
           };
-
           executionThread.start();
+    }
+    
+    private void initRobots(){
+        displayMessage("Init", ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+        Iterator<Team> it = this.teams.iterator();
+        while(it.hasNext()){
+            Team nextTeam = it.next();
+            displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+            Iterator<Robot> robotIt = nextTeam.getAllRobots().iterator();
+            while(robotIt.hasNext()){
+                Robot nextRobot = robotIt.next();
+                view.updateRobotInfo(nextRobot, 0);
+                displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+                try {
+                    ForthInterpreter.initRobot(nextRobot, this);
+                } catch (ForthRunTimeException | ForthParseException e) {
+                    e.printStackTrace();
+                    displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
+                    displayMessage("Ending Init", ConsoleMessageType.CONSOLE_ERROR);
+                }
+            }
+        }
     }
     
     public int teamsAlive(){
@@ -114,26 +132,58 @@ public class GameController extends Game{
         }
         return livingNum;
     }
-
+   
+    /**
+     * Called when the user pushed the fast forward button. 
+     * Finds the current speed state, and switches to the next one
+     * @return the new state, for updating ui elements
+     */
+    public GameSpeed switchGameSpeed(){
+        switch(this.speedMultiplier){
+            case GAME_SPEED_1X:
+                this.speedMultiplier = GameSpeed.GAME_SPEED_2X;
+                this.delayDuration = 250;
+                this.animationSpeed = 50;
+                 break;
+            case GAME_SPEED_2X:
+                this.speedMultiplier = GameSpeed.GAME_SPEED_4X;
+                this.delayDuration = 125;
+                this.animationSpeed = 25;
+                break;
+            case GAME_SPEED_4X:
+                this.speedMultiplier = GameSpeed.GAME_SPEED_16X;
+                this.delayDuration = 30;
+                this.animationSpeed = 7;
+                break;
+            case GAME_SPEED_16X:
+                this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
+                this.delayDuration = 500;
+                this.animationSpeed = 100;
+                break;
+        }
+        return this.speedMultiplier;
+    }
+    
+    
+    /**
+     * @return whether the game should be paused
+     */
+    public boolean isPaused(){
+        return this.isPaused;
+    }
     
     /**
      * puts the game into a paused state
      */
     public void pause(){
-        try {
-            this.executionThread.wait();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.isPaused = true;
     }
     
     /**
      * resumes the game from the paused state
      */
     public void resume(){
-        this.resume();
-        this.executionThread.notify();
+        this.isPaused = false;
     }
     
     /**
@@ -143,14 +193,10 @@ public class GameController extends Game{
         //TODO new EndController();
     }
     
+
     /**
-     * Changes the animation speed to a new one in milliseconds.
-     * @param newSpeed
+     * @return the animation speed
      */
-    public void setAnimationSpeed(int newSpeed){
-        this.animationSpeed = newSpeed;
-    }
-    
     public int getAnimationSpeed(){
         return this.animationSpeed;
     }
@@ -211,33 +257,40 @@ public class GameController extends Game{
      * to be played is on
      * @param robotNum the s/n of the robot who's turn it is
      */
-    public Robot getRobot(int teamNum, int robotNum){
+    public Robot getRobot(int teamNum, int robotNum) throws IndexOutOfBoundsException{
         return teams.get(teamNum).getTeamMember(robotNum);
     }
     
     /**
      * executes a round of turns
      */
-    public void executeNextTurn(){
+    public void executeNextTurn(int turnNum){
+        displayMessage("Turn " + turnNum, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
         Iterator<Team> teamIt = this.teams.iterator();
         while(teamIt.hasNext()){
             Team nextTeam = teamIt.next();
+            displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
             Queue<Robot> robotList = nextTeam.getLivingRobots();
             Iterator<Robot> robotIt = robotList.iterator();
             while(robotIt.hasNext()){
                 Robot nextRobot = robotIt.next();
+                view.updateRobotInfo(nextRobot, turnNum);
+                displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
                 try {
                     ForthInterpreter.executeTurn(nextRobot, this);
                 } catch (ForthRunTimeException | ForthParseException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
+                    //this is thrown when forth encounters an error that it can't handle. 
+                    //Display the error, and end the turn
+                    displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
+                    displayMessage("Ending Turn", ConsoleMessageType.CONSOLE_ERROR);
                 }
             }
         }
     }
 
 
-    public void moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft){
+    public int moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft) throws RuntimeException{
            
       int newX;
       int newY;
@@ -260,22 +313,22 @@ public class GameController extends Game{
 //          }
 //      }
        
-      Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
        
       Tile[][] allTiles = this.gameMap.getTiles();
        
       //Removing the robot from it's current tile
-      allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
+      allTiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].removeRobot(robotToMove);
        
       if(movesLeft < range){
           throw new RuntimeException("range to move cannot be higher than the amount of moves remaining");
       }
       
-      temp.setXPosition(newX);
-      temp.setYPosition(newY);
+      robotToMove.setXPosition(newX);
+      robotToMove.setYPosition(newY);
         
       //Adding the robot to the new tile
-      allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
+      allTiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].addRobot(robotToMove);
+      return range;
         
    }
         
@@ -283,12 +336,13 @@ public class GameController extends Game{
     /**
      *  fire at the position passed in
      * @param shooter is the robot that will fire a shot
-     * @param hexPos is the position that the robot is firing towards
+     * @param range the distance away to shoot
+     * @param direction the direction to shoot
      */
-    public void shootAtSpace(Robot shooter, int range, int Direction){
+    public void shootAtSpace(Robot shooter, int range, int direction){
         Tile[][] allTiles = this.gameMap.getTiles();
         
-        DIRECTION dir = gameMap.getDirection(Direction);
+        DIRECTION dir = gameMap.getDirection(direction);
         
         int xPos = dir.getXCoordinate()*range;
         int yPos = dir.getYCoordinate()*range;
@@ -307,42 +361,91 @@ public class GameController extends Game{
             }
             
         }
-        
-        
-        
-
     }
+    
     /**
-     * Called every frame
+     * Finds a returns a list of the closest robots to input robot r
+     * Will return up to 4 robots, in a range up to 3 spaces
+     * Called by the ForthInterpreter
+     * @param r the robot asking for closest robots
+     * @return
      */
-   
-    
-
-    public void render(){
-        super.render();
+    public List<Robot> getClosest(Robot r) {
+        return new LinkedList<Robot>();
     }
     
-    public static void main(String[] args){
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "RobotSport370";
-        config.height = 800;
-        config.width = 1280;
-        
-        Queue<Team> teamList = new LinkedList<Team>();
-        for(int i=0; i<6; i++){
-            Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
-            Team newTeam = new Team(robotList, i);
-            teamList.add(newTeam);
+    /**
+     * Sends a forth word from one robot to the mailbox of another
+     * Robots must be on the same team, and the forth word must be either an int, a string, or a boolean
+     * Called by the forth interpreter
+     * @param sender  the robot sending the message
+     * @param receiverNumber the member number of the robot to recieve the message (on the same team)
+     * @param value the value to send
+     * @return a bool indicating whether the operation was a success. 
+     *         Will fail if the receiverNumber is invalid, if the receiver is destroyed, or if the receiver's mailbox is full
+     */
+    public boolean sendMail(Robot sender, int receiverNumber, ForthWord value){
+        int teamNum = (int) sender.getTeamNumber();
+        Team thisTeam = this.teams.get(teamNum);
+        try{
+            Robot reciever = thisTeam.getTeamMember(receiverNumber);
+            //attempt to send mail. Will return true if it worked, or false if it failed
+            return reciever.addMailFromMember((int)sender.getMemberNumber(), value);
+        } catch (IndexOutOfBoundsException e){
+            //if there is no team mate with the number requested, return false
+            return false;
         }
-        
-        new LwjglApplication(new GameController(teamList), config);
     }
 
     
-    @Override
-    public void create() {
-        mapView map = new mapView(this, this.teams);
-        this.setScreen(map);
+    /**
+     * Will be called by the forth interpreter to show new actions for display in the interface
+     * Will be called anytime the robot does anything, so the user can be updated as to what is happening
+     * @param newActionMessage the latest action being run by a robot
+     * @param type the type of message to display
+     */
+    public void displayMessage(String newActionMessage, ConsoleMessageType type){
+        this.view.displayMessage(newActionMessage, type);
+        //sleep in between messages, so that we get an even printing speed
+        //do not progress to the next action if we are paused
+        try {
+            do{
+                Thread.sleep(this.delayDuration);
+            } while (this.isPaused);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Tells us the number of robots at a given square from a reference robot
+     * Called but the Forth Interpreter
+     * @param referencePosition the robot asking for the population
+     * @param direction the direction to look in
+     * @param range the range to look in
+     * @return the number of robots on the space
+     */
+    public int populationAtPosition(Robot referencePosition, int direction, int range){
+        return 0;
+    }
+    
+    
+    /**
+     * Tells us the direction between two robots
+     * @param from the robot to start from
+     * @param to the robot we are finding the direction to
+     */
+    public int directionBetweenRobots(Robot from, Robot to){
+        return 0;
+    }
+    
+    /**
+     * Tells us the range between two robots
+     * @param from the robot to start from
+     * @param to the robot we are finding the range to
+     */
+    public int rangeBetweenRobots(Robot from, Robot to){
+        return 0;
     }
 }
 
