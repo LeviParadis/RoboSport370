@@ -389,7 +389,7 @@ public class GameController {
           robotToMove.setYPosition(newY);
           
           tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].addRobot(robotToMove);
-          view.moveRobot(robotToMove.getTeamNumber(), robotToMove.getMemberNumber(), direction);
+          view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), direction);
           
       }
       
