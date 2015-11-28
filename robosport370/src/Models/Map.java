@@ -5,7 +5,7 @@ import Controllers.gameVariables;
 import Models.Map.DIRECTION;
 
 public class Map {
-    boolean test = true;
+    boolean test = false;
     private int mapDiameter = gameVariables.mapSize *2 -1;
     private int height = gameVariables.mapSize;
     private int mapSize = gameVariables.mapSize;
@@ -194,6 +194,47 @@ public class Map {
     	return toRet;
     }
     
+    public Tile findTile(int x, int y){
+        Tile toRet = null;
+
+        int inity = 0;
+        int height = gameVariables.mapSize;
+        int xPos = -(gameVariables.mapSize-1);
+        int yPos = inity;
+        int blwHalfDepth = 0;
+        
+        for(int left = 0; left < this.mapDiameter; left++){
+            
+            for(int other = 0; other < height; other++) {
+                if(left > ((this.mapDiameter-1)/2)+1){
+                   
+                    if(tiles[left][other].getXCoord() == x && tiles[left][other].getYCoord() == y){
+                        toRet = tiles[left][other];
+                    }
+                    yPos--;
+                }else{
+                    if(height > this.mapDiameter) height--;
+                    if(tiles[left][other].getXCoord() == x && tiles[left][other].getYCoord() == y){
+                        toRet = tiles[left][other];
+                    }   
+                    yPos--;
+                }  
+            }          
+            if(left >= ((this.mapDiameter-1)/2)){
+                xPos++;
+                yPos = gameVariables.mapSize-1;
+                height--;
+            }else{
+                blwHalfDepth++;
+                xPos++;
+                yPos = blwHalfDepth;
+                height++;    
+            }
+        }
+        return toRet;
+        
+        
+    }
     
     public Tile[][] getTiles(){
         return this.tiles;

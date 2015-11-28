@@ -76,7 +76,7 @@ public class GameController {
             teams.add((int) nextTeam.getTeamNumber(), nextTeam);
         }
 
-        
+        initRobotPositions();
         this.executionThread = new Thread(){
             public void run(){
                 //init robots
@@ -91,7 +91,7 @@ public class GameController {
                gameComplete = true;
             }
           };
-          initRobotPositions();
+          
           executionThread.start();
           
           UIManager manager = UIManager.sharedInstance();
@@ -127,8 +127,6 @@ public class GameController {
         int size = gameMap.getMapSize();
         Point[] teamInitPoints = new Point[numTeams];
        
-        
-//        position 
         if(numTeams == 2){
             teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
             teams.get(0).setTeamDirection(-3);
@@ -168,7 +166,8 @@ public class GameController {
                 Robot tempRobot = robots.remove();
                 tempRobot.setXPosition((int) teamInitPoints[l].getX());
                 tempRobot.setYPosition((int) teamInitPoints[l].getY());
-                findTile((int)(teamInitPoints[l].getX()), (int)(teamInitPoints[l].getY())).addRobot(tempRobot);
+                displayMessage(teamInitPoints[l].getX() + "," + teamInitPoints[l].getY(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
+                gameMap.findTile((int)(teamInitPoints[l].getX()), (int)(teamInitPoints[l].getY())).addRobot(tempRobot);
                 robots.add(tempRobot);
             }
         }
@@ -260,21 +259,6 @@ public class GameController {
     }
     
     
-    public Tile findTile(int x, int y){
-        if(tiles == null){
-            System.out.println("WTF");
-        }
-        for(int i = 0; i < gameMap.getMapDiameter(); i++){
-            for(int l = 0; l < gameMap.getMapDiameter(); l++){
-                if(tiles[i][l].getXCoord() == x && tiles[i][l].getYCoord() == y){
-                    return tiles[i][l];
-                }
-            }
-        }
-        return null;
-    }
-    
-    
     /**
      * Gets the robot that currently has the turn to play
      * @param teamNum the number that represents the team that the robot
@@ -325,7 +309,7 @@ public class GameController {
         for (int newX = currentX-1; newX<currentX+1; newX++ ){
             for(int newY = currentY-1; newY<currentY+1; newY++ ){
                 if(newX != currentX && newY != currentY){
-                    Tile neighbourTile = findTile(newX, newY);
+                    Tile neighbourTile = gameMap.findTile(newX, newY);
                     //find the cost to reach this neighbout
                     int cost = neighbourTile.getCost();
                     //if we found the destination, return a new list with the destination in it
@@ -381,7 +365,7 @@ public class GameController {
       int newX;
       int newY;
 
-      Tile curTile = findTile(robotToMove.getXPosition(), robotToMove.getYPosition());
+      Tile curTile = gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition());
       
       Point dir = gameMap.getDirection(direction, range);
       
@@ -399,12 +383,12 @@ public class GameController {
       while(iter.hasNext()){
           Tile temp = iter.next();
           
-          findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
+          gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
           
           robotToMove.setXPosition(newX);
           robotToMove.setYPosition(newY);
           
-          findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
+          gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
           int xOffset = newX - robotToMove.getXPosition();
           int yOffset = newY - robotToMove.getYPosition();
           int currentDirection = getDirection(xOffset, yOffset);
