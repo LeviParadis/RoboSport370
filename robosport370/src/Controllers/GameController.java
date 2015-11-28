@@ -28,6 +28,7 @@ public class GameController {
     private Map gameMap;
     
     private mapView view;
+    private Tile[][] tiles;
     
     private boolean isPaused;
     
@@ -65,6 +66,7 @@ public class GameController {
         this.gameComplete = false;
         this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
         gameMap = new Map();
+        tiles = gameMap.getTiles();
         this.view = new mapView(this, allTeams);
    
         teams = new ArrayList<Team>();
@@ -124,6 +126,7 @@ public class GameController {
         int numTeams = teams.size();
         int size = gameMap.getMapSize();
         Point[] teamInitPoints = new Point[numTeams];
+       
         
 //        position 
         if(numTeams == 2){
@@ -156,7 +159,7 @@ public class GameController {
             teams.get(5).setTeamDirection(2);
         }
         else{
-            throw new RuntimeException("there must be 2,3, or 6 teams for a tournament");
+            displayMessage("there must be 2,3, or 6 teams for a tournament", ConsoleMessageType.CONSOLE_ERROR);
         }
         for(int l = 0; l < teamInitPoints.length; l++){
             Team tempTeam = teams.get(l);
@@ -165,6 +168,7 @@ public class GameController {
                 Robot tempRobot = robots.remove();
                 tempRobot.setXPosition((int) teamInitPoints[l].getX());
                 tempRobot.setYPosition((int) teamInitPoints[l].getY());
+                findTile((int)(teamInitPoints[l].getX()), (int)(teamInitPoints[l].getY())).addRobot(tempRobot);
                 robots.add(tempRobot);
             }
         }
@@ -256,7 +260,19 @@ public class GameController {
     }
     
     
-    
+    public Tile findTile(int x, int y){
+        if(tiles == null){
+            System.out.println("WTF");
+        }
+        for(int i = 0; i < gameMap.getMapDiameter(); i++){
+            for(int l = 0; l < gameMap.getMapDiameter(); l++){
+                if(tiles[i][l].getXCoord() == x && tiles[i][l].getYCoord() == y){
+                    return tiles[i][l];
+                }
+            }
+        }
+        return null;
+    }
     
     
     /**
@@ -302,7 +318,6 @@ public class GameController {
         int currentX = current.getXCoord();
         int currentY = current.getYCoord();
         
-        Tile[][] allTiles = this.gameMap.getTiles();
         
         List<List<Tile>> options = new  LinkedList<List<Tile>>();
         
@@ -310,7 +325,7 @@ public class GameController {
         for (int newX = currentX-1; newX<currentX+1; newX++ ){
             for(int newY = currentY-1; newY<currentY+1; newY++ ){
                 if(newX != currentX && newY != currentY){
-                    Tile neighbourTile = allTiles[newX][newY];
+                    Tile neighbourTile = findTile(newX, newY);
                     //find the cost to reach this neighbout
                     int cost = neighbourTile.getCost();
                     //if we found the destination, return a new list with the destination in it
@@ -365,8 +380,8 @@ public class GameController {
            
       int newX;
       int newY;
-      Tile[][] tiles = gameMap.getTiles();
-      Tile curTile = tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()];
+
+      Tile curTile = findTile(robotToMove.getXPosition(), robotToMove.getYPosition());
       
       Point dir = gameMap.getDirection(direction, range);
       
@@ -384,14 +399,14 @@ public class GameController {
       while(iter.hasNext()){
           Tile temp = iter.next();
           
-          tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].removeRobot(robotToMove);
+          findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
           
           robotToMove.setXPosition(newX);
           robotToMove.setYPosition(newY);
           
-          tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].addRobot(robotToMove);
+          findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
           int xOffset = newX - robotToMove.getXPosition();
-          int yOffset = newY - robotToMove.getYPoisition();
+          int yOffset = newY - robotToMove.getYPosition();
           int currentDirection = getDirection(xOffset, yOffset);
           view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
       }
@@ -471,7 +486,6 @@ public class GameController {
      * @param direction the direction to shoot
      */
     public void shootAtSpace(Robot shooter, int range, int direction){
-        Tile[][] allTiles = this.gameMap.getTiles();
         
         if(range > 3){
             this.displayMessage("cannot shoot farther then range 3", ConsoleMessageType.CONSOLE_ERROR);
@@ -483,7 +497,7 @@ public class GameController {
         int xPos = (int) (dir.getX()*range);
         int yPos = (int) (dir.getY()*range);
         
-        LinkedList<Robot> robots = allTiles[xPos][yPos].getRobots();
+        LinkedList<Robot> robots = tiles[xPos][yPos].getRobots();
         
         Iterator<Robot> iter = robots.iterator();
         

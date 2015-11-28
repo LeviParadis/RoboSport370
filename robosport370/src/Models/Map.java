@@ -64,33 +64,6 @@ public class Map {
         if(test)System.out.println(count);
     }
     
-   
-    
-    /**
-     * Calculates distance between two tiles
-     * @param cur the tile to start on 
-     * @param dest the tile that is being travelled to
-     * @return the distance as an integer
-     */
-    public int calcDistance(Tile cur, Tile dest){
-    	if (cur.getXCoord() == dest.getXCoord()){
-    		return Math.abs(dest.getYCoord() - cur.getYCoord());    	  		  
-  	  	}
-  	  	else if (cur.getYCoord() == dest.getYCoord()){
-  	  		return Math.abs(dest.getXCoord() - cur.getXCoord());    	  		  
-  	  	}
-  	  	else{
-  	  		int dx = Math.abs(dest.getXCoord() - cur.getXCoord());
-  	  		int dy = Math.abs(dest.getYCoord() - cur.getYCoord());
-  	  		if (cur.getYCoord() < dest.getYCoord()){
-  	  			return (int) (dx + dy - (Math.ceil(dx / 2.0))-1);
-  	  		}
-  	  		else{
-  	  			return (int) (dx + dy - (Math.floor(dx / 2.0))-1); 					  
-  	  		}
-  	  	}
-    }
-    
     public enum DIRECTION{
         NORTH(0,1),
         SOUTH(0,-1),
@@ -253,8 +226,6 @@ public class Map {
     public static void main(String[] args){
         Map test = new Map();   
         Tile one = new Tile(-1, -1);
-        Tile two = new Tile(3, 4);
-        System.out.println(test.calcDistance(one, two));
-        
+        Tile two = new Tile(3, 4);        
     }
 } 

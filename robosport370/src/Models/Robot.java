@@ -113,7 +113,7 @@ public class Robot implements Cloneable{
         return this.xPosition;
     }
     
-    public int getYPoisition(){
+    public int getYPosition(){
         return this.yPosition;
     }
     
