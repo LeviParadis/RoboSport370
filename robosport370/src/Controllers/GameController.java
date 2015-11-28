@@ -366,19 +366,17 @@ public class GameController {
       
       Point dir = gameMap.getDirection(direction, range);
       
-      Tile dest = tiles[(int) dir.getX()][(int) dir.getY()];
-      newX = (int) dir.getX();
-      newY = (int) dir.getY();
-        
-      newX = newX*range;
-      newY = newY*range;
+      Tile dest = gameMap.findTile((int) dir.getX(), (int) dir.getY());
       
-      List<Tile> bestPath = findBestPath( curTile, dest, movesLeft);
+      
+      List<Tile> bestPath = findBestPath( curTile, dest, movesRemain);
       
       Iterator<Tile> iter = bestPath.iterator();
       
       while(iter.hasNext()){
           Tile temp = iter.next();
+          newX = temp.getXCoord();
+          newY = temp.getYCoord();
           
           gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
           
@@ -471,7 +469,20 @@ public class GameController {
      * @return
      */
     public List<Robot> getClosest(Robot r) {
-        return new LinkedList<Robot>();
+        //TODO
+        LinkedList<Robot> closest = new LinkedList<>();
+        //TODO find how much range increases for second for loop
+        for(int i = 0; i < 5; i++){
+            Point t = gameMap.getDirection(i, 1); //change 1 to range after
+            Tile temp = gameMap.findTile((int) t.getX(), (int) t.getY());
+            if(temp.getRobots() != null){
+                for (int j = 0; j < temp.getNumRobots(); j++){
+                    closest.add(temp.getRobots().get(j));
+                }
+            }
+        }
+        
+        return closest;
     }
     
     /**
