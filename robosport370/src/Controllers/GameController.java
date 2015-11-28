@@ -1,7 +1,6 @@
 package Controllers;
 
 import java.awt.Point;
-import java.security.AllPermission;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -156,18 +155,16 @@ public class GameController {
             teamInitPoints[5] = new Point(-((size-1)/2), -(size-1));
             teams.get(5).setTeamDirection(2);
         }
-        else{
-            displayMessage("there must be 2,3, or 6 teams for a tournament", ConsoleMessageType.CONSOLE_ERROR);
-        }
         for(int l = 0; l < teamInitPoints.length; l++){
             Team tempTeam = teams.get(l);
             Queue<Robot> robots = tempTeam.getAllRobots();
+            Tile tempTile = gameMap.findTile((int)(teamInitPoints[l].getX()),(int)(teamInitPoints[l].getY()));
             for(int i = 0; i < robots.size(); i++){
                 Robot tempRobot = robots.remove();
                 tempRobot.setXPosition((int) teamInitPoints[l].getX());
                 tempRobot.setYPosition((int) teamInitPoints[l].getY());
                 displayMessage(teamInitPoints[l].getX() + "," + teamInitPoints[l].getY(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
-                gameMap.findTile((int)(teamInitPoints[l].getX()), (int)(teamInitPoints[l].getY())).addRobot(tempRobot);
+                tempTile.addRobot(tempRobot);
                 robots.add(tempRobot);
             }
         }
@@ -305,22 +302,22 @@ public class GameController {
         
         List<List<Tile>> options = new  LinkedList<List<Tile>>();
         
-        //iterate through all neighbour tiles
+        //iterate through all neighbor tiles
         for (int newX = currentX-1; newX<currentX+1; newX++ ){
             for(int newY = currentY-1; newY<currentY+1; newY++ ){
                 if(newX != currentX && newY != currentY){
                     Tile neighbourTile = gameMap.findTile(newX, newY);
-                    //find the cost to reach this neighbout
+                    //find the cost to reach this neighbor
                     int cost = neighbourTile.getCost();
                     //if we found the destination, return a new list with the destination in it
                     if(neighbourTile == destination){
                        LinkedList<Tile> result = new LinkedList<Tile>();
                        result.add(neighbourTile);
                        return result;
-                    //if the neighbour isnt the destination but it is reachable, recurse to the neighbour
+                    //if the neighbor isn't the destination but it is reachable, recurse to the neighbor
                     } else if(cost <= movesAvailable){
                         List<Tile> neighbourResult = findBestPath(neighbourTile, destination, movesAvailable - cost);
-                        //if the neighbour was able to find a path, add it to the list of options
+                        //if the neighbor was able to find a path, add it to the list of options
                         if(neighbourResult != null){
                             options.add(neighbourResult);
                         }
@@ -364,7 +361,7 @@ public class GameController {
            
       int newX;
       int newY;
-
+      int movesRemain = movesLeft;
       Tile curTile = gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition());
       
       Point dir = gameMap.getDirection(direction, range);
@@ -385,8 +382,8 @@ public class GameController {
           
           gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
           
-          robotToMove.setXPosition(newX);
-          robotToMove.setYPosition(newY);
+          robotToMove.setXPosition(temp.getXCoord());
+          robotToMove.setYPosition(temp.getYCoord());
           
           gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
           int xOffset = newX - robotToMove.getXPosition();
@@ -394,41 +391,8 @@ public class GameController {
           int currentDirection = getDirection(xOffset, yOffset);
           view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
       }
-      
-      
-      
-      
-      
-      
-    //TODO add the team specific direction here
-      
-//      if(newY > gameMap.getMaxY() || newY < gameMap.getMinY()){
-//          throw new RuntimeException("can't go off the edge in the Y coordinate");
-//      }
-//      if(newX > gameMap.getMaxX() || newX < gameMap.getMinY()){
-//          throw new RuntimeException("can't go off the edge in the X coordinate");
-//      }
-//       
-//      Robot temp = this.teams.get(TeamNumber).getTeamMember((int) robotToMove.getMemberNumber());
-//       
-//      Tile[][] allTiles = this.gameMap.getTiles();
-//      
-//      if(movesLeft < allTiles[newX][newY].getCost()){
-//          throw new RuntimeException("There are not enough moves left to go there");
-//      }
-//      //Removing the robot from it's current tile
-//      allTiles[temp.getXPosition()][temp.getYPoisition()].removeRobot(temp);
-//       
-//      if(movesLeft < range){
-//          throw new RuntimeException("range to move cannot be higher than the amount of moves remaining");
-//      }
-//      
-//      temp.setXPosition(newX);
-//      temp.setYPosition(newY);
-//        
-//      //Adding the robot to the new tile
-//      allTiles[temp.getXPosition()][temp.getYPoisition()].addRobot(temp);
-    return 0;
+    
+    return movesRemain;
         
    }
     
