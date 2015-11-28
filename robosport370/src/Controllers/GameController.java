@@ -384,15 +384,16 @@ public class GameController {
       while(iter.hasNext()){
           Tile temp = iter.next();
           
-          //TODO
           tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].removeRobot(robotToMove);
           
           robotToMove.setXPosition(newX);
           robotToMove.setYPosition(newY);
           
           tiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].addRobot(robotToMove);
-          view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), direction);
-          
+          int xOffset = newX - robotToMove.getXPosition();
+          int yOffset = newY - robotToMove.getYPoisition();
+          int currentDirection = getDirection(xOffset, yOffset);
+          view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
       }
       
       
@@ -431,6 +432,36 @@ public class GameController {
     return 0;
         
    }
+    
+    /**
+     * Takes an x and y offset of range 1 and returns the direction (0->5)
+     * @param xOffset -1, 0, 1
+     * @param yOffset -1, 0, 1
+     * @return the direction (0->5) the given offset points to, -1 if invalid input
+     */
+    public int getDirection(int xOffset, int yOffset) {
+    	if(xOffset == 0 && yOffset == 1) {
+    		return 0;
+    	}
+    	else if(xOffset == 1 && yOffset == 1) {
+    		return 1;
+    	}
+		else if(xOffset == 1 && yOffset == 0) {
+			return 2;	
+		}
+		else if(xOffset == 0 && yOffset == -1) {
+			return 3;
+		}
+		else if(xOffset == -1 && yOffset == -1) {
+			return 4;
+		}
+		else if(xOffset == -1 && yOffset == 0) {
+			return 5;
+		}
+		else {
+			return -1;
+		}
+    }
         
     
     /**
