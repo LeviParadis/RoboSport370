@@ -42,6 +42,8 @@ and mantaining robots written in Forth code.
 
 Installation
 --------------------
+Download the Robosport370.zip folder. Unzip and run the .Jar file. Make sure 
+that the assets folder is in the same place as the .jar file.
 
 License
 ---------
