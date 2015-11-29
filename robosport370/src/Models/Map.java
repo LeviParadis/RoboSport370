@@ -255,9 +255,9 @@ public class Map {
                 found = true;
             }
         }
-        if(toRet == null){
-           throw new RuntimeException("A tile outside of the map cannot be accessed"); 
-        }
+//        if(toRet == null){
+//           throw new RuntimeException("A tile outside of the map cannot be accessed"); 
+//        }
         return toRet;    
     }
     
