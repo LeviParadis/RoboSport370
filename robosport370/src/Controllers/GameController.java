@@ -27,7 +27,6 @@ public class GameController {
     private Map gameMap;
     
     private mapView view;
-    private Tile[][] tiles;
     
     private boolean isPaused;
     
@@ -65,7 +64,6 @@ public class GameController {
         this.gameComplete = false;
         this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
         gameMap = new Map();
-        tiles = gameMap.getTiles();
         this.view = new mapView(this, allTeams);
    
         teams = new ArrayList<Team>();
@@ -127,10 +125,14 @@ public class GameController {
         Point[] teamInitPoints = new Point[numTeams];
        
         if(numTeams == 2){
-            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
-            teams.get(0).setTeamDirection(-3);
-            teamInitPoints[1] = new Point(size-1, (size-1)/2);
-            teams.get(1).setTeamDirection(0);
+//            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+//            teams.get(0).setTeamDirection(-3);
+//            teamInitPoints[1] = new Point(size-1, (size-1)/2);
+//            teams.get(1).setTeamDirection(0);
+            
+            teamInitPoints[0] = new Point(0, 1);
+            teamInitPoints[1] = new Point(1, 0);
+            
         }
         else if(numTeams == 3){
             teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
@@ -387,6 +389,7 @@ public class GameController {
           int xOffset = newX - robotToMove.getXPosition();
           int yOffset = newY - robotToMove.getYPosition();
           int currentDirection = getDirection(xOffset, yOffset);
+          displayMessage("new position", ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
           view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
       }
     
@@ -443,7 +446,7 @@ public class GameController {
         int xPos = (int) (dir.getX()*range);
         int yPos = (int) (dir.getY()*range);
         
-        LinkedList<Robot> robots = tiles[xPos][yPos].getRobots();
+        LinkedList<Robot> robots = gameMap.findTile(xPos, yPos).getRobots();
         
         Iterator<Robot> iter = robots.iterator();
         
@@ -469,15 +472,20 @@ public class GameController {
      * @return
      */
     public List<Robot> getClosest(Robot r) {
-        //TODO
+        
         LinkedList<Robot> closest = new LinkedList<>();
         //TODO find how much range increases for second for loop
         for(int i = 0; i < 5; i++){
             Point t = gameMap.getDirection(i, 1); //change 1 to range after
-            Tile temp = gameMap.findTile((int) t.getX(), (int) t.getY());
-            if(temp.getRobots() != null){
-                for (int j = 0; j < temp.getNumRobots(); j++){
-                    closest.add(temp.getRobots().get(j));
+            
+            if(t.getX() < gameMap.getMaxX() && t.getX() > gameMap.getMinX() &&
+                    t.getY() < gameMap.getMaxY() && t.getY() > gameMap.getMinY()){
+                
+                Tile temp = gameMap.findTile((int) t.getX(), (int) t.getY());
+                if(temp.getRobots() != null){
+                    for (int j = 0; j < temp.getNumRobots(); j++){
+                        closest.add(temp.getRobots().get(j));
+                    }
                 }
             }
         }

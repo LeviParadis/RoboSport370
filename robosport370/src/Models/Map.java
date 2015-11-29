@@ -1,5 +1,7 @@
 package Models;
 import java.awt.Point;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import Controllers.gameVariables;
 import Models.Map.DIRECTION;
@@ -11,7 +13,7 @@ public class Map {
     private int mapSize = gameVariables.mapSize;
     private int xPosMax, xPosMin, yPosMax, yPosMin;
     
-    Tile[][] tiles = new Tile[mapDiameter][mapDiameter];
+    LinkedList<Tile> tiles = new LinkedList<Tile>();
     
     public Map(){
         
@@ -33,17 +35,17 @@ public class Map {
             for(int y = 0; y < height; y++) {
                 if(left > ((mapDiameter-1)/2)+1){
                    
-                    tiles[left][y] = new Tile(xPos, yPos);    
+                    tiles.add(new Tile(xPos, yPos));    
                     yPos--;
                 }else{
                     if(height > mapDiameter) height--;
-                    tiles[left][y] = new Tile(xPos, yPos);
+                    tiles.add(new Tile(xPos, yPos));
                     
                     yPos--;
                 }
                 if(test){
-                    System.out.print("(" + tiles[left][y].getXCoord() +
-                            "," + tiles[left][y].getYCoord() + ")");                    
+//                    System.out.print("(" + tiles.get(index).getXCoord() +
+//                            "," + tiles[left][y].getYCoord() + ")");                    
                 }
                 
                 count++;
@@ -194,49 +196,25 @@ public class Map {
     	return toRet;
     }
     
-    public Tile findTile(int x, int y){
+    public Tile findTile(int x, int y) throws RuntimeException{
         Tile toRet = null;
-
-        int inity = 0;
-        int height = gameVariables.mapSize;
-        int xPos = -(gameVariables.mapSize-1);
-        int yPos = inity;
-        int blwHalfDepth = 0;
         
-        for(int left = 0; left < this.mapDiameter; left++){
+        Iterator<Tile> iter = tiles.iterator();
+        
+        while(iter.hasNext()){
+            Tile temp = iter.next();
             
-            for(int other = 0; other < height; other++) {
-                if(left > ((this.mapDiameter-1)/2)+1){
-                   
-                    if(tiles[left][other].getXCoord() == x && tiles[left][other].getYCoord() == y){
-                        toRet = tiles[left][other];
-                    }
-                    yPos--;
-                }else{
-                    if(height > this.mapDiameter) height--;
-                    if(tiles[left][other].getXCoord() == x && tiles[left][other].getYCoord() == y){
-                        toRet = tiles[left][other];
-                    }   
-                    yPos--;
-                }  
-            }          
-            if(left >= ((this.mapDiameter-1)/2)){
-                xPos++;
-                yPos = gameVariables.mapSize-1;
-                height--;
-            }else{
-                blwHalfDepth++;
-                xPos++;
-                yPos = blwHalfDepth;
-                height++;    
+            if(temp.getXCoord() == x && temp.getYCoord() == y){
+                toRet = temp;
             }
         }
-        return toRet;
-        
-        
+        if(toRet == null){
+           throw new RuntimeException("A tile outside of the map cannot be accessed"); 
+        }
+        return toRet;    
     }
     
-    public Tile[][] getTiles(){
+    public LinkedList<Tile> getTiles(){
         return this.tiles;
     }
     
