@@ -45,22 +45,6 @@ public class ForthInterpreter {
     //indicates how many moves the current robot has left. Reset on every execution
     private static long movesAvailable;
 
-    //tester
-    public static void main(String[] args) {
-        JSONParser parser=new JSONParser(); 
-        try {
-            JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
-            Robot newRobot = JsonInterpreter.robotFromJSON(json);
-            System.out.println(INIT_WORD);
-            initRobot(newRobot, null);
-            System.out.println();
-            System.out.println(TURN_WORD);
-            executeTurn(newRobot, null);
-            
-        } catch (IOException | ParseException | ForthRunTimeException | ForthParseException e1) {
-            e1.printStackTrace();
-        }
-    }
 
     
     /**
@@ -137,7 +121,7 @@ public class ForthInterpreter {
             if(!robot.isAlive()){
                 return;
             }
-            
+            System.out.println(movesAvailable);
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
 

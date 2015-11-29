@@ -306,13 +306,10 @@ public class GameController {
             Point destPt = gameMap.getDirection(dir, 1);
             int newX = (int) destPt.getX() + current.getXCoord();
             int newY = (int) destPt.getY() + current.getYCoord();
+            Tile neighbourTile = gameMap.findTile(newX, newY);
                 
             //making sure position desired is on map
-            if(newX > gameMap.getMinX() && newX < gameMap.getMaxX() && 
-                    newY > gameMap.getMinY() && newY < gameMap.getMaxY()){
-                    Tile neighbourTile = gameMap.findTile(newX, newY);
-                        
-                        
+            if(neighbourTile != null && gameMap.isValidTile(neighbourTile)){
                     //find the cost to reach this neighbor
                     int cost = neighbourTile.getCost();
                     //if we found the destination, return a new list with the destination in it
@@ -489,8 +486,7 @@ public class GameController {
                 Tile tempTile = gameMap.findTile(r.getXPosition() + (int)dirToGO.getX(), 
                                                  r.getYPosition() + (int)dirToGO.getY());
                 //check to see if tile is on map esle skips it
-                if(tempTile.getXCoord() > gameMap.getMinX() && tempTile.getXCoord() < gameMap.getMaxX() &&
-                        tempTile.getYCoord() > gameMap.getMinY() && tempTile.getYCoord() < gameMap.getMaxY()){
+                if(gameMap.isValidTile(tempTile)){
                     Iterator<Robot> iter = tempTile.getRobots().iterator();
                     while(iter.hasNext() && !foundFour){
                         closest.add(iter.next());

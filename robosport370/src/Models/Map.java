@@ -273,20 +273,20 @@ public class Map {
         return this.mapDiameter;
     }
 
-    public int getMaxY(){
-        return yPosMax;
-    }
-    
-    public int getMaxX(){
-        return xPosMax;
-    }
-    
-    public int getMinY(){
-        return yPosMin;
-    }
-    
-    public int getMinX(){
-        return xPosMin;
+    public boolean isValidTile(Tile checkTile){
+        int checkX = checkTile.getXCoord();
+        int checkY = checkTile.getYCoord();
+        
+        if(checkX == 0){
+            //if x is 0, y can range from yMin to yMax
+            return (checkY >= this.yPosMin && checkY <= this.yPosMax);
+        } else if(checkX < 0){
+            //if x is negative, y can range from yMin to (yMax + x)
+            return (checkY >= this.xPosMin && checkY <= (this.yPosMax + checkX));
+        } else {
+            //if x is positive, y can range from (yMin + x) to yMax
+            return (checkY >= (this.xPosMin + checkX) && checkY <= this.yPosMax);
+        }
     }
     
     public static void main(String[] args){
