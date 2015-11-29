@@ -121,6 +121,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     /**
      * Creates a mapView screen
      * @param controller the controller creating this screen
+     * @param teamsInMatch The number of teams in the current game
      */
     public mapView(final GameController controller, List<Team> teamsInMatch) {
         this.controller = controller;
@@ -281,7 +282,8 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     /**
      * used to update the console logger
-     * newMessage the latest message to display
+     * @param newMessage the latest message to display
+     * @param type Type of Console Message
      */
     public void displayMessage(String newMessage, ConsoleMessageType type){  
         this.consoleList.add(newMessage);
@@ -333,6 +335,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     /**
      * used to update the current robot's info on the screen
      * @param robot the robot that is running it's turn
+     * @param turnNum The turn number the controller is on
      */
     public void updateRobotInfo(Robot robot, int turnNum){
         nameLabel.setText(robot.getName());
@@ -367,6 +370,7 @@ public class mapView extends ScreenAdapter implements EventListener {
      * Sets a robot's initial position based on team size and team
      * @param teamNum the team number
      * @param s the robot sprite
+     * @param numTeams The number of teams the game will have
      */
 
     public void setRobotStartingPosition(int teamNum, Sprite s, int numTeams) {
@@ -428,6 +432,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         }
 
         stage.draw();
+        this.controller.checkGameComplete();
     }
     
     public void renderExplosion() {
@@ -507,7 +512,6 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     /**
      * This function finds a index (0 through 3) based on map position
-     * @param tile the tile being chosen
      * @param i the current column
      * @param j the current height
      * @return the index based of the current map tile
@@ -570,29 +574,30 @@ public class mapView extends ScreenAdapter implements EventListener {
         int moveY = 0;
 
         // Doing all of our x translations
-        if(direction == 2 || direction == 3) {
+        if(direction == 1 || direction == 2) {
             moveX = sizeX;
         }
-        if(direction == 5 || direction == 6) {
+        if(direction == 4 || direction == 5) {
             moveX = -sizeX;
         }
 
         // Doing all of our y translations
-        if(direction == 1) {
+        if(direction == 0) {
             moveY = sizeY;
         }
-        if(direction == 2 || direction == 6) {
+        if(direction == 1 || direction == 5) {
             moveY = sizeY/2;
         }
-        if(direction == 3 || direction == 5) {
+        if(direction == 2 || direction == 4) {
             moveY = -sizeY/2;
         }
-        if(direction == 4) {
+        if(direction == 3) {
             moveY = -sizeY;
         }
         AudibleTimeline aTimeline = new AudibleTimeline(this);
+        int speedMils = this.controller.getAnimationSpeed();
         aTimeline.setTimeline(Timeline.createSequence()
-                .push(Tween.to(teamList.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
+                .push(Tween.to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, speedMils/1000f).targetRelative(moveX, moveY)));
         timelineTweenQueue.add(aTimeline);
     }
 
@@ -624,8 +629,9 @@ public class mapView extends ScreenAdapter implements EventListener {
     	AudibleTimeline aTimeline = new AudibleTimeline(this);
     	aTimeline.setProjectile(projectile);
     	aTimeline.setSource(teamList.get(team).get(robot));
+    int speedMils = this.controller.getAnimationSpeed();
     	Timeline t = Timeline.createSequence()
-    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, 0.5f)
+    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, speedMils/1000f)
     					.targetRelative(xTranslate, yTranslate));
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
@@ -635,7 +641,8 @@ public class mapView extends ScreenAdapter implements EventListener {
     	AudibleTimeline aTimeline = new AudibleTimeline(this);
     	aTimeline.setSource(teamList.get(team).get(robot));
     	aTimeline.setExplosion(explosionPos);
-    	Timeline t = Timeline.createSequence().delay(1f);
+    int speedMils = this.controller.getAnimationSpeed();
+    	Timeline t = Timeline.createSequence().delay(speedMils/1000f);
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
     }

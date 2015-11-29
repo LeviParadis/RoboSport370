@@ -1,0 +1,262 @@
+ROBOSPORT370 CHANGELOG [0.1.0]
+
+db5167f (HEAD -> master, origin/master) Updating Changelog
+3d409a8 Giving Changelog .md format
+d56c0c7 Add changelog
+59f988d Unecessary
+1482f10 Can't be created on the git page
+4e5ee59 Changed to base64
+91d0ba2 Add changelog
+4d9c8c7 Added more information about RobotLibrarian
+1e948ef Added information on Libraries
+9ea78c9 Adding more info to the readme
+c22671a Uploading the Readme
+24495a0 Fixed javadocs, adding them to repo
+ab17c54 (origin/feature/end_game_when_done) made it so that it will show the end controller at the end of the match, times out after 500 turns
+2ed967d added code to call the end controller when the game is complete
+32e6af4 fixed errors that the last commit added
+190479d (origin/feature/end-controller) Merge branch 'feature/end-controller' of git@git.cs.usask.ca:370-15/370-15c3.git into feature/end-controller
+bd56ce8 added single change in create() method
+f55517d Merge remote-tracking branch 'origin/master' into feature/end-controller
+2e2a763 Merge branch 'feature/map-view-animations' into 'master'
+49afaf0 Robots now explode and are removed
+6eaba1d implemented sending mail between robots
+788ace0 Merge branch 'feature/map-view-animations' into 'master'
+ea3c8b0 fireRobot animation now works correctly
+2e127e2 Spelling mistakes
+f87d269 use a flag to mark that the console has updates. This is much more efficient than updating the table every frame
+0f61ca7 got it maybe working with a counter to update the table multiple times a second on the main thread
+215f64f Working end screen and controller are done, could add more stats after game controller is done
+2e0e082 works, but crashes
+c3d6772 Re-did end controller and view
+d41b273 error box should show message instead of exception type
+4e3408e disallowed  adding teams when there are already 6
+3ef0d5d made it so that the teams start in the right position
+5004d06 (origin/feature/game_ui_interface) added back in exception if not enough teams are added
+edadbea added current stats information
+a52c54d moved the delay logic into the controller's display message function. This way, we will always have a consistent log message speed
+336c266 not displays error messages when they happen now properly handles errors when they come up in the forth interpreter. Displays all errors In the console, and ends the turn when the forth code breaks
+23be228 log init messages too
+ef856d1 added colors to the console
+f5d0dc5 fixed send mail forth function
+9b9e3b9 implemented fast forward
+b11164f added new delay property that says how long to wait in between forth commands
+534dafa hooked up pause button
+b7a8ea3 listens for button presses
+e082eee added current robot info
+2c6e1c6 added console commands to screen
+d3b8b95 added some basic buttons
+2e89d7d got some basic labels to show up on the side
+f07675e removed unused imports
+25dc82b forth code will now show up when editing robots
+043c4a1 can now retire robots
+6acb5eb Set up new view for editing Robots
+91abdf8 created new class to handle editing robots
+fa8553f changed robot son to make them just move and shoot
+c116be2 Merge branch 'feature/team_creation'
+d26a79e added comments
+faf3e7d added padding, and added text explaing how to see robot info
+5d58bdd made it so that unchecked checkboxes become disabled when we have added the max amount
+2fbd5f4 added robot selection to manage robot view
+830a08c added 4 unique robots to server mock
+e563b99 added teams now show up in the list of teams in the set up controller
+2675657 renamed classes, since we aren't just editing teams, we are picking robots. Makes it more useful in other contexts
+bc4d013 added default values to search fields
+77547c2 Merge branch 'feature/team_creation' into feature/end-controller
+9e4fead hooked up the input fields so that the son interpreter is actually being sent the filter information
+8d446cf added back in selection style
+932833e changed is equal function to consider serial number; now, when we search through robots from the server, it will be able to identify copies that are separate instances
+ecc19fc added scroll bars
+732169a Visual changes
+49343d0 Implemented robotInfo on hover
+0533689 added delegate model to allow us to pass information back to the caller
+ffaa19f enforce maximum limit
+ca6f361 Merge branch 'feature/team_creation' of git.cs.usask.ca:370-15/370-15c3 into feature/team_creation
+2c88a5c enforces a minimum number of robots in selection screen
+03ba831 Fixed issue with adding more then 6 robots to team
+5f2f6b4 made changes to class to allow selecting robots from server
+c627ba4 Same as add robot screen for now
+9e453d2 now sends action to the controller as it does it
+f89bf4a Empty class file for editTeamView
+71ed0f0 forth interpreter now uses stubs in game controller to attempt to do actions
+9f84657 Merge branch 'feature/team_creation' of ssh://git@git.cs.usask.ca/370-15/370-15c3.git into feature/team_creation
+dd850c2 changed sample robot to move forward and shoot forward each turn
+ff6b01e added stubs for use by the forth interpreter
+1538dcd added alert message if the user didn't select a proper number of teams
+6c9dbda Merge branch 'feature/new-robot-main-menu' into 'master'
+57b34e9 Updated the menu name
+6a646dc made it so that it would clear selected teams whenever it returns to the main screen
+d77a749 Merge branch 'master' of git.cs.usask.ca:370-15/370-15c3
+0b89329 removed dispose statements, because they were causing crashes
+d860ddf Merge branch 'feature/new-robot-main-menu' into 'master'
+1a843f0 Adjusted main menus functionality
+544e135 Merge branch 'feature/team_names_in_setup' into 'master'
+f0f7509 made team text match system font; shows text even when no teams were added
+e90564e made team name be more human readable
+3d38c1a now shows a lit of teams as you set them up
+32d6691 fixed java doc comment
+3580076 Merge branch 'feature/team_creation' of git.cs.usask.ca:370-15/370-15c3 into feature/team_creation
+5b4e7c3 Merge branch 'feature/manage_robots' into 'master'
+121a63e removed annoying log
+85f3dfe made it so the active screen always takes over control of button events
+1c8d6ae added new manage robot screen, with buttons to reach other screens
+5d9afb4 fixed issue with pop to root. Now actually pops to root. Also disposes old screens
+da36959 (masterl) Tried to add a new sprite to the main menu
+39112ee (origin/masterl) Merge branch 'feature/add_robot' into 'master'
+75a8a24 moved logic from view into controller; added new screen into the exit button on the main menu
+3573302 Merge branch 'master' into add_robot
+cb0a049 added pushing and popping to the UIManager, instead of setting the screen directly
+6a410ec added ability to upload the new robot
+610a1c2 added a few comments
+26391dd added checkboxes inverting their opposites
+eca89f6 made it look better
+d6ed5e9 added checkboxes
+445b154 added some labels
+eb16c58 added new screen for adding robots
+2541f42 Merge branch 'feature/game_manager' into 'master'
+1b05870 renamed to UIManager, so it doesnt get confused with GameController
+1e25d00 removed another unneeded main function
+0ef6542 removed main methods from controller classes, since we will just start from the game manager now
+865c35a (origin/feature/team_creation) Created add robot view file with Levi
+0a769c5 tested working with a new class to manage screens, instead of having every class be it's own game class
+df302f6 Merge branch 'feature/forth_runner' into 'master'
+f0696ec made the executionThread run until there is only one team left
+01c64c2 removed index to keep trck of who goes next; we will use a queue for that. Implemented a thread to run the forth code
+ae70a0a added forth calls for init and turns; changed next team idx to be an idex into the team list
+78c7939 Merge branch 'feature/show_teams_on_map' into 'master'
+a4f4d77 now shows teams on the right side
+9017bba maoview now loads actual robots from teams in gamecontroller
+9bd7580 Merge branch 'feature/map_creation' into 'master'
+157009c Finished the map creation algorithm
+50dd75c Merge branch 'feature/map_creation' into 'master'
+2f570e5 Worked on creating the map
+dc3b369 Merge remote-tracking branch 'origin/master' into feature/gameMapTile
+f5a7c86 Made a bunch of changes
+e64e211 created teams are now passed to the game controller
+daeb35d added method to get the name for a team
+fbbd456 removed team color
+64b82a7 can now add and delete teams from setup view
+fad890c added ability to add stubbed teams
+9914442 Working on team edit
+b60bd89 Merge branch 'feature/robot_librarian' into feature/team_creation
+164d01c new branch for gamecontroller
+0876c2e (origin/feature/robot_librarian) made jsoninterpreter return more robots in its list so we can create a team
+ae90fc2 Merge branch 'feature/game-controller' of ssh://git@git.cs.usask.ca/370-15/370-15c3.git into feature/game-controller
+23e6a58 Added Stub for creating teams
+88ec411 first
+13c1a0e Added new png for endMenu sprites, basic working end controller done
+76c2139 Added music files and some other changes.
+e4b6566 Merge branch 'feature/game-controller' of git@git.cs.usask.ca:370-15/370-15c3.git into feature/game-controller
+9568846 made a few changes and added the Music files
+71db6e2 Added in fireShot functionality for the map view
+a817842 Started End Controller, added some options to end view, created png for end view
+0406779 (origin/feature/game-controller, feature/game-controller) Merge branch 'feature/game-controller' of git@git.cs.usask.ca:370-15/370-15c3.git into feature/game-controller
+bd89c8f added a bunch of changes to gamecontroller
+c52ad5e added some code to registerRobot function
+a54ed3b finished networking function
+444e3f5 Merge remote-tracking branch 'origin/feature/setup-controller' into feature/end-controller
+11a6a83 added api library so we can communicate with the robot librarian
+45ce518 Simulation doesn't open a map view
+0172ee2 Added controller + view support
+da91e10 Merge branch 'feature/game-controller' of git@git.cs.usask.ca:370-15/370-15c3.git into feature/game-controller
+53a0e81 Game variables class
+2bf759e added posoitions to robot
+9ead4c3 started creating json we'll eventually send to the robot librarian
+a0ae828 Added a static variable holding class to connect controllers
+77f3cd6 changed some stuff
+794e6a0 Working animations!!!
+ac42c4b mapView functionality
+1b60e14 made stub functions return temporary data for testing
+e0af2f5 added clone method to robot class
+9ef4673 added new functions to JSON interpreter based on robot librarian spec
+2df4c22 added some code for a queue for next turn.
+15a349b Working on the map view.
+bb619bf Merge branch 'feature/setup-controller' into 'feature/game-controller'
+479fd1a (origin/feature/setup-controller) Merge branch 'feature/game-controller' into 'feature/setup-controller'
+94448fe Trying to get the merge to work
+bc85d58 Updating .classpath for a merge
+86a2eae Trying to sync up for a merge request
+e24ae38 added code to Map and GameControlelr
+944849d Started end view, made small changes to end controller, added import end view to setup controller
+ec10e29 Deleting TODO comments
+9c0cd55 Merge branch 'feature/setup-controller' of ssh://git@git.cs.usask.ca/370-15/370-15c3.git into feature/setup-controller
+2c8aac9 did work in game controller and created class map controller
+00e6f49 Added and tested MapSize to the controller
+a9f4966 Merge branch 'feature/setup-controller' into 'feature/end-controller'
+69a678f Fixed a library naming.
+e09492c Added controller interaction to the main menu and setup views
+5282649 fixed class path
+693f31f merged in master
+e8ba399 now adds a new robot game stats object to the cahce when it creates a new one
+e6fe47e fixed an error that slipped though on the merge
+4a85215 Cleaned up some files.
+75af800 Merge branch 'feature/robots-and-teams' into 'master'
+9499342 Pushing for meeting.
+e025f5a Added in fonts as fonts, rather than sprites.
+1b10cd2 Completed both the main menu view and the setup view.
+eb7fe71 added a few changes
+3f7e5df (origin/feature/robots-and-teams, feature/robots-and-teams) fixed jsoninterpreter to noe create a robot with a valid stats class
+68b4369 hooked up some of the stats to update when the robot does
+cb0a78e added files missing in last commit
+9d7e82d added robot stats class
+afe507e Merge branch 'feature/forth_interpreter' into 'master'
+774c7d8 added constants where applicable
+74786f2 Working copy for today's meeting.
+c7510f9 a comment
+f74512e Finished the MainMenuView and part of the setupController.
+083c68b added code to GameController
+2b5882b added EndController.Java
+bbab612 structure in GameController.java
+428b6d6 Working prototype of the start menu\!
+ba1232d deleted test classes
+109bb4e added comments and refactoring to all classes used in branch
+e8e31a4 added comments to forth parser class
+ff730f0 added comments to forth interpreter
+605bb32 added comments to forth system commands
+117e8d6 seperated forth system commands into a new class
+dd985dd refactored forth interpreter into an interpreter class and a parser class. Addded an exception so the leave word will work
+fe6f1ae added until loops
+5fa71ee added do loops
+396c593 Fixed a small conflict with the controller files.
+597da31 Made a setupView skeleton
+f5aee1b Created a skeleton for the mapView
+f711d94 added conditional logic to forth code
+ad68f1c modified random exception thrower to be a bit cleaner
+dcf0a21 added comments, added exception throw if random is given a negative value
+5d83e4c Created a working view for setupView
+c3b23f5 added mailbox forth functionality
+79f7b9a added new exception for when we can't find what a word is supposed to do
+461b82e added exception to be thrown if the forth logic has an error
+9140b54 Merge branch 'feature/robots-and-teams' into feature/forth_interpreter
+b35f055 added forth runtime exception, so we can stop a turn if there is a forth logic error
+7752648 added ablity to get robot with member number from a team
+262b607 changed mailbox to have a separate box for different senders
+70c27a0 removed movesLeft methods, because the forth interpreter will handle that instead
+32fd9c6 implemented some more of the system forth functions
+693a92b renamed custom forth word class so that it starts with forth, like all the others
+cc00603 Merge branch 'feature/robots-and-teams' into feature/forth_interpreter
+1807465 added static field to ensure that each team is assigned a unique number automatically
+b6c321c added simulator assigned variables to the robot, so it can be uniquely ided in the forth logic for each match
+15c8101 set forth variables to default to 0 instead of ""
+dff9c6d We can now run forth code! (except for loops and if statements)
+322e7f1 renamed system command enum, because it was too similar to forth system word class. Also moned it into a new enums package
+53ed466 added ability to run system forth methods
+37fcb71 removed pointer to next word in forthword classes. We can just use the system standard linked list instead. Also, added new console string class to all forth words
+8dfc9cb added function to parse forth string into forth word classes
+eb34f46 added classes for forth word types
+b897370 added basic forth interreter functions. Only missing conditionals (and testing)
+4a2fc6e added method stubs for ForthInterpreter
+9576817 added the team class
+ab72194 added the ability to encode a robot class back into a JSON object
+bd1149f fixed indentation in JsonInterpreter class
+59f87b7 the json interpreter can now create a robot class. I restructured the robot class to make sure all the fields lined up, and added documentation
+7655200 added code to game controller
+ed25c3c Added basic methods and some code to the Robot class.
+fcbe376 using robot class in json interpreter
+b5adf00 Merge remote-tracking branch 'origin/feature/json_interpreter' into feature/robots-and-teams
+eb983fc Some method stubs of Robot Class
+1d0fef6 added the ability to parse forth code out of the JSON
+4cbd4bf added template JSON file
+16e89e7 added json simple library
+2d4ecbe Merge branch 'feature/game-controller' of git@git.cs.usask.ca:370-15/370-15c3.git into feature/game-controller
+4cae8e7 (origin/feature/forth_interpreter, origin/feature/Logger, feature/forth_interpreter) added new packages

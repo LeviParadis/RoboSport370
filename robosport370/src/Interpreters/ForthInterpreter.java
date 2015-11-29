@@ -45,28 +45,12 @@ public class ForthInterpreter {
     //indicates how many moves the current robot has left. Reset on every execution
     private static long movesAvailable;
 
-    //tester
-    public static void main(String[] args) {
-        JSONParser parser=new JSONParser(); 
-        try {
-            JSONObject json = (JSONObject) parser.parse(new FileReader("resources/RobotExample.JSON"));
-            Robot newRobot = JsonInterpreter.robotFromJSON(json);
-            System.out.println(INIT_WORD);
-            initRobot(newRobot, null);
-            System.out.println();
-            System.out.println(TURN_WORD);
-            executeTurn(newRobot, null);
-            
-        } catch (IOException | ParseException | ForthRunTimeException | ForthParseException e1) {
-            e1.printStackTrace();
-        }
-    }
 
     
     /**
      * Run's a robot's forth init logic
      * @param robot             the robot we are setting up
-     * @param GameController    the controller that controls the game
+     * @param controller the controller that controls the game
      * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
      * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */
@@ -94,8 +78,7 @@ public class ForthInterpreter {
     /**
      * Run's a robot's forth turn logic
      * @param robot             the robot we are setting up
-     * @param GameController    the controller that controls the game
-     * @param delaySeconds      the amount of time to wait in between commands
+     * @param controller    the controller that controls the game
      * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
      * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
      */
@@ -138,12 +121,16 @@ public class ForthInterpreter {
                 return;
             }
             
+           if(controller.teamsAlive() <= 1){
+               //we found a winner. Stop what you're doing so we can get to the end screen
+               return;
+           }
             
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
-            
+
             controller.displayMessage(nextItem.toString(), ConsoleMessageType.CONSOLE_ACTION);
-            
+
             //find what kind of word it is, and handle appropriately
             if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
                 //literals are pushed to the stack
