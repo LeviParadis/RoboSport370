@@ -628,7 +628,7 @@ public class mapView extends ScreenAdapter implements EventListener {
     	aTimeline.setSource(teamList.get(team).get(robot));
     int speedMils = this.controller.getAnimationSpeed();
     	Timeline t = Timeline.createSequence()
-    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, speedMils/1000)
+    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, speedMils/1000f)
     					.targetRelative(xTranslate, yTranslate));
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
