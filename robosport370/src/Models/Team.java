@@ -66,7 +66,6 @@ public class Team {
      */
     public int numberOfLivingRobots(){
         Queue<Robot> livingSet = this.getLivingRobots();
-        System.out.println(this.teamNumber + ":" + livingSet.size());
         return livingSet.size();
     }
     
