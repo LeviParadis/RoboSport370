@@ -617,7 +617,7 @@ public class ForthSystemCommands {
                     return cost;
                 } catch (RuntimeException e){
                     //we don't have enough moves left. Display an error, and attempt the next command
-                    controller.displayMessage("Not enough moves left to move to space", ConsoleMessageType.CONSOLE_ERROR);
+                    controller.displayMessage("Could Not Move To Space", ConsoleMessageType.CONSOLE_ERROR);
                     //we couldn't move, so don't use any moves up
                     return 0;
                 }
