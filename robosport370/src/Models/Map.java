@@ -33,8 +33,7 @@ public class Map {
         	
             for(int y = 0; y < height; y++) {
                 Tile temp = new Tile(xPos, yPos);
-                temp.setType(chooseIndex(xPos, yPos));
-                if(temp.getType() == null) temp.setType(1);
+                temp.setType(chooseIndex(left, y));
                 if(left > ((mapDiameter-1)/2)+1){
                    
                     tiles.add(temp);    
