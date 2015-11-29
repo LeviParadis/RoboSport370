@@ -379,20 +379,27 @@ public class GameController {
           Iterator<Tile> iter = bestPath.iterator();
           
           while(iter.hasNext()){
+              
               Tile temp = iter.next();
-              newX = temp.getXCoord();
-              newY = temp.getYCoord();
               
-              gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
-              
-              int xOffset = newX - robotToMove.getXPosition();
-              int yOffset = newY - robotToMove.getYPosition();
-              robotToMove.setXPosition(temp.getXCoord());
-              robotToMove.setYPosition(temp.getYCoord());
-              
-              gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
-              int currentDirection = getDirection(xOffset, yOffset);
-              view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
+              if(!gameMap.isValidTile(temp)){
+                  throw new RuntimeException("A robot can't go off the edge of the map");
+              }else{
+                  
+                  newX = temp.getXCoord();
+                  newY = temp.getYCoord();
+                  
+                  gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
+                  
+                  int xOffset = newX - robotToMove.getXPosition();
+                  int yOffset = newY - robotToMove.getYPosition();
+                  robotToMove.setXPosition(temp.getXCoord());
+                  robotToMove.setYPosition(temp.getYCoord());
+                  
+                  gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
+                  int currentDirection = getDirection(xOffset, yOffset);
+                  view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
+              }
           }
       }
     return movesLeft;
@@ -452,7 +459,6 @@ public class GameController {
         if(tileToShoot != null){
             LinkedList<Robot> robots = tileToShoot.getRobots();
         
-            Iterator<Robot> iter = robots.iterator();
             view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
             
             for(int i=0; i<robots.size(); i++){
@@ -462,7 +468,6 @@ public class GameController {
                     view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
                     temp.destroy();
                     robots.remove(temp);
-
                 }
             
             }
