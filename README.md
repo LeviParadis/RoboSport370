@@ -15,7 +15,7 @@ JSON files that contain information about Robots.
 The Latest Version
 --------------------------
 Details of the latest version can be found in the implementation document.
-The project is currently in an early beta stage.
+The project is currently in an alpha stage of development.
 
 Documentation
 -------------------------
