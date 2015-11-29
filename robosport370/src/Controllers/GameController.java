@@ -389,14 +389,14 @@ public class GameController {
               
               gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
               
+              int xOffset = newX - robotToMove.getXPosition();
+              int yOffset = newY - robotToMove.getYPosition();
               robotToMove.setXPosition(temp.getXCoord());
               robotToMove.setYPosition(temp.getYCoord());
               
               gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
-              int xOffset = newX - robotToMove.getXPosition();
-              int yOffset = newY - robotToMove.getYPosition();
               int currentDirection = getDirection(xOffset, yOffset);
-              view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), 1);
+              view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
           }
       }
     return movesLeft;

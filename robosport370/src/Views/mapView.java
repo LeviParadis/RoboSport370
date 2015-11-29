@@ -571,24 +571,24 @@ public class mapView extends ScreenAdapter implements EventListener {
         int moveY = 0;
 
         // Doing all of our x translations
-        if(direction == 2 || direction == 3) {
+        if(direction == 1 || direction == 2) {
             moveX = sizeX;
         }
-        if(direction == 5 || direction == 6) {
+        if(direction == 4 || direction == 5) {
             moveX = -sizeX;
         }
 
         // Doing all of our y translations
-        if(direction == 1) {
+        if(direction == 0) {
             moveY = sizeY;
         }
-        if(direction == 2 || direction == 6) {
+        if(direction == 1 || direction == 5) {
             moveY = sizeY/2;
         }
-        if(direction == 3 || direction == 5) {
+        if(direction == 2 || direction == 4) {
             moveY = -sizeY/2;
         }
-        if(direction == 4) {
+        if(direction == 3) {
             moveY = -sizeY;
         }
         AudibleTimeline aTimeline = new AudibleTimeline(this);
