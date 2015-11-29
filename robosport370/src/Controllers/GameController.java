@@ -1,34 +1,21 @@
 package Controllers;
 
-import java.lang.Thread.UncaughtExceptionHandler;
+import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Queue;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.graphics.Color;
-
 import Enums.ConsoleMessageType;
 import Enums.GameSpeed;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Interfaces.ForthWord;
 import Interpreters.ForthInterpreter;
-import Interpreters.JsonInterpreter;
 import Models.Robot;
 import Models.Team;
 import Models.Tile;
 import Models.Map;
-import Models.Map.DIRECTION;
 import Views.endView;
 import Views.mapView;
 
@@ -53,7 +40,7 @@ public class GameController {
     private GameSpeed speedMultiplier;
     
     /** how long it takes for each animation to complete in milliseconds */
-    private int animationSpeed = 100;
+    private int animationSpeed = 400;
     
     /** how long it waits in between actions in milliseconds */
     private int delayDuration = 500;
@@ -65,6 +52,7 @@ public class GameController {
     /**
      * initializes the teams and ??sets their position on the map??
      * @param allTeams an array that contains all of the teams playing the match
+     * @param hexSize the size of the map on one side
      */
     public GameController(List<Team> allTeams) throws RuntimeException{
         if(allTeams == null){
@@ -85,9 +73,7 @@ public class GameController {
             teams.add((int) nextTeam.getTeamNumber(), nextTeam);
         }
 
-        UIManager manager = UIManager.sharedInstance();
-        manager.pushScreen(this.view);
-        
+        initRobotPositions();
         this.executionThread = new Thread(){
             public void run(){
                 //init robots
@@ -102,7 +88,11 @@ public class GameController {
                gameComplete = true;
             }
           };
+          
           executionThread.start();
+          
+          UIManager manager = UIManager.sharedInstance();
+          manager.pushScreen(this.view);
     }
     
     private void initRobots(){
@@ -123,6 +113,61 @@ public class GameController {
                     displayMessage("Error: " + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);
                     displayMessage("Ending Init", ConsoleMessageType.CONSOLE_ERROR);
                 }
+            }
+        }
+    }
+    /**
+     * Adds the robot teams to their starting positions on the map
+     */
+    private void initRobotPositions(){
+        int numTeams = teams.size();
+        int size = gameMap.getMapSize();
+        Point[] teamInitPoints = new Point[numTeams];
+       
+        if(numTeams == 2){
+            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teams.get(0).setTeamDirection(-3);
+            teamInitPoints[1] = new Point(size-1, (size-1)/2);
+            teams.get(1).setTeamDirection(0);
+            
+//            teamInitPoints[0] = new Point(0, 1); //for testing at closer starting positions
+//            teamInitPoints[1] = new Point(1, 0);
+            
+            
+        }
+        else if(numTeams == 3){
+            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teams.get(0).setTeamDirection(-3);
+            teamInitPoints[1] = new Point((size-1)/2, size-1);
+            teams.get(1).setTeamDirection(1);
+            teamInitPoints[2] = new Point((size-1)/2, -((size-1)/2));
+            teams.get(2).setTeamDirection(-1);
+            
+        }
+        else if(numTeams == 6){
+            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teams.get(0).setTeamDirection(-3);
+            teamInitPoints[1] = new Point(-((size-1)/2), (size-1)/2);
+            teams.get(1).setTeamDirection(-2);
+            teamInitPoints[2] = new Point((size-1)/2, size-1);
+            teams.get(2).setTeamDirection(-1);
+            teamInitPoints[3] = new Point(size-1, (size-1)/2);
+            teams.get(3).setTeamDirection(0);
+            teamInitPoints[4] = new Point((size-1)/2, -((size-1)/2));
+            teams.get(4).setTeamDirection(1);
+            teamInitPoints[5] = new Point(-((size-1)/2), -(size-1));
+            teams.get(5).setTeamDirection(2);
+        }
+        for(int l = 0; l < teamInitPoints.length; l++){
+            Team tempTeam = teams.get(l);
+            Queue<Robot> robots = tempTeam.getAllRobots();
+            Tile tempTile = gameMap.findTile((int)(teamInitPoints[l].getX()),(int)(teamInitPoints[l].getY()));
+            for(int i = 0; i < robots.size(); i++){
+                Robot tempRobot = robots.remove();
+                tempRobot.setXPosition((int) teamInitPoints[l].getX());
+                tempRobot.setYPosition((int) teamInitPoints[l].getY());
+                tempTile.addRobot(tempRobot);
+                robots.add(tempRobot);
             }
         }
     }
@@ -150,22 +195,22 @@ public class GameController {
             case GAME_SPEED_1X:
                 this.speedMultiplier = GameSpeed.GAME_SPEED_2X;
                 this.delayDuration = 250;
-                this.animationSpeed = 50;
+                this.animationSpeed = 200;
                  break;
             case GAME_SPEED_2X:
                 this.speedMultiplier = GameSpeed.GAME_SPEED_4X;
                 this.delayDuration = 125;
-                this.animationSpeed = 25;
+                this.animationSpeed = 100;
                 break;
             case GAME_SPEED_4X:
                 this.speedMultiplier = GameSpeed.GAME_SPEED_16X;
                 this.delayDuration = 30;
-                this.animationSpeed = 7;
+                this.animationSpeed = 25;
                 break;
             case GAME_SPEED_16X:
                 this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
                 this.delayDuration = 500;
-                this.animationSpeed = 100;
+                this.animationSpeed = 400;
                 break;
         }
         return this.speedMultiplier;
@@ -213,70 +258,17 @@ public class GameController {
     }
     
     
-    public int scan(){
-       int count = 0;
-       
-       for(int i = 0; i < teams.size(); i++){
-    	   
-       }
-       return 0;
-    }
-    
-    /**
-     * 
-     * @param robotSN the S/N of the robot that we need info about
-     * @param xPos the x coordinate of the robot
-     * @param yPos the y position of the robot
-     * @return a queue with the required info in the order
-     * 1: Team Number int
-     * 2: Robot health int
-     * 3: distance/range to robot int
-     * 4: direction to robot DIRECTION
-     */
-    public LinkedList<Object> identifyRobot(int robotSN, int xPos, int yPos){
-        LinkedList<Object> toRet = new LinkedList<Object>();
-//        boolean exists = false;
-        
-    	for(int i = 0; i < teams.size(); i++){
-    	   Iterator<Team> iter = teams.iterator();
-    	   while(iter.hasNext()){
-    	       Team temp = (Team) iter.next();
-    	       if(temp.getAllRobots().contains(robotSN)){
-//    	           exists = true;
-    	           toRet.add(temp.getTeamNumber());
-    	           Robot tempRobot = temp.getTeamMember(robotSN);
-    	           
-    	           toRet.add((int) tempRobot.getHealth());
-    	           //TODO add original robot position
-    	           //Calculate distance
-    	           int distance = gameMap.calcDistance( xPos,tempRobot.getXPosition(), 
-    	                   yPos,tempRobot.getYPoisition());
-    	           toRet.add(distance);
-    	           
-    	           
-    	           //Calculate direction
-    	           toRet.add(gameMap.getDirection(xPos)); 
-    	       
-    	       }
-    	   }
-    	}
-    	return toRet;
-    }
-    
-    
     /**
      * Gets the robot that currently has the turn to play
      * @param teamNum the number that represents the team that the robot
      * to be played is on
      * @param robotNum the s/n of the robot who's turn it is
-     * @return Robot returns a Robot object
      */
     public Robot getRobot(int teamNum, int robotNum) throws IndexOutOfBoundsException{
         return teams.get(teamNum).getTeamMember(robotNum);
     }
     
     /**
-     * @param turnNum the current turn the controller is on
      * executes a round of turns
      */
     public void executeNextTurn(int turnNum){
@@ -288,6 +280,11 @@ public class GameController {
             Queue<Robot> robotList = nextTeam.getLivingRobots();
             Iterator<Robot> robotIt = robotList.iterator();
             while(robotIt.hasNext()){
+                if(teamsAlive() <= 1){
+                    //we have a winner. Break
+                    return;
+                }
+                    
                 Robot nextRobot = robotIt.next();
                 view.updateRobotInfo(nextRobot, turnNum);
                 displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
@@ -305,47 +302,141 @@ public class GameController {
     }
 
 
-    public int moveRobot(Robot robotToMove, int TeamNumber, int range, int Direction, int movesLeft) throws RuntimeException{
+    public  List<Tile> findBestPath(Tile current, Tile destination, int movesAvailable){
+        List<List<Tile>> options = new  LinkedList<List<Tile>>();
+        
+        //iterate through all neighbor tiles
+        for(int dir=0; dir<6; dir++){
+            Point destPt = gameMap.getDirection(dir, 1);
+            int newX = (int) destPt.getX() + current.getXCoord();
+            int newY = (int) destPt.getY() + current.getYCoord();
+            Tile neighbourTile = gameMap.findTile(newX, newY);
+                
+            //making sure position desired is on map
+            if(neighbourTile != null && gameMap.isValidTile(neighbourTile)){
+                    //find the cost to reach this neighbor
+                    int cost = neighbourTile.getCost();
+                    //if we found the destination, return a new list with the destination in it
+                    if(neighbourTile == destination && cost <= movesAvailable){
+                        LinkedList<Tile> result = new LinkedList<Tile>();
+                        result.add(neighbourTile);
+                        return result;
+                        //if the neighbor isn't the destination but it is reachable, recurse to the neighbor
+                    } else if(cost <= movesAvailable){
+                        List<Tile> neighbourResult = findBestPath(neighbourTile, destination, movesAvailable - cost);
+                        //if the neighbor was able to find a path, add it to the list of options
+                        if(neighbourResult != null){
+                            options.add(neighbourResult);
+                        }
+                    }
+             }
+        }
+        
+        //now we have a list of paths that reach the destination. Look through them all to find the best option
+        if(options.size()==0){
+            //if there are no options, this path is a dead end
+            return null;
+        } else {
+            int bestPath = Integer.MAX_VALUE;
+            List<Tile> bestList = null;
+            Iterator<List<Tile>> it = options.iterator();
+            while(it.hasNext()){
+                List<Tile> thisOption = it.next();
+                int cost = sizeOfPath(thisOption);
+                if(cost < bestPath){
+                    bestPath = cost;
+                    bestList = thisOption;
+                }
+            }
+            bestList.add(current);
+            return bestList;
+        }
+    }
+
+    private int sizeOfPath(List<Tile> list){
+        int sum = 0;
+        Iterator<Tile> it = list.iterator();
+        while(it.hasNext()){
+            Tile next = it.next();
+            sum = next.getCost() + sum;
+        }
+        return sum;
+    }
+    
+    public int moveRobot(Robot robotToMove, int TeamNumber, int range, int direction, int movesLeft) throws RuntimeException{
            
       int newX;
       int newY;
-
-      DIRECTION dir = gameMap.getDirection(Direction);
-      newX = dir.getXCoordinate();
-      newY = dir.getYCoordinate();
-        
-      newX = newX*range;
-      newY = newY*range;
+      Tile curTile = gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition());
       
-//      for(int i = 0; i < teams.size(); i++){
-//          Team temp = teams.get(i);
-//          if(teams.get(i).getTeamNumber() == TeamNumber){
-//              if(temp.getTeamDirection() == 5){
-//                  newX = newX
-//              }
-//              newX = newX+teams.get(i).getTeamDirection();
-//              
-//          }
-//      }
-       
-       
-      Tile[][] allTiles = this.gameMap.getTiles();
-       
-      //Removing the robot from it's current tile
-      allTiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].removeRobot(robotToMove);
-       
-      if(movesLeft < range){
-          throw new RuntimeException("range to move cannot be higher than the amount of moves remaining");
+      Point dir = gameMap.getDirection(direction, range);
+      
+      Tile dest = gameMap.findTile((int) dir.getX() + curTile.getXCoord(), (int) dir.getY() + curTile.getYCoord());
+      
+      if(!gameMap.isValidTile(dest)){
+          throw new RuntimeException("not a valid tile");
       }
       
-      robotToMove.setXPosition(newX);
-      robotToMove.setYPosition(newY);
-        
-      //Adding the robot to the new tile
-      allTiles[robotToMove.getXPosition()][robotToMove.getYPoisition()].addRobot(robotToMove);
-      return range;
+      
+      List<Tile> bestPath = findBestPath( curTile, dest, movesLeft);
+      
+      if(bestPath == null){
+         throw new RuntimeException("not enough moves");
+      }
+      else{
+          
+          Iterator<Tile> iter = bestPath.iterator();
+          
+          while(iter.hasNext()){
+              Tile temp = iter.next();
+              newX = temp.getXCoord();
+              newY = temp.getYCoord();
+              
+              gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
+              
+              int xOffset = newX - robotToMove.getXPosition();
+              int yOffset = newY - robotToMove.getYPosition();
+              robotToMove.setXPosition(temp.getXCoord());
+              robotToMove.setYPosition(temp.getYCoord());
+              
+              gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
+              int currentDirection = getDirection(xOffset, yOffset);
+              view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
+          }
+      }
+    return movesLeft;
         
    }
+    
+    /**
+     * Takes an x and y offset of range 1 and returns the direction (0->5)
+     * @param xOffset -1, 0, 1
+     * @param yOffset -1, 0, 1
+     * @return the direction (0->5) the given offset points to, -1 if invalid input
+     */
+    public int getDirection(int xOffset, int yOffset) {
+    	if(xOffset == 0 && yOffset == 1) {
+    		return 0;
+    	}
+    	else if(xOffset == 1 && yOffset == 1) {
+    		return 1;
+    	}
+		else if(xOffset == 1 && yOffset == 0) {
+			return 2;	
+		}
+		else if(xOffset == 0 && yOffset == -1) {
+			return 3;
+		}
+		else if(xOffset == -1 && yOffset == -1) {
+			return 4;
+		}
+		else if(xOffset == -1 && yOffset == 0) {
+			return 5;
+		}
+		else {
+			return -1;
+		}
+    }
         
     
     /**
@@ -355,26 +446,34 @@ public class GameController {
      * @param direction the direction to shoot
      */
     public void shootAtSpace(Robot shooter, int range, int direction){
-        Tile[][] allTiles = this.gameMap.getTiles();
         
-        DIRECTION dir = gameMap.getDirection(direction);
+        if(range > 3){
+            this.displayMessage("Error: cannot shoot farther then range 3", ConsoleMessageType.CONSOLE_ERROR);
+            return;
+        }
         
-        int xPos = dir.getXCoordinate()*range;
-        int yPos = dir.getYCoordinate()*range;
+        Point dir = gameMap.getDirection(direction, range);
         
-        LinkedList<Robot> robots = allTiles[xPos][yPos].getRobots();
+        int xPos = (int) (dir.getX()*range) + shooter.getXPosition();
+        int yPos = (int) (dir.getY()*range) + shooter.getYPosition();
         
-        Iterator<Robot> iter = robots.iterator();
+        Tile tileToShoot =  gameMap.findTile(xPos, yPos);
+        if(tileToShoot != null){
+            LinkedList<Robot> robots = tileToShoot.getRobots();
         
-        while(iter.hasNext()){
-            Robot temp = iter.next();
-            temp.inflictDamage(shooter.getStrength());
-            if(temp.getHealth() <= 0){
-                temp.destroy();
-                robots.remove(temp);
-
-            }
+            view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
             
+            for(int i=0; i<robots.size(); i++){
+                Robot temp = robots.get(i);
+                temp.inflictDamage(shooter.getStrength());
+                if(!temp.isAlive()){
+                    view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
+                    temp.destroy();
+                }
+            
+            }
+        } else {
+            this.displayMessage("Error: Can not shoot off map", ConsoleMessageType.CONSOLE_ERROR);
         }
     }
     
@@ -383,10 +482,33 @@ public class GameController {
      * Will return up to 4 robots, in a range up to 3 spaces
      * Called by the ForthInterpreter
      * @param r the robot asking for closest robots
-     * @return List a list of robots
+     * @return
      */
     public List<Robot> getClosest(Robot r) {
-        return new LinkedList<Robot>();
+        
+        LinkedList<Robot> closest = new LinkedList<>();
+        boolean foundFour = false;
+        //TODO find how much range increases for second for loop
+        for(int range = 1; range < gameMap.getMapSize(); range++){
+            for(int direction = 0; direction < (range*6)-1; direction++){
+                Point dirToGO = gameMap.getDirection(range, direction);
+                
+                Tile tempTile = gameMap.findTile(r.getXPosition() + (int)dirToGO.getX(), 
+                                                 r.getYPosition() + (int)dirToGO.getY());
+                //check to see if tile is on map esle skips it
+                if(gameMap.isValidTile(tempTile)){
+                    Iterator<Robot> iter = tempTile.getRobots().iterator();
+                    while(iter.hasNext() && !foundFour){
+                        closest.add(iter.next());
+                        if(closest.size() == 4) foundFour = true;
+                    }
+                }
+                // else tile is not on map    
+                if(foundFour) return closest;
+            }  
+        }
+        
+        return closest;
     }
     
     /**
@@ -449,7 +571,6 @@ public class GameController {
      * Tells us the direction between two robots
      * @param from the robot to start from
      * @param to the robot we are finding the direction to
-     * @return int 
      */
     public int directionBetweenRobots(Robot from, Robot to){
         return 0;
@@ -459,7 +580,6 @@ public class GameController {
      * Tells us the range between two robots
      * @param from the robot to start from
      * @param to the robot we are finding the range to
-     * @return int
      */
     public int rangeBetweenRobots(Robot from, Robot to){
         return 0;

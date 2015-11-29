@@ -8,7 +8,8 @@ public class Tile {
     
     private int xCoordinate;
     private int yCoordinate;
-    private int cost; 
+    private TYPE type;
+    //private int cost; 
     
     private enum TYPE{
         WATER(10),
@@ -26,23 +27,28 @@ public class Tile {
             return this.cost;
         }
         
-        
+        public TYPE getType(){
+            if(this.cost == 1) return PLAINS;
+            else if(this.cost == 2) return FOREST;
+            else if(this.cost == 3) return MOUNTAINS;
+            else return WATER;
+        }
         
     }
     
     public void setType(int cost){
-        
-        if(cost == TYPE.FOREST.getCost()){
-            this.cost = cost;
+        int thisCost = cost;
+        if(thisCost == TYPE.FOREST.getCost()){
+            this.type = TYPE.FOREST;
         }
-        else if(cost == TYPE.MOUNTAINS.getCost()){
-            this.cost = cost;
+        else if(thisCost == TYPE.MOUNTAINS.getCost()){
+            this.type = TYPE.MOUNTAINS;
         }
-        else if(cost == TYPE.PLAINS.getCost()){
-            this.cost = cost;
+        else if(thisCost == TYPE.PLAINS.getCost()){
+            this.type = TYPE.PLAINS;
         }
-        else if(cost == TYPE.WATER.getCost()){
-            this.cost = cost;
+        else if(thisCost == TYPE.WATER.getCost()){
+            this.type = TYPE.WATER;
         }
         
     }
@@ -75,5 +81,17 @@ public class Tile {
     
     public int getYCoord(){
         return yCoordinate;
+    }
+    
+    /**
+     * Returns the cost to move across the tile
+     * @return the tiles cost
+     */
+    public int getCost(){
+        return this.type.getCost();
+    }
+    
+    public TYPE getType(){
+        return this.type.getType();
     }
 }

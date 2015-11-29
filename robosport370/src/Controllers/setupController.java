@@ -61,7 +61,7 @@ public List<Team> selectedTeams;
     UIManager manager = UIManager.sharedInstance();
     
     manager.pushScreen(new setupView(this));
-    System.out.println("Tournament");
+    //System.out.println("Tournament");
 	}
 	
 	/**

@@ -27,10 +27,6 @@ public class JsonInterpreter {
     
     public static final String ROBOT_LIBRARIAN_URL = "http://localhost:8080/CrunchifyTutorials/api/crunchifyService";
     
-    //test method
-    public static void main(String[] args) {
-        getRobot(123);
-    }
     
     /**
      * lists all robots that meet the passed in parameters. All parameters are optional except currentVersionOnly

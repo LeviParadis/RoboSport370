@@ -15,7 +15,7 @@
         "firepower" : 3,
         "damages" : 17,
         "kills" : 12,
-        "movement" : 1,
+        "movement" : 5,
         "distance" : 0,
         "code" : [  {"variable" : "maxRange"},
                     {"word" :      {   "name" : "init",
@@ -35,7 +35,7 @@
                     },
                     {"word" :       {   "name" : "turn",
                                         "comment" : "( -- )",
-                                        "body" :  "1 1 move! 1 1 shoot!"
+                                        "body" :  "6 random 2 random 1 + move! 6 random 2 random 1 + shoot!"
                                     }
                     }
                 ]

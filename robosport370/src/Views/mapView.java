@@ -574,29 +574,30 @@ public class mapView extends ScreenAdapter implements EventListener {
         int moveY = 0;
 
         // Doing all of our x translations
-        if(direction == 2 || direction == 3) {
+        if(direction == 1 || direction == 2) {
             moveX = sizeX;
         }
-        if(direction == 5 || direction == 6) {
+        if(direction == 4 || direction == 5) {
             moveX = -sizeX;
         }
 
         // Doing all of our y translations
-        if(direction == 1) {
+        if(direction == 0) {
             moveY = sizeY;
         }
-        if(direction == 2 || direction == 6) {
+        if(direction == 1 || direction == 5) {
             moveY = sizeY/2;
         }
-        if(direction == 3 || direction == 5) {
+        if(direction == 2 || direction == 4) {
             moveY = -sizeY/2;
         }
-        if(direction == 4) {
+        if(direction == 3) {
             moveY = -sizeY;
         }
         AudibleTimeline aTimeline = new AudibleTimeline(this);
+        int speedMils = this.controller.getAnimationSpeed();
         aTimeline.setTimeline(Timeline.createSequence()
-                .push(Tween.to(teamList.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
+                .push(Tween.to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, speedMils/1000f).targetRelative(moveX, moveY)));
         timelineTweenQueue.add(aTimeline);
     }
 
@@ -628,8 +629,9 @@ public class mapView extends ScreenAdapter implements EventListener {
     	AudibleTimeline aTimeline = new AudibleTimeline(this);
     	aTimeline.setProjectile(projectile);
     	aTimeline.setSource(teamList.get(team).get(robot));
+    int speedMils = this.controller.getAnimationSpeed();
     	Timeline t = Timeline.createSequence()
-    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, 0.5f)
+    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, speedMils/1000f)
     					.targetRelative(xTranslate, yTranslate));
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
@@ -639,7 +641,8 @@ public class mapView extends ScreenAdapter implements EventListener {
     	AudibleTimeline aTimeline = new AudibleTimeline(this);
     	aTimeline.setSource(teamList.get(team).get(robot));
     	aTimeline.setExplosion(explosionPos);
-    	Timeline t = Timeline.createSequence().delay(1f);
+    int speedMils = this.controller.getAnimationSpeed();
+    	Timeline t = Timeline.createSequence().delay(speedMils/1000f);
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
     }
