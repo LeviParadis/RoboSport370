@@ -439,30 +439,35 @@ public class GameController {
     public void shootAtSpace(Robot shooter, int range, int direction){
         
         if(range > 3){
-            this.displayMessage("cannot shoot farther then range 3", ConsoleMessageType.CONSOLE_ERROR);
+            this.displayMessage("Error: cannot shoot farther then range 3", ConsoleMessageType.CONSOLE_ERROR);
             return;
         }
         
         Point dir = gameMap.getDirection(direction, range);
         
-        int xPos = (int) (dir.getX()*range);
-        int yPos = (int) (dir.getY()*range);
+        int xPos = (int) (dir.getX()*range) + shooter.getXPosition();
+        int yPos = (int) (dir.getY()*range) + shooter.getYPosition();
         
-        LinkedList<Robot> robots = gameMap.findTile(xPos, yPos).getRobots();
+        Tile tileToShoot =  gameMap.findTile(xPos, yPos);
+        if(tileToShoot != null){
+            LinkedList<Robot> robots = tileToShoot.getRobots();
         
-        Iterator<Robot> iter = robots.iterator();
-        view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
+            Iterator<Robot> iter = robots.iterator();
+            view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
         
-        while(iter.hasNext()){
-            Robot temp = iter.next();
-            temp.inflictDamage(shooter.getStrength());
-            if(temp.getHealth() <= 0){
-                view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
-                temp.destroy();
-                robots.remove(temp);
+            while(iter.hasNext()){
+                Robot temp = iter.next();
+                temp.inflictDamage(shooter.getStrength());
+                if(temp.getHealth() <= 0){
+                    view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
+                    temp.destroy();
+                    robots.remove(temp);
 
-            }
+                }
             
+            }
+        } else {
+            this.displayMessage("Error: Can not shoot off map", ConsoleMessageType.CONSOLE_ERROR);
         }
     }
     
