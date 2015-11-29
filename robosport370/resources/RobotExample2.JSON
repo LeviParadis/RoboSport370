@@ -35,7 +35,7 @@
                     },
                     {"word" :       {   "name" : "turn",
                                         "comment" : "( -- )",
-                                        "body" :  "1 1 move! 1 1 shoot!"
+                                        "body" :  "2 5 move! 1 1 shoot!"
                                     }
                     }
                 ]

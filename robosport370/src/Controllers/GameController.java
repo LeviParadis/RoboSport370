@@ -166,7 +166,6 @@ public class GameController {
                 Robot tempRobot = robots.remove();
                 tempRobot.setXPosition((int) teamInitPoints[l].getX());
                 tempRobot.setYPosition((int) teamInitPoints[l].getY());
-                displayMessage(teamInitPoints[l].getX() + "," + teamInitPoints[l].getY(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
                 tempTile.addRobot(tempRobot);
                 robots.add(tempRobot);
             }

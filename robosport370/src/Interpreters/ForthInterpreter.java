@@ -121,7 +121,6 @@ public class ForthInterpreter {
             if(!robot.isAlive()){
                 return;
             }
-            System.out.println(movesAvailable);
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
 
