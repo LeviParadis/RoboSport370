@@ -27,22 +27,27 @@ public class Tile {
             return this.cost;
         }
         
-        
+        public TYPE getType(){
+            if(this.cost == 1) return PLAINS;
+            else if(this.cost == 2) return FOREST;
+            else if(this.cost == 3) return MOUNTAINS;
+            else return WATER;
+        }
         
     }
     
     public void setType(int cost){
-        
-        if(cost == TYPE.FOREST.getCost()){
+        int thisCost = cost;
+        if(thisCost == TYPE.FOREST.getCost()){
             this.type = TYPE.FOREST;
         }
-        else if(cost == TYPE.MOUNTAINS.getCost()){
+        else if(thisCost == TYPE.MOUNTAINS.getCost()){
             this.type = TYPE.MOUNTAINS;
         }
-        else if(cost == TYPE.PLAINS.getCost()){
+        else if(thisCost == TYPE.PLAINS.getCost()){
             this.type = TYPE.PLAINS;
         }
-        else if(cost == TYPE.WATER.getCost()){
+        else if(thisCost == TYPE.WATER.getCost()){
             this.type = TYPE.WATER;
         }
         
@@ -84,5 +89,9 @@ public class Tile {
      */
     public int getCost(){
         return this.type.getCost();
+    }
+    
+    public TYPE getType(){
+        return this.type.getType();
     }
 }

@@ -125,13 +125,13 @@ public class GameController {
         Point[] teamInitPoints = new Point[numTeams];
        
         if(numTeams == 2){
-//            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
-//            teams.get(0).setTeamDirection(-3);
-//            teamInitPoints[1] = new Point(size-1, (size-1)/2);
-//            teams.get(1).setTeamDirection(0);
+            teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
+            teams.get(0).setTeamDirection(-3);
+            teamInitPoints[1] = new Point(size-1, (size-1)/2);
+            teams.get(1).setTeamDirection(0);
             
-            teamInitPoints[0] = new Point(0, 1);
-            teamInitPoints[1] = new Point(1, 0);
+//            teamInitPoints[0] = new Point(0, 1); //for testing at closer starting positions
+//            teamInitPoints[1] = new Point(1, 0);
             
         }
         else if(numTeams == 3){
@@ -382,26 +382,31 @@ public class GameController {
       
       List<Tile> bestPath = findBestPath( curTile, dest, movesRemain);
       
-      Iterator<Tile> iter = bestPath.iterator();
-      
-      while(iter.hasNext()){
-          Tile temp = iter.next();
-          newX = temp.getXCoord();
-          newY = temp.getYCoord();
-          
-          gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
-          
-          robotToMove.setXPosition(temp.getXCoord());
-          robotToMove.setYPosition(temp.getYCoord());
-          
-          gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
-          int xOffset = newX - robotToMove.getXPosition();
-          int yOffset = newY - robotToMove.getYPosition();
-          int currentDirection = getDirection(xOffset, yOffset);
-          displayMessage("new position", ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
-          view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
+      if(bestPath == null){
+          displayMessage("No path to desired tile with remaining number of moves!",ConsoleMessageType.CONSOLE_ERROR);
       }
-    
+      else{
+          
+          Iterator<Tile> iter = bestPath.iterator();
+          
+          while(iter.hasNext()){
+              Tile temp = iter.next();
+              newX = temp.getXCoord();
+              newY = temp.getYCoord();
+              
+              gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
+              
+              robotToMove.setXPosition(temp.getXCoord());
+              robotToMove.setYPosition(temp.getYCoord());
+              
+              gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
+              int xOffset = newX - robotToMove.getXPosition();
+              int yOffset = newY - robotToMove.getYPosition();
+              int currentDirection = getDirection(xOffset, yOffset);
+              displayMessage("new position", ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
+              view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
+          }
+      }
     return movesRemain;
         
    }

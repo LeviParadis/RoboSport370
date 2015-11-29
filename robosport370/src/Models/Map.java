@@ -33,7 +33,8 @@ public class Map {
         	
             for(int y = 0; y < height; y++) {
                 Tile temp = new Tile(xPos, yPos);
-                temp.setType(1);
+                temp.setType(chooseIndex(xPos, yPos));
+                if(temp.getType() == null) temp.setType(1);
                 if(left > ((mapDiameter-1)/2)+1){
                    
                     tiles.add(temp);    
@@ -46,7 +47,7 @@ public class Map {
                 }
                 if(test){
                     System.out.print("(" + temp.getXCoord() +
-                            "," + temp.getYCoord() + ")");                    
+                            "," + temp.getYCoord() + ")" + temp.getCost());                    
                 }
                 
                 count++;
@@ -65,6 +66,51 @@ public class Map {
         }
         
         if(test)System.out.println(count);
+    }
+    
+    /**
+     * This function finds a index (0 through 3) based on map position
+     * @param tile the tile being chosen
+     * @param i the current column
+     * @param j the current height
+     * @return the index based of the current map tile
+     */
+    public int chooseIndex(int i, int j) {
+        // This is essentially a bunch of magic number manipulation
+        // It generates consistent results
+        // But makes it so the map isn't either random or just all of one type of tile
+        if(i == 9 || i == 12 || ( i == 3 && j > 7)) {
+            return 1;
+        }
+        if((i == 0 || i == mapDiameter - 1) && j == mapSize - mapSize / 2 - 1) {
+            return 1;
+        }
+        if(j < i - mapSize && (i % 3 == 2 || i % 3 == 2)) {
+            return 2;
+        }
+        if(j > i + 3) {
+            return 2;
+        }
+
+        if(j < 3 && (i % 3 == 2 || i % 3 == 1)) {
+            return 2;
+        }
+        if(i < (mapDiameter / 2 + 1) && i < (mapDiameter / 2 - 1) && (j % 3 == 2 || j % 3 == 1) ) {
+            return 3;
+        }
+        if((i - 1 == mapSize/2) && j < 6 && j > 3) {
+            return 3;
+        }
+        if(i == mapSize / 2 + 3 && j == 6) {
+            return 3;
+        }
+        if(i < 4 && i > 1 && j < 4 && j > 2) {
+            return 10;
+        }
+        if(i > 5 && (j % 5 == 4)) {
+            return 10;
+        }
+        return 1;
     }
     
     public enum DIRECTION{
