@@ -451,14 +451,14 @@ public class GameController {
         LinkedList<Robot> robots = gameMap.findTile(xPos, yPos).getRobots();
         
         Iterator<Robot> iter = robots.iterator();
+        view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
         
         while(iter.hasNext()){
             Robot temp = iter.next();
             temp.inflictDamage(shooter.getStrength());
-            view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
             if(temp.getHealth() <= 0){
-                temp.destroy();
                 view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
+                temp.destroy();
                 robots.remove(temp);
 
             }
