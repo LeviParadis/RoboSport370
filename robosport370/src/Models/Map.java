@@ -167,10 +167,16 @@ public class Map {
      * @return returns the type DIrection with x and y coordinates
      */
     public Point getDirection(int direction, int range){
+        int side;
+        int depthSide;
+        if (range ==0){
+           side = 0;
+           depthSide = 0;
+        } else {
+          side = direction/range;
+          depthSide = direction % range;
+        }
         
-        int side = direction/range;
-        
-        int depthSide = direction % range;
         
         int retX, retY;
         
