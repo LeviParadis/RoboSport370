@@ -21,7 +21,7 @@ public class Robot implements Cloneable{
     
     private long serialNumber;
     private String name;
-    private long baseHealth, currentHealth, movesPerTurn, hexPosition;
+    private long baseHealth, currentHealth, movesPerTurn;
     private int strength;
     private int xPosition;
     private int yPosition;
@@ -173,21 +173,6 @@ public class Robot implements Cloneable{
         return movesPerTurn;
     }
     
-
-    /**
-     * @return a number representing the robot's position on the board
-     */
-    public long getPosition() {
-        return hexPosition;
-    }
-
-    /**
-     * @param newHexPosition the hex number to move this robot to
-     */
-    public void setPosition(long newHexPosition) {
-        this.hexPosition = newHexPosition;
-    }
-
     /**
      * @return the value stored in the forth variable "variableName"
      * @param variableName the name of the variable we are checking

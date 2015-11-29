@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import Controllers.gameVariables;
 
 public class Map {
-    boolean test = true;
+    boolean test = false;
     private int mapDiameter = gameVariables.mapSize *2 -1;
     private int height = gameVariables.mapSize;
     private int mapSize = gameVariables.mapSize;
@@ -229,26 +229,13 @@ public class Map {
        
     }
     
-    /**
-     * returns a direction given a current and destination tile
-     * @param current the tile that the direction is going from
-     * @param destination the destination tile to calculate direction
-     * @return returns the direction as an enum DIRECTION.
-     */
-//    public DIRECTION findDirection(Tile current, Tile destination){
-//    	int xCoord = destination.getXCoord()- current.getXCoord();
-//    	int yCoord = destination.getYCoord()- current.getYCoord();
-//    	
-//    	DIRECTION toRet = null;
-//    	for(DIRECTION dir: DIRECTION.values()){
-//    		if(dir.getXCoord() == xCoord && dir.getYCoord() == yCoord){
-//    			toRet = dir;
-//    		}
-//    	}
-//    	return toRet;
-//    }
-//    
-    public Tile findTile(int x, int y) throws RuntimeException{
+   /**
+    * Returns the desired tile if it exist on the map 
+    * @param x the x coordinate
+    * @param y the y coordinate
+    * @return the tile desired if found otherwise returns null
+    */
+    public Tile findTile(int x, int y){
         Tile toRet = null;
         
         Iterator<Tile> iter = tiles.iterator();
@@ -261,9 +248,6 @@ public class Map {
                 found = true;
             }
         }
-//        if(toRet == null){
-//           throw new RuntimeException("A tile outside of the map cannot be accessed"); 
-//        }
         return toRet;    
     }
     
@@ -286,12 +270,15 @@ public class Map {
         if(checkX == 0){
             //if x is 0, y can range from yMin to yMax
             return (checkY >= this.yPosMin && checkY <= this.yPosMax);
-        } else if(checkX < 0){
+        } else if(checkX < 0 && checkX > xPosMax){
             //if x is negative, y can range from yMin to (yMax + x)
-            return (checkY >= this.xPosMin && checkY <= (this.yPosMax + checkX));
-        } else {
+            return (checkY >= this.yPosMin && checkY <= (this.yPosMax + checkX));
+        } else if(checkX > 0 && checkX < xPosMin) {
             //if x is positive, y can range from (yMin + x) to yMax
-            return (checkY >= (this.xPosMin + checkX) && checkY <= this.yPosMax);
+            return (checkY >= (this.yPosMin + checkX) && checkY <= this.yPosMax);
+        }
+        else{
+            return false;
         }
     }
     
