@@ -42,9 +42,10 @@ and mantaining robots written in Forth code.
 
 Installation
 --------------------
-Download and place the contents of the RoboSport370Runnable file into a folder. 
-Unzip and run the .Jar file. Make sure that the assets folder is in the same
-place as the .jar file.
+Download the RoboSport370.zip project from the following path 
+robosport370/Runnable/RoboSport370.zip. Unzip the folder and then run the .jar 
+file. If issues occur make sure the .jar file is in the same folder as the other
+downloaded files.
 
 License
 ---------
