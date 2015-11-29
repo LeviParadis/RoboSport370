@@ -280,6 +280,11 @@ public class GameController {
             Queue<Robot> robotList = nextTeam.getLivingRobots();
             Iterator<Robot> robotIt = robotList.iterator();
             while(robotIt.hasNext()){
+                if(teamsAlive() <= 1){
+                    //we have a winner. Break
+                    return;
+                }
+                    
                 Robot nextRobot = robotIt.next();
                 view.updateRobotInfo(nextRobot, turnNum);
                 displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
@@ -458,11 +463,9 @@ public class GameController {
             for(int i=0; i<robots.size(); i++){
                 Robot temp = robots.get(i);
                 temp.inflictDamage(shooter.getStrength());
-                if(temp.getHealth() <= 0){
+                if(!temp.isAlive()){
                     view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
                     temp.destroy();
-                    robots.remove(temp);
-
                 }
             
             }

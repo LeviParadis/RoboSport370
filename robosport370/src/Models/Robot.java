@@ -243,7 +243,7 @@ public class Robot implements Cloneable{
      * @returns true if robot's health is above 0
      */
     public boolean isAlive(){
-        return (this.currentHealth >= 0);
+        return (this.currentHealth > 0);
     }
 
     /**

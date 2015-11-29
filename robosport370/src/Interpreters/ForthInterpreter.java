@@ -121,6 +121,12 @@ public class ForthInterpreter {
             if(!robot.isAlive()){
                 return;
             }
+            
+           if(controller.teamsAlive() <= 1){
+               //we found a winner. Stop what you're doing so we can get to the end screen
+               return;
+           }
+            
             //find the next command
             ForthWord nextItem = commandQueue.poll(); 
 
