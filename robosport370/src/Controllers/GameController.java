@@ -454,9 +454,9 @@ public class GameController {
         
             Iterator<Robot> iter = robots.iterator();
             view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
-        
-            while(iter.hasNext()){
-                Robot temp = iter.next();
+            
+            for(int i=0; i<robots.size(); i++){
+                Robot temp = robots.get(i);
                 temp.inflictDamage(shooter.getStrength());
                 if(temp.getHealth() <= 0){
                     view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
