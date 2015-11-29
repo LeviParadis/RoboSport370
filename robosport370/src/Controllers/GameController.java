@@ -306,8 +306,9 @@ public class GameController {
         List<List<Tile>> options = new  LinkedList<List<Tile>>();
         
         //iterate through all neighbor tiles
-        for (int newX = currentX-1; newX<currentX+1; newX++ ){
-            for(int newY = currentY-1; newY<currentY+1; newY++ ){
+        for (int newX = currentX-1; newX<=currentX+1; newX++ ){
+            System.out.println(newX);
+            for(int newY = currentY-1; newY<=currentY+1; newY++ ){
                 
                 //making sure position desired is on map
                 if(newX > gameMap.getMinX() && newX < gameMap.getMaxX() && 
@@ -378,7 +379,7 @@ public class GameController {
       
       Point dir = gameMap.getDirection(direction, range);
       
-      Tile dest = gameMap.findTile((int) dir.getX(), (int) dir.getY());
+      Tile dest = gameMap.findTile((int) dir.getX() + curTile.getXCoord(), (int) dir.getY() + curTile.getYCoord());
       
       
       List<Tile> bestPath = findBestPath( curTile, dest, movesRemain);
@@ -404,7 +405,6 @@ public class GameController {
               int xOffset = newX - robotToMove.getXPosition();
               int yOffset = newY - robotToMove.getYPosition();
               int currentDirection = getDirection(xOffset, yOffset);
-              displayMessage("new position", ConsoleMessageType.CONSOLE_ROBOT_MESSAGE);
               view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
           }
       }
