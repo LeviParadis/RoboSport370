@@ -40,7 +40,7 @@ public class GameController {
     private GameSpeed speedMultiplier;
     
     /** how long it takes for each animation to complete in milliseconds */
-    private int animationSpeed = 100;
+    private int animationSpeed = 400;
     
     /** how long it waits in between actions in milliseconds */
     private int delayDuration = 500;
@@ -195,22 +195,22 @@ public class GameController {
             case GAME_SPEED_1X:
                 this.speedMultiplier = GameSpeed.GAME_SPEED_2X;
                 this.delayDuration = 250;
-                this.animationSpeed = 50;
+                this.animationSpeed = 200;
                  break;
             case GAME_SPEED_2X:
                 this.speedMultiplier = GameSpeed.GAME_SPEED_4X;
                 this.delayDuration = 125;
-                this.animationSpeed = 25;
+                this.animationSpeed = 100;
                 break;
             case GAME_SPEED_4X:
                 this.speedMultiplier = GameSpeed.GAME_SPEED_16X;
                 this.delayDuration = 30;
-                this.animationSpeed = 7;
+                this.animationSpeed = 25;
                 break;
             case GAME_SPEED_16X:
                 this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
                 this.delayDuration = 500;
-                this.animationSpeed = 100;
+                this.animationSpeed = 400;
                 break;
         }
         return this.speedMultiplier;
@@ -457,7 +457,6 @@ public class GameController {
         if(tileToShoot != null){
             LinkedList<Robot> robots = tileToShoot.getRobots();
         
-            Iterator<Robot> iter = robots.iterator();
             view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
             
             for(int i=0; i<robots.size(); i++){

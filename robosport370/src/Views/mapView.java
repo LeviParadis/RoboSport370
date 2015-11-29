@@ -592,8 +592,9 @@ public class mapView extends ScreenAdapter implements EventListener {
             moveY = -sizeY;
         }
         AudibleTimeline aTimeline = new AudibleTimeline(this);
+        int speedMils = this.controller.getAnimationSpeed();
         aTimeline.setTimeline(Timeline.createSequence()
-                .push(Tween.to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
+                .push(Tween.to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, speedMils/1000f).targetRelative(moveX, moveY)));
         timelineTweenQueue.add(aTimeline);
     }
 
@@ -625,8 +626,9 @@ public class mapView extends ScreenAdapter implements EventListener {
     	AudibleTimeline aTimeline = new AudibleTimeline(this);
     	aTimeline.setProjectile(projectile);
     	aTimeline.setSource(teamList.get(team).get(robot));
+    int speedMils = this.controller.getAnimationSpeed();
     	Timeline t = Timeline.createSequence()
-    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, 0.5f)
+    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, speedMils/1000)
     					.targetRelative(xTranslate, yTranslate));
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
@@ -636,7 +638,8 @@ public class mapView extends ScreenAdapter implements EventListener {
     	AudibleTimeline aTimeline = new AudibleTimeline(this);
     	aTimeline.setSource(teamList.get(team).get(robot));
     	aTimeline.setExplosion(explosionPos);
-    	Timeline t = Timeline.createSequence().delay(1f);
+    int speedMils = this.controller.getAnimationSpeed();
+    	Timeline t = Timeline.createSequence().delay(speedMils/1000f);
     	aTimeline.setTimeline(t);
     	timelineTweenQueue.add(aTimeline);
     }
