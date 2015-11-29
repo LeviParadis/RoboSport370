@@ -4,10 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import Controllers.gameVariables;
-import Models.Map.DIRECTION;
 
 public class Map {
-    boolean test = false;
+    boolean test = true;
     private int mapDiameter = gameVariables.mapSize *2 -1;
     private int height = gameVariables.mapSize;
     private int mapSize = gameVariables.mapSize;
@@ -19,7 +18,7 @@ public class Map {
         
         int inity = 0;
         int blwHalfDepth = 0;
-        int abvHalfDepth = mapSize-1;
+
         xPosMax = this.mapSize;
         yPosMax = this.mapSize;
         xPosMin = -this.mapSize;
@@ -33,19 +32,21 @@ public class Map {
         for(int left = 0; left < mapDiameter; left++){
         	
             for(int y = 0; y < height; y++) {
+                Tile temp = new Tile(xPos, yPos);
+                temp.setType(1);
                 if(left > ((mapDiameter-1)/2)+1){
                    
-                    tiles.add(new Tile(xPos, yPos));    
+                    tiles.add(temp);    
                     yPos--;
                 }else{
                     if(height > mapDiameter) height--;
-                    tiles.add(new Tile(xPos, yPos));
+                    tiles.add(temp);
                     
                     yPos--;
                 }
                 if(test){
-//                    System.out.print("(" + tiles.get(index).getXCoord() +
-//                            "," + tiles[left][y].getYCoord() + ")");                    
+                    System.out.print("(" + temp.getXCoord() +
+                            "," + temp.getYCoord() + ")");                    
                 }
                 
                 count++;
@@ -183,34 +184,35 @@ public class Map {
      * @param destination the destination tile to calculate direction
      * @return returns the direction as an enum DIRECTION.
      */
-    public DIRECTION findDirection(Tile current, Tile destination){
-    	int xCoord = destination.getXCoord()- current.getXCoord();
-    	int yCoord = destination.getYCoord()- current.getYCoord();
-    	
-    	DIRECTION toRet = null;
-    	for(DIRECTION dir: DIRECTION.values()){
-    		if(dir.getXCoord() == xCoord && dir.getYCoord() == yCoord){
-    			toRet = dir;
-    		}
-    	}
-    	return toRet;
-    }
-    
+//    public DIRECTION findDirection(Tile current, Tile destination){
+//    	int xCoord = destination.getXCoord()- current.getXCoord();
+//    	int yCoord = destination.getYCoord()- current.getYCoord();
+//    	
+//    	DIRECTION toRet = null;
+//    	for(DIRECTION dir: DIRECTION.values()){
+//    		if(dir.getXCoord() == xCoord && dir.getYCoord() == yCoord){
+//    			toRet = dir;
+//    		}
+//    	}
+//    	return toRet;
+//    }
+//    
     public Tile findTile(int x, int y) throws RuntimeException{
         Tile toRet = null;
         
         Iterator<Tile> iter = tiles.iterator();
-        
-        while(iter.hasNext()){
+        boolean found = false;
+        while(iter.hasNext() && !found){
             Tile temp = iter.next();
             
-            if(temp.getXCoord() == x && temp.getYCoord() == y){
+            if(temp.getXCoord() == x && temp.getYCoord() == y ){
                 toRet = temp;
+                found = true;
             }
         }
-        if(toRet == null){
-           throw new RuntimeException("A tile outside of the map cannot be accessed"); 
-        }
+//        if(toRet == null){
+//           throw new RuntimeException("A tile outside of the map cannot be accessed"); 
+//        }
         return toRet;    
     }
     
@@ -245,6 +247,7 @@ public class Map {
     public static void main(String[] args){
         Map test = new Map();   
         Tile one = new Tile(-1, -1);
-        Tile two = new Tile(3, 4);        
+        Tile two = new Tile(3, 4);
+        System.out.println(test.getDirection(7, 2));
     }
 } 

@@ -307,21 +307,30 @@ public class GameController {
         //iterate through all neighbor tiles
         for (int newX = currentX-1; newX<currentX+1; newX++ ){
             for(int newY = currentY-1; newY<currentY+1; newY++ ){
-                if(newX != currentX && newY != currentY){
-                    Tile neighbourTile = gameMap.findTile(newX, newY);
-                    //find the cost to reach this neighbor
-                    int cost = neighbourTile.getCost();
-                    //if we found the destination, return a new list with the destination in it
-                    if(neighbourTile == destination){
-                       LinkedList<Tile> result = new LinkedList<Tile>();
-                       result.add(neighbourTile);
-                       return result;
-                    //if the neighbor isn't the destination but it is reachable, recurse to the neighbor
-                    } else if(cost <= movesAvailable){
-                        List<Tile> neighbourResult = findBestPath(neighbourTile, destination, movesAvailable - cost);
-                        //if the neighbor was able to find a path, add it to the list of options
-                        if(neighbourResult != null){
-                            options.add(neighbourResult);
+                
+                //making sure position desired is on map
+                if(newX > gameMap.getMinX() && newX < gameMap.getMaxX() && 
+                        newY > gameMap.getMinY() && newY < gameMap.getMaxY()){
+                    
+                    
+                    if(newX != currentX && newY != currentY){
+                        Tile neighbourTile = gameMap.findTile(newX, newY);
+                        
+                        
+                        //find the cost to reach this neighbor
+                        int cost = neighbourTile.getCost();
+                        //if we found the destination, return a new list with the destination in it
+                        if(neighbourTile == destination){
+                            LinkedList<Tile> result = new LinkedList<Tile>();
+                            result.add(neighbourTile);
+                            return result;
+                            //if the neighbor isn't the destination but it is reachable, recurse to the neighbor
+                        } else if(cost <= movesAvailable){
+                            List<Tile> neighbourResult = findBestPath(neighbourTile, destination, movesAvailable - cost);
+                            //if the neighbor was able to find a path, add it to the list of options
+                            if(neighbourResult != null){
+                                options.add(neighbourResult);
+                            }
                         }
                     }
                 }
@@ -474,20 +483,26 @@ public class GameController {
     public List<Robot> getClosest(Robot r) {
         
         LinkedList<Robot> closest = new LinkedList<>();
+        boolean foundFour = false;
         //TODO find how much range increases for second for loop
-        for(int i = 0; i < 5; i++){
-            Point t = gameMap.getDirection(i, 1); //change 1 to range after
-            
-            if(t.getX() < gameMap.getMaxX() && t.getX() > gameMap.getMinX() &&
-                    t.getY() < gameMap.getMaxY() && t.getY() > gameMap.getMinY()){
+        for(int range = 1; range < gameMap.getMapSize(); range++){
+            for(int direction = 0; direction < (range*6)-1; direction++){
+                Point dirToGO = gameMap.getDirection(range, direction);
                 
-                Tile temp = gameMap.findTile((int) t.getX(), (int) t.getY());
-                if(temp.getRobots() != null){
-                    for (int j = 0; j < temp.getNumRobots(); j++){
-                        closest.add(temp.getRobots().get(j));
+                Tile tempTile = gameMap.findTile(r.getXPosition() + (int)dirToGO.getX(), 
+                                                 r.getYPosition() + (int)dirToGO.getY());
+                //check to see if tile is on map esle skips it
+                if(tempTile.getXCoord() > gameMap.getMinX() && tempTile.getXCoord() < gameMap.getMaxX() &&
+                        tempTile.getYCoord() > gameMap.getMinY() && tempTile.getYCoord() < gameMap.getMaxY()){
+                    Iterator<Robot> iter = tempTile.getRobots().iterator();
+                    while(iter.hasNext() && !foundFour){
+                        closest.add(iter.next());
+                        if(closest.size() == 4) foundFour = true;
                     }
                 }
-            }
+                // else tile is not on map    
+                if(foundFour) return closest;
+            }  
         }
         
         return closest;
