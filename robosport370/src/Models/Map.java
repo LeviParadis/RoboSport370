@@ -270,10 +270,10 @@ public class Map {
         if(checkX == 0){
             //if x is 0, y can range from yMin to yMax
             return (checkY >= this.yPosMin && checkY <= this.yPosMax);
-        } else if(checkX < 0 && checkX > xPosMin){
+        } else if(checkX < 0 && checkX >= xPosMin){
             //if x is negative, y can range from yMin to (yMax + x)
             return (checkY >= this.yPosMin && checkY <= (this.yPosMax + checkX));
-        } else if(checkX > 0 && checkX < xPosMax) {
+        } else if(checkX > 0 && checkX <= xPosMax) {
             //if x is positive, y can range from (yMin + x) to yMax
             return (checkY >= (this.yPosMin + checkX) && checkY <= this.yPosMax);
         }

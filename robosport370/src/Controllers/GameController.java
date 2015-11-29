@@ -373,6 +373,10 @@ public class GameController {
       
       Tile dest = gameMap.findTile((int) dir.getX() + curTile.getXCoord(), (int) dir.getY() + curTile.getYCoord());
       
+      if(!gameMap.isValidTile(dest)){
+          throw new RuntimeException("not a valid tile");
+      }
+      
       
       List<Tile> bestPath = findBestPath( curTile, dest, movesLeft);
       
