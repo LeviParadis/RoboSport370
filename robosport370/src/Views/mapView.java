@@ -593,7 +593,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         }
         AudibleTimeline aTimeline = new AudibleTimeline(this);
         aTimeline.setTimeline(Timeline.createSequence()
-                .push(Tween.to(teamList.get(1).get(1), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
+                .push(Tween.to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, 0.5f).targetRelative(moveX, moveY)));
         timelineTweenQueue.add(aTimeline);
     }
 

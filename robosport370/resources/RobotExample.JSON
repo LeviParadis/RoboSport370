@@ -15,7 +15,7 @@
         "firepower" : 3,
         "damages" : 17,
         "kills" : 12,
-        "movement" : 1,
+        "movement" : 5,
         "distance" : 0,
         "code" : [  {"variable" : "maxRange"},
                     {"word" :      {   "name" : "init",

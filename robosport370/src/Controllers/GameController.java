@@ -299,44 +299,36 @@ public class GameController {
 
 
     public  List<Tile> findBestPath(Tile current, Tile destination, int movesAvailable){
-        int currentX = current.getXCoord();
-        int currentY = current.getYCoord();
-        
-        
         List<List<Tile>> options = new  LinkedList<List<Tile>>();
         
         //iterate through all neighbor tiles
-        for (int newX = currentX-1; newX<=currentX+1; newX++ ){
-            System.out.println(newX);
-            for(int newY = currentY-1; newY<=currentY+1; newY++ ){
+        for(int dir=0; dir<6; dir++){
+            Point destPt = gameMap.getDirection(dir, 1);
+            int newX = (int) destPt.getX() + current.getXCoord();
+            int newY = (int) destPt.getY() + current.getYCoord();
                 
-                //making sure position desired is on map
-                if(newX > gameMap.getMinX() && newX < gameMap.getMaxX() && 
-                        newY > gameMap.getMinY() && newY < gameMap.getMaxY()){
-                    
-                    
-                    if(newX != currentX && newY != currentY){
-                        Tile neighbourTile = gameMap.findTile(newX, newY);
+            //making sure position desired is on map
+            if(newX > gameMap.getMinX() && newX < gameMap.getMaxX() && 
+                    newY > gameMap.getMinY() && newY < gameMap.getMaxY()){
+                    Tile neighbourTile = gameMap.findTile(newX, newY);
                         
                         
-                        //find the cost to reach this neighbor
-                        int cost = neighbourTile.getCost();
-                        //if we found the destination, return a new list with the destination in it
-                        if(neighbourTile == destination){
-                            LinkedList<Tile> result = new LinkedList<Tile>();
-                            result.add(neighbourTile);
-                            return result;
-                            //if the neighbor isn't the destination but it is reachable, recurse to the neighbor
-                        } else if(cost <= movesAvailable){
-                            List<Tile> neighbourResult = findBestPath(neighbourTile, destination, movesAvailable - cost);
-                            //if the neighbor was able to find a path, add it to the list of options
-                            if(neighbourResult != null){
-                                options.add(neighbourResult);
-                            }
+                    //find the cost to reach this neighbor
+                    int cost = neighbourTile.getCost();
+                    //if we found the destination, return a new list with the destination in it
+                    if(neighbourTile == destination && cost <= movesAvailable){
+                        LinkedList<Tile> result = new LinkedList<Tile>();
+                        result.add(neighbourTile);
+                        return result;
+                        //if the neighbor isn't the destination but it is reachable, recurse to the neighbor
+                    } else if(cost <= movesAvailable){
+                        List<Tile> neighbourResult = findBestPath(neighbourTile, destination, movesAvailable - cost);
+                        //if the neighbor was able to find a path, add it to the list of options
+                        if(neighbourResult != null){
+                            options.add(neighbourResult);
                         }
                     }
-                }
-            }
+             }
         }
         
         //now we have a list of paths that reach the destination. Look through them all to find the best option
@@ -374,7 +366,6 @@ public class GameController {
            
       int newX;
       int newY;
-      int movesRemain = movesLeft;
       Tile curTile = gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition());
       
       Point dir = gameMap.getDirection(direction, range);
@@ -382,10 +373,10 @@ public class GameController {
       Tile dest = gameMap.findTile((int) dir.getX() + curTile.getXCoord(), (int) dir.getY() + curTile.getYCoord());
       
       
-      List<Tile> bestPath = findBestPath( curTile, dest, movesRemain);
+      List<Tile> bestPath = findBestPath( curTile, dest, movesLeft);
       
       if(bestPath == null){
-          displayMessage("No path to desired tile with remaining number of moves!",ConsoleMessageType.CONSOLE_ERROR);
+         throw new RuntimeException("not enough moves");
       }
       else{
           
@@ -405,10 +396,10 @@ public class GameController {
               int xOffset = newX - robotToMove.getXPosition();
               int yOffset = newY - robotToMove.getYPosition();
               int currentDirection = getDirection(xOffset, yOffset);
-              view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
+              view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), 1);
           }
       }
-    return movesRemain;
+    return movesLeft;
         
    }
     

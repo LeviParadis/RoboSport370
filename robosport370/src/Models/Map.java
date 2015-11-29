@@ -19,10 +19,10 @@ public class Map {
         int inity = 0;
         int blwHalfDepth = 0;
 
-        xPosMax = this.mapSize;
-        yPosMax = this.mapSize;
-        xPosMin = -this.mapSize;
-        yPosMin = -this.mapSize;
+        xPosMax = this.mapSize -1;
+        yPosMax = this.mapSize -1;
+        xPosMin = -this.mapSize +1;
+        yPosMin = -this.mapSize +1;
         
         int xPos = -(mapSize-1);
         int yPos = inity;
