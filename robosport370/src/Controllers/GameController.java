@@ -461,14 +461,14 @@ public class GameController {
         
             view.fireShot((int)(shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction, range);
             
-            for(int i=0; i<robots.size(); i++){
+            for(int i=0; i< robots.size(); i++){
                 Robot temp = robots.get(i);
                 temp.inflictDamage(shooter.getStrength());
-                if(temp.getHealth() <= 0){
-                    view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));
-                    temp.destroy();
+                if(!temp.isAlive()){
                     robots.remove(temp);
+                    view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));                    
                 }
+                
             
             }
         } else {
