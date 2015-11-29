@@ -133,6 +133,7 @@ public class GameController {
 //            teamInitPoints[0] = new Point(0, 1); //for testing at closer starting positions
 //            teamInitPoints[1] = new Point(1, 0);
             
+            
         }
         else if(numTeams == 3){
             teamInitPoints[0] = new Point(-(size-1), -((size-1)/2));
