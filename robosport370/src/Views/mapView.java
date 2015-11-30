@@ -42,9 +42,9 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 
-
 /**
  * A GUI view for the main menu
+ * 
  * @author Corey
  *
  */
@@ -66,14 +66,14 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     private Texture projectileTexture;
     private Sprite projectile;
-    
+
     // For our explosion animation
     private Animation explosionAnimation;
     private TextureAtlas explosionAtlas;
     private TextureRegion[] explosionFrames;
     private TextureRegion currentExplosionFrame;
     private Sprite explosionPos;
-    
+
     float stateTime;
 
     // Camera settings
@@ -107,21 +107,25 @@ public class mapView extends ScreenAdapter implements EventListener {
     private Label numLabel;
     private TextButton pauseBtn;
     private TextButton speedBtn;
-    private  Label movesLabel;
-    private  Label healthLabel;
-    private  Label strengthLabel;
-    
+    private Label movesLabel;
+    private Label healthLabel;
+    private Label strengthLabel;
+
     private ArrayList<String> consoleList;
     private ArrayList<ConsoleMessageType> consoleTypeList;
     private boolean consoleUpdatesAvailable;
 
     // TODO For future fonts
-    //private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
+    // private BitmapFont font = new
+    // BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),Gdx.files.internal("assets/MoonFlower.png"),false);
 
     /**
      * Creates a mapView screen
-     * @param controller the controller creating this screen
-     * @param teamsInMatch The number of teams in the current game
+     * 
+     * @param controller
+     *            the controller creating this screen
+     * @param teamsInMatch
+     *            The number of teams in the current game
      */
     public mapView(final GameController controller, List<Team> teamsInMatch) {
         this.controller = controller;
@@ -144,28 +148,29 @@ public class mapView extends ScreenAdapter implements EventListener {
         projectile = new Sprite(projectileTexture);
         projectile.setPosition(5000f, 5000f);
 
-        // Setting up the explosion animation        
-        explosionAtlas = new TextureAtlas(Gdx.files.internal("assets/explosion/explosion.pack"),Gdx.files.internal("assets/explosion/"));
+        // Setting up the explosion animation
+        explosionAtlas = new TextureAtlas(Gdx.files.internal("assets/explosion/explosion.pack"),
+                Gdx.files.internal("assets/explosion/"));
         explosionFrames = new TextureRegion[12];
-        
-        for(int i = 0; i < 12; i++) {
-        	explosionFrames[i] = explosionAtlas.createSprite("explosion", i);
+
+        for (int i = 0; i < 12; i++) {
+            explosionFrames[i] = explosionAtlas.createSprite("explosion", i);
         }
-        
+
         explosionAnimation = new Animation(0.025f, explosionFrames);
         stateTime = 0f;
-        
+
         explosionPos = new Sprite();
         explosionPos.setX(5000f);
         explosionPos.setY(5000f);
-        
+
         // Setting up the camera based on map size
-        mapSize = gameVariables.mapSize; 
+        mapSize = gameVariables.mapSize;
         mapDiameter = mapSize * 2 - 1;
 
-        cameraWidth = (int) (mapDiameter * sizeY * WINDOW_WIDTH/WINDOW_HEIGHT);
+        cameraWidth = (int) (mapDiameter * sizeY * WINDOW_WIDTH / WINDOW_HEIGHT);
 
-        cam = new OrthographicCamera(cameraWidth, cameraWidth * (WINDOW_HEIGHT/WINDOW_WIDTH));
+        cam = new OrthographicCamera(cameraWidth, cameraWidth * (WINDOW_HEIGHT / WINDOW_WIDTH));
 
         cam.position.set(3 * sizeX * mapSize / 4, 5, 0);
         cam.update();
@@ -174,7 +179,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         this.teamList = new ArrayList<List<Sprite>>();
 
         Iterator<Team> it = teamsInMatch.iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             createRobots(it.next(), teamsInMatch.size());
         }
 
@@ -183,20 +188,18 @@ public class mapView extends ScreenAdapter implements EventListener {
         timelineTweenQueue = new LinkedList<AudibleTimeline>();
         batch = new SpriteBatch();
 
-
-        //add table to sides
-        //set up scroll bar style
+        // add table to sides
+        // set up scroll bar style
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
         Skin skin = new Skin();
         skin.addRegions(atlas);
-
 
         TextButtonStyle buttonStyle = new TextButtonStyle();
         buttonStyle.font = new BitmapFont();
         buttonStyle.up = skin.getDrawable("button_02");
         buttonStyle.down = skin.getDrawable("button_01");
 
-        //put lists in scroll panes, so we can scroll to see all entries
+        // put lists in scroll panes, so we can scroll to see all entries
 
         pauseBtn = new TextButton("Pause", buttonStyle);
         pauseBtn.addListener(this);
@@ -204,8 +207,8 @@ public class mapView extends ScreenAdapter implements EventListener {
         speedBtn.addListener(this);
 
         Table master = new Table();
-        master.setSize(WINDOW_WIDTH/3, WINDOW_HEIGHT);
-        master.setPosition(WINDOW_WIDTH-(WINDOW_WIDTH/3), 0);
+        master.setSize(WINDOW_WIDTH / 3, WINDOW_HEIGHT);
+        master.setPosition(WINDOW_WIDTH - (WINDOW_WIDTH / 3), 0);
         topTable = new Table();
         topTable.clearListeners();
         Table bottom = new Table();
@@ -223,7 +226,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         blackLabelStyle = new LabelStyle();
         blackLabelStyle.fontColor = Color.BLACK;
         blackLabelStyle.font = font;
-        
+
         blueLabelStyle = new LabelStyle();
         blueLabelStyle.fontColor = Color.BLUE;
         blueLabelStyle.font = font;
@@ -235,7 +238,6 @@ public class mapView extends ScreenAdapter implements EventListener {
         purpleLabelStyle = new LabelStyle();
         purpleLabelStyle.fontColor = Color.PURPLE;
         purpleLabelStyle.font = font;
-
 
         Label titleLabel = new Label("Current Robot Information: ", blackLabelStyle);
         Label nameTitle = new Label("Name: ", blackLabelStyle);
@@ -274,7 +276,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         bottom.row();
         bottom.add(movesTitle);
         bottom.add(movesLabel);
-        
+
         this.consoleList = new ArrayList<String>();
         this.consoleTypeList = new ArrayList<ConsoleMessageType>();
         this.consoleUpdatesAvailable = true;
@@ -282,32 +284,38 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     /**
      * used to update the console logger
-     * @param newMessage the latest message to display
-     * @param type Type of Console Message
+     * 
+     * @param newMessage
+     *            the latest message to display
+     * @param type
+     *            Type of Console Message
      */
-    public void displayMessage(String newMessage, ConsoleMessageType type){  
+    public void displayMessage(String newMessage, ConsoleMessageType type) {
         this.consoleList.add(newMessage);
-        this.consoleTypeList.add(type); 
-        //we mark the table as needing updates, but we don't acyually update the table ourselves
-        //we want to leave all UI updating to the main thread, otherwise there may be crashes
-        //the main thread will mark this bool as false once it updates the table
+        this.consoleTypeList.add(type);
+        // we mark the table as needing updates, but we don't acyually update
+        // the table ourselves
+        // we want to leave all UI updating to the main thread, otherwise there
+        // may be crashes
+        // the main thread will mark this bool as false once it updates the
+        // table
         this.consoleUpdatesAvailable = true;
     }
-    
+
     /**
-     * Called by by the render function to update the table when updates are available
-     * Rebuilds the table using the latest console data
+     * Called by by the render function to update the table when updates are
+     * available Rebuilds the table using the latest console data
      */
-    private void updateConsoleTable(){
+    private void updateConsoleTable() {
         this.topTable.clear();
         int size = this.consoleList.size();
-        for(int i=size-21; i<size; i++){
+        for (int i = size - 21; i < size; i++) {
             String message;
             LabelStyle style;
-            try{
-                message =this.consoleList.get(i);
+            try {
+                message = this.consoleList.get(i);
                 ConsoleMessageType type = this.consoleTypeList.get(i);
-                switch(type){
+                switch (type) {
                 case CONSOLE_ERROR:
                     style = redLabelStyle;
                     break;
@@ -321,7 +329,7 @@ public class mapView extends ScreenAdapter implements EventListener {
                     style = blackLabelStyle;
                     break;
                 }
-            }catch(IndexOutOfBoundsException e){
+            } catch (IndexOutOfBoundsException e) {
                 message = " ";
                 style = blackLabelStyle;
             }
@@ -334,75 +342,82 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     /**
      * used to update the current robot's info on the screen
-     * @param robot the robot that is running it's turn
-     * @param turnNum The turn number the controller is on
+     * 
+     * @param robot
+     *            the robot that is running it's turn
+     * @param turnNum
+     *            The turn number the controller is on
      */
-    public void updateRobotInfo(Robot robot, int turnNum){
+    public void updateRobotInfo(Robot robot, int turnNum) {
         nameLabel.setText(robot.getName());
         teamLabel.setText("" + robot.getTeamNumber());
         numLabel.setText("" + robot.getMemberNumber());
-        if(turnNum == 0){
+        if (turnNum == 0) {
             turnLabel.setText("init");
         } else {
             turnLabel.setText("" + turnNum);
         }
         healthLabel.setText("" + robot.getHealth());
         strengthLabel.setText("" + robot.getStrength());
-        //TODO: make this value change as the robot moves. Can do this in game controller, whenever a move is made
+        // TODO: make this value change as the robot moves. Can do this in game
+        // controller, whenever a move is made
         movesLabel.setText("" + robot.getMovesPerTurn());
     }
 
-    public void createRobots(Team teamToAdd, int numTeams){
+    public void createRobots(Team teamToAdd, int numTeams) {
         Queue<Robot> robotList = teamToAdd.getAllRobots();
         Iterator<Robot> it = robotList.iterator();
         ArrayList<Sprite> spriteList = new ArrayList<Sprite>();
 
-        while(it.hasNext()){
+        while (it.hasNext()) {
             it.next();
             Sprite s = atlas.createSprite("robot", teamToAdd.getTeamNumber());
             setRobotStartingPosition(teamToAdd.getTeamNumber(), s, numTeams);
-            spriteList.add(s); 
+            spriteList.add(s);
         }
         this.teamList.add(spriteList);
     }
 
     /**
      * Sets a robot's initial position based on team size and team
-     * @param teamNum the team number
-     * @param s the robot sprite
-     * @param numTeams The number of teams the game will have
+     * 
+     * @param teamNum
+     *            the team number
+     * @param s
+     *            the robot sprite
+     * @param numTeams
+     *            The number of teams the game will have
      */
 
     public void setRobotStartingPosition(int teamNum, Sprite s, int numTeams) {
         s.setPosition(-14, -23);
 
-        if(teamNum == 0) {
-            s.translate(-(mapSize-1)*sizeX, 0);
-        } 	else if(teamNum == 1) {
-            if(numTeams == 2) {
-                s.translate((mapSize-1)*sizeX, 0);
-            } 		else if(numTeams == 3) {
-                s.translate((mapSize/2)*sizeX, (0.75f*(float)mapSize-0.75f)*sizeY);
-            } 		else if(numTeams == 6) {
-                s.translate(-(mapSize/2)*sizeX, (0.75f*(float)mapSize-0.75f)*sizeY);
+        if (teamNum == 0) {
+            s.translate(-(mapSize - 1) * sizeX, 0);
+        } else if (teamNum == 1) {
+            if (numTeams == 2) {
+                s.translate((mapSize - 1) * sizeX, 0);
+            } else if (numTeams == 3) {
+                s.translate((mapSize / 2) * sizeX, (0.75f * (float) mapSize - 0.75f) * sizeY);
+            } else if (numTeams == 6) {
+                s.translate(-(mapSize / 2) * sizeX, (0.75f * (float) mapSize - 0.75f) * sizeY);
             }
-        }  	else if(teamNum == 2) {
-            if(numTeams == 3) {
-                s.translate((mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
-            } 		else if(numTeams == 6) {
-                s.translate((mapSize/2)*sizeX, (0.75f*(float)mapSize-0.75f)*sizeY);
+        } else if (teamNum == 2) {
+            if (numTeams == 3) {
+                s.translate((mapSize / 2) * sizeX, (-0.75f * (float) mapSize + 0.75f) * sizeY);
+            } else if (numTeams == 6) {
+                s.translate((mapSize / 2) * sizeX, (0.75f * (float) mapSize - 0.75f) * sizeY);
             }
-        } 	else if(teamNum == 3) {
-            s.translate((mapSize-1)*sizeX, 0);
-        } 	else if(teamNum == 4) {
-            s.translate((mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
-        } 	else if(teamNum == 5) {
-            s.translate(-(mapSize/2)*sizeX, (-0.75f*(float)mapSize+0.75f)*sizeY);
+        } else if (teamNum == 3) {
+            s.translate((mapSize - 1) * sizeX, 0);
+        } else if (teamNum == 4) {
+            s.translate((mapSize / 2) * sizeX, (-0.75f * (float) mapSize + 0.75f) * sizeY);
+        } else if (teamNum == 5) {
+            s.translate(-(mapSize / 2) * sizeX, (-0.75f * (float) mapSize + 0.75f) * sizeY);
         }
     }
-    
 
-    public void render(float delta) {   
+    public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -414,11 +429,10 @@ public class mapView extends ScreenAdapter implements EventListener {
         renderRobots();
         renderExplosion();
         renderTesting();
-        if(timelineTweenQueue.peek() != null) {
-            if(timelineTweenQueue.peek().getTimeline().isFinished()) {
+        if (timelineTweenQueue.peek() != null) {
+            if (timelineTweenQueue.peek().getTimeline().isFinished()) {
                 timelineTweenQueue.poll();
-            }
-            else if(!timelineTweenQueue.peek().getTimeline().isStarted()) {
+            } else if (!timelineTweenQueue.peek().getTimeline().isStarted()) {
                 timelineTweenQueue.peek().startTimeline(tweenManager);
             }
         }
@@ -426,84 +440,83 @@ public class mapView extends ScreenAdapter implements EventListener {
         projectile.draw(batch);
         batch.end();
 
-        //if there is a new console message, update the console table
-        if(this.consoleUpdatesAvailable){
+        // if there is a new console message, update the console table
+        if (this.consoleUpdatesAvailable) {
             this.updateConsoleTable();
         }
 
         stage.draw();
         this.controller.checkGameComplete();
     }
-    
+
     public void renderExplosion() {
-    	stateTime += Gdx.graphics.getDeltaTime();
-    	currentExplosionFrame = explosionAnimation.getKeyFrame(stateTime, true);
-    	batch.draw(currentExplosionFrame, explosionPos.getX(), explosionPos.getY());
+        stateTime += Gdx.graphics.getDeltaTime();
+        currentExplosionFrame = explosionAnimation.getKeyFrame(stateTime, true);
+        batch.draw(currentExplosionFrame, explosionPos.getX(), explosionPos.getY());
     }
 
     public void renderTesting() {
-        if(Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
             moveRobot(1, 1, 1);
         }
-        if(Gdx.input.isKeyJustPressed(Keys.NUM_2)) {
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_2)) {
             moveRobot(1, 1, 2);
         }
-        if(Gdx.input.isKeyJustPressed(Keys.NUM_3)) {
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_3)) {
             moveRobot(1, 1, 3);
         }
-        if(Gdx.input.isKeyJustPressed(Keys.NUM_4)) {
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_4)) {
             moveRobot(1, 1, 4);
         }
-        if(Gdx.input.isKeyJustPressed(Keys.NUM_5)) {
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_5)) {
             moveRobot(1, 1, 5);
         }
-        if(Gdx.input.isKeyJustPressed(Keys.NUM_6)) {
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_6)) {
             moveRobot(1, 1, 6);
         }
-    	if(Gdx.input.isKeyJustPressed(Keys.Q)) {
-    		fireShot(1, 1, 1, 1);
-    	}
-    	if(Gdx.input.isKeyJustPressed(Keys.W)) {
-    		fireShot(1, 1, 1, 2);
-    	}
-    	if(Gdx.input.isKeyJustPressed(Keys.E)) {
-    		fireShot(1, 1, 1, 3);
-    	}
-    	if(Gdx.input.isKeyJustPressed(Keys.A)) {
-    		fireShot(1, 1, 5, 1);
-    	}
-    	if(Gdx.input.isKeyJustPressed(Keys.S)) {
-    		fireShot(1, 1, 9, 2);
-    	}
-    	if(Gdx.input.isKeyJustPressed(Keys.D)) {
-    		fireShot(1, 1, 13, 3);
-    	}
-    	if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-    		destroyRobot(1, 1);
-    	}
+        if (Gdx.input.isKeyJustPressed(Keys.Q)) {
+            fireShot(1, 1, 1, 1);
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.W)) {
+            fireShot(1, 1, 1, 2);
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.E)) {
+            fireShot(1, 1, 1, 3);
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.A)) {
+            fireShot(1, 1, 5, 1);
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.S)) {
+            fireShot(1, 1, 9, 2);
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.D)) {
+            fireShot(1, 1, 13, 3);
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+            destroyRobot(1, 1);
+        }
     }
 
     public void renderTiles() {
         int width = mapDiameter;
         int height = mapSize;
 
-        int xPos = -mapDiameter * sizeX / 2 ;
+        int xPos = -mapDiameter * sizeX / 2;
         int yPos = (mapSize - 2) * sizeY / 2;
 
         // TODO remove the hard coded numbers
         // Call the controller instead, getMapSize()
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 tiles.get(chooseIndex(i, j)).setPosition(xPos, yPos);
                 tiles.get(chooseIndex(i, j)).draw(batch);
                 yPos = yPos - sizeY;
             }
-            if( (width) / (i+1) >= 2) {
-                yPos = yPos + sizeY * height + sizeY/2;
+            if ((width) / (i + 1) >= 2) {
+                yPos = yPos + sizeY * height + sizeY / 2;
                 height++;
-            }
-            else {
-                yPos = yPos + sizeY * height - sizeY/2;
+            } else {
+                yPos = yPos + sizeY * height - sizeY / 2;
                 height--;
             }
             xPos = xPos + sizeX;
@@ -512,43 +525,47 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     /**
      * This function finds a index (0 through 3) based on map position
-     * @param i the current column
-     * @param j the current height
+     * 
+     * @param i
+     *            the current column
+     * @param j
+     *            the current height
      * @return the index based of the current map tile
      */
     public int chooseIndex(int i, int j) {
         // This is essentially a bunch of magic number manipulation
         // It generates consistent results
-        // But makes it so the map isnt either random or just all of one type of tile
-        if(i == 9 || i == 12 || ( i == 3 && j > 7)) {
+        // But makes it so the map isnt either random or just all of one type of
+        // tile
+        if (i == 9 || i == 12 || (i == 3 && j > 7)) {
             return 1;
         }
-        if((i == 0 || i == mapDiameter - 1) && j == mapSize - mapSize / 2 - 1) {
+        if ((i == 0 || i == mapDiameter - 1) && j == mapSize - mapSize / 2 - 1) {
             return 1;
         }
-        if(j < i - mapSize && (i % 3 == 2 || i % 3 == 2)) {
+        if (j < i - mapSize && (i % 3 == 2 || i % 3 == 2)) {
             return 2;
         }
-        if(j > i + 3) {
+        if (j > i + 3) {
             return 2;
         }
 
-        if(j < 3 && (i % 3 == 2 || i % 3 == 1)) {
+        if (j < 3 && (i % 3 == 2 || i % 3 == 1)) {
             return 2;
         }
-        if(i < (mapDiameter / 2 + 1) && i < (mapDiameter / 2 - 1) && (j % 3 == 2 || j % 3 == 1) ) {
+        if (i < (mapDiameter / 2 + 1) && i < (mapDiameter / 2 - 1) && (j % 3 == 2 || j % 3 == 1)) {
             return 3;
         }
-        if((i - 1 == mapSize/2) && j < 6 && j > 3) {
+        if ((i - 1 == mapSize / 2) && j < 6 && j > 3) {
             return 3;
         }
-        if(i == mapSize / 2 + 3 && j == 6) {
+        if (i == mapSize / 2 + 3 && j == 6) {
             return 3;
         }
-        if(i < 4 && i > 1 && j < 4 && j > 2) {
+        if (i < 4 && i > 1 && j < 4 && j > 2) {
             return 0;
         }
-        if(i > 5 && (j % 5 == 4)) {
+        if (i > 5 && (j % 5 == 4)) {
             return 0;
         }
         return 1;
@@ -556,8 +573,8 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     public void renderRobots() {
         // Starts at team 1
-        for(int i = 0; i < teamList.size(); i++) {
-            for(int j = 0; j < teamList.get(i).size(); j++) {
+        for (int i = 0; i < teamList.size(); i++) {
+            for (int j = 0; j < teamList.get(i).size(); j++) {
                 teamList.get(i).get(j).draw(batch);
             }
         }
@@ -565,99 +582,107 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     /**
      * Moves a robot in a certain direction
-     * @param team the number of the team the robot is on
-     * @param robot the number of the robot on the team
-     * @param direction the direct (1 is north, 2 is north east, etc. to 6)
+     * 
+     * @param team
+     *            the number of the team the robot is on
+     * @param robot
+     *            the number of the robot on the team
+     * @param direction
+     *            the direct (1 is north, 2 is north east, etc. to 6)
      */
     public void moveRobot(int team, int robot, int direction) {
         int moveX = 0;
         int moveY = 0;
 
         // Doing all of our x translations
-        if(direction == 1 || direction == 2) {
+        if (direction == 1 || direction == 2) {
             moveX = sizeX;
         }
-        if(direction == 4 || direction == 5) {
+        if (direction == 4 || direction == 5) {
             moveX = -sizeX;
         }
 
         // Doing all of our y translations
-        if(direction == 0) {
+        if (direction == 0) {
             moveY = sizeY;
         }
-        if(direction == 1 || direction == 5) {
-            moveY = sizeY/2;
+        if (direction == 1 || direction == 5) {
+            moveY = sizeY / 2;
         }
-        if(direction == 2 || direction == 4) {
-            moveY = -sizeY/2;
+        if (direction == 2 || direction == 4) {
+            moveY = -sizeY / 2;
         }
-        if(direction == 3) {
+        if (direction == 3) {
             moveY = -sizeY;
         }
         AudibleTimeline aTimeline = new AudibleTimeline(this);
         int speedMils = this.controller.getAnimationSpeed();
         aTimeline.setTimeline(Timeline.createSequence()
-                .push(Tween.to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, speedMils/1000f).targetRelative(moveX, moveY)));
+                .push(Tween.to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, speedMils / 1000f)
+                        .targetRelative(moveX, moveY)));
         timelineTweenQueue.add(aTimeline);
     }
 
     /**
-     * Displays an animation of a shot being fired from robot on team
-     * to a relative position at direction and range
-     * @param team the team number of the robot
-     * @param robot the robot number in the team
-     * @param direction the number of the direction (0 is north, increment clockwise)
-     * @param range a range from 0 to 3
+     * Displays an animation of a shot being fired from robot on team to a
+     * relative position at direction and range
+     * 
+     * @param team
+     *            the team number of the robot
+     * @param robot
+     *            the robot number in the team
+     * @param direction
+     *            the number of the direction (0 is north, increment clockwise)
+     * @param range
+     *            a range from 0 to 3
      */
     public void fireShot(int team, int robot, int direction, int range) {
-    	// Getting the xy coordinates based of the direction and range
-    	Float xTranslate;
-    	Float yTranslate;
-    	
-    	double theta;
-    	// In case we fire on ourselves
-    	if(range == 0) {
-    		theta = 0;
-    	}
-    	else{
-    		theta = (float) -direction/((float) range*6) * 2 * Math.PI + Math.PI/2;
-    	}
-    	
-    	xTranslate = (float) ((float) 1.1 * sizeX * range * Math.cos(theta) - 2);
-    	yTranslate = (float) ((float) sizeY * range * Math.sin(theta) + 5);
-    	
-    	AudibleTimeline aTimeline = new AudibleTimeline(this);
-    	aTimeline.setProjectile(projectile);
-    	aTimeline.setSource(teamList.get(team).get(robot));
-    int speedMils = this.controller.getAnimationSpeed();
-    	Timeline t = Timeline.createSequence()
-    			.push(Tween.to(projectile, SpriteAccessor.POSITION_XY, speedMils/1000f)
-    					.targetRelative(xTranslate, yTranslate));
-    	aTimeline.setTimeline(t);
-    	timelineTweenQueue.add(aTimeline);
+        // Getting the xy coordinates based of the direction and range
+        Float xTranslate;
+        Float yTranslate;
+
+        double theta;
+        // In case we fire on ourselves
+        if (range == 0) {
+            theta = 0;
+        } else {
+            theta = (float) -direction / ((float) range * 6) * 2 * Math.PI + Math.PI / 2;
+        }
+
+        xTranslate = (float) ((float) 1.1 * sizeX * range * Math.cos(theta) - 2);
+        yTranslate = (float) ((float) sizeY * range * Math.sin(theta) + 5);
+
+        AudibleTimeline aTimeline = new AudibleTimeline(this);
+        aTimeline.setProjectile(projectile);
+        aTimeline.setSource(teamList.get(team).get(robot));
+        int speedMils = this.controller.getAnimationSpeed();
+        Timeline t = Timeline.createSequence().push(Tween.to(projectile, SpriteAccessor.POSITION_XY, speedMils / 1000f)
+                .targetRelative(xTranslate, yTranslate));
+        aTimeline.setTimeline(t);
+        timelineTweenQueue.add(aTimeline);
     }
-    
+
     public void destroyRobot(int team, int robot) {
-    	AudibleTimeline aTimeline = new AudibleTimeline(this);
-    	aTimeline.setSource(teamList.get(team).get(robot));
-    	aTimeline.setExplosion(explosionPos);
-    int speedMils = this.controller.getAnimationSpeed();
-    	Timeline t = Timeline.createSequence().delay(speedMils/1000f);
-    	aTimeline.setTimeline(t);
-    	timelineTweenQueue.add(aTimeline);
+        AudibleTimeline aTimeline = new AudibleTimeline(this);
+        aTimeline.setSource(teamList.get(team).get(robot));
+        aTimeline.setExplosion(explosionPos);
+        int speedMils = this.controller.getAnimationSpeed();
+        Timeline t = Timeline.createSequence().delay(speedMils / 1000f);
+        aTimeline.setTimeline(t);
+        timelineTweenQueue.add(aTimeline);
     }
-    
+
     public void setExplosionPosition(Float x, Float y) {
-    	explosionPos.setX(x);
-    	explosionPos.setY(y);
+        explosionPos.setX(x);
+        explosionPos.setY(y);
     }
-    
+
     public Float getExplosionXPos() {
-    	return explosionPos.getX();
+        return explosionPos.getX();
     }
-    
+
     public Float getExplosionYPos() {
-    	return explosionPos.getY();
+        return explosionPos.getY();
     }
 
     @Override
@@ -674,20 +699,20 @@ public class mapView extends ScreenAdapter implements EventListener {
 
     @Override
     public boolean handle(Event arg0) {
-        if(arg0.getTarget() instanceof TextButton &&  ((TextButton)arg0.getTarget()).isPressed()){
-            //handle button presses
-            TextButton sender = (TextButton)arg0.getTarget();
-            if(sender == this.pauseBtn){
-                if(this.controller.isPaused()){
+        if (arg0.getTarget() instanceof TextButton && ((TextButton) arg0.getTarget()).isPressed()) {
+            // handle button presses
+            TextButton sender = (TextButton) arg0.getTarget();
+            if (sender == this.pauseBtn) {
+                if (this.controller.isPaused()) {
                     this.controller.resume();
                     pauseBtn.setText("Pause");
                 } else {
                     this.controller.pause();
                     pauseBtn.setText("Play");
                 }
-            } else if (sender == this.speedBtn){
+            } else if (sender == this.speedBtn) {
                 GameSpeed newSpeed = this.controller.switchGameSpeed();
-                switch(newSpeed){
+                switch (newSpeed) {
                 case GAME_SPEED_1X:
                     this.speedBtn.setText("1X");
                     break;

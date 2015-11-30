@@ -33,5 +33,5 @@ public class JSONConstants {
     public static final String LIST_TYPE_TAG = "data";
     public static final String LIST_TYPE_BRIEF = "brief";
     public static final String LIST_TYPE_FULL = "full";
-   
+
 }

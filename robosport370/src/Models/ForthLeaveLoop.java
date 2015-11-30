@@ -7,11 +7,14 @@ public class ForthLeaveLoop implements ForthWord {
 
     /**
      * constructs a word that will exit any loops it is run in
-     * @param item  a string representing the leave value
-     * @throws ForthParseException if the string dosn't represent the leave word
+     * 
+     * @param item
+     *            a string representing the leave value
+     * @throws ForthParseException
+     *             if the string dosn't represent the leave word
      */
     public ForthLeaveLoop(String item) throws ForthParseException {
-        if(!isThisKind(item)){
+        if (!isThisKind(item)) {
             throw new ForthParseException("attempted to instantiate a forth else value with " + item);
         }
     }
@@ -25,20 +28,19 @@ public class ForthLeaveLoop implements ForthWord {
     }
 
     /**
-     * @return the string value that is printed by forth in the  console
+     * @return the string value that is printed by forth in the console
      */
-    public String toString(){
+    public String toString() {
         return "leaving loop";
     }
 
-
     /**
-     * @param item a plain text string
+     * @param item
+     *            a plain text string
      * @return whether or not the string represents a leave value
      */
-    public static boolean isThisKind(String item){
+    public static boolean isThisKind(String item) {
         return item.equals("leave");
     }
-
 
 }

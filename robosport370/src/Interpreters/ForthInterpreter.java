@@ -32,258 +32,347 @@ import Models.Robot;
 
 public class ForthInterpreter {
     /**
-     * This class is used to run valid forth logic that has been parsed into the appropriate objects
+     * This class is used to run valid forth logic that has been parsed into the
+     * appropriate objects
      */
-    
+
     public static final String INIT_WORD = "init";
     public static final String TURN_WORD = "turn";
     public static final String STACK_EXCEPTION_ERROR = "attempted to pop off an empty stack";
-    
-    
-    //indicates whether the current robot has used it's shot. Reset on every execution
+
+    // indicates whether the current robot has used it's shot. Reset on every
+    // execution
     private static boolean shotAvailable;
-    //indicates how many moves the current robot has left. Reset on every execution
+    // indicates how many moves the current robot has left. Reset on every
+    // execution
     private static long movesAvailable;
 
-
-    
     /**
      * Run's a robot's forth init logic
-     * @param robot             the robot we are setting up
-     * @param controller the controller that controls the game
-     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     * 
+     * @param robot
+     *            the robot we are setting up
+     * @param controller
+     *            the controller that controls the game
+     * @throws ForthRunTimeException
+     *             if there is an error that comes up while executing the forth
+     *             code
+     * @throws ForthParseException
+     *             if the forth parser encounters a word it doesn't know how to
+     *             handle
      */
-    public static void initRobot(Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
-        //robot should not move or shoot in it's init method
+    public static void initRobot(Robot robot, GameController controller)
+            throws ForthRunTimeException, ForthParseException {
+        // robot should not move or shoot in it's init method
         shotAvailable = false;
         movesAvailable = 0;
-        
-        //find logic string
+
+        // find logic string
         String logicString = robot.getForthWord(INIT_WORD);
-        //parse into forth words
+        // parse into forth words
         Queue<ForthWord> forthBody = ForthParser.parseForthBodyString(logicString, robot);
-        //create empty stack for the program to use
+        // create empty stack for the program to use
         Stack<ForthWord> forthStack = new Stack<ForthWord>();
-        
-        try{
-            //execute command
+
+        try {
+            // execute command
             executeForthCommand(forthBody, robot, forthStack, controller, null);
-        } catch (LeaveLoopException e){
-            //thrown if the program encounters a leave command, but it is not inside a loop
+        } catch (LeaveLoopException e) {
+            // thrown if the program encounters a leave command, but it is not
+            // inside a loop
             throw new ForthRunTimeException("encountered the word leave ouside of a loop");
         }
     }
-    
+
     /**
      * Run's a robot's forth turn logic
-     * @param robot             the robot we are setting up
-     * @param controller    the controller that controls the game
-     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     * 
+     * @param robot
+     *            the robot we are setting up
+     * @param controller
+     *            the controller that controls the game
+     * @throws ForthRunTimeException
+     *             if there is an error that comes up while executing the forth
+     *             code
+     * @throws ForthParseException
+     *             if the forth parser encounters a word it doesn't know how to
+     *             handle
      */
-    public static void executeTurn(Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
-      //set initial values for shot and moves available
+    public static void executeTurn(Robot robot, GameController controller)
+            throws ForthRunTimeException, ForthParseException {
+        // set initial values for shot and moves available
         movesAvailable = robot.getMovesPerTurn();
         shotAvailable = true;
-        
-      //find logic string
+
+        // find logic string
         String logicString = robot.getForthWord(TURN_WORD);
-      //parse into forth words
+        // parse into forth words
         Queue<ForthWord> forthBody = ForthParser.parseForthBodyString(logicString, robot);
-        //create empty stack for the program to use
+        // create empty stack for the program to use
         Stack<ForthWord> forthStack = new Stack<ForthWord>();
-        
-        try{
-            //execute command
+
+        try {
+            // execute command
             executeForthCommand(forthBody, robot, forthStack, controller, null);
-        } catch (LeaveLoopException e){
-            //thrown if the program encounters a leave command, but it is not inside a loop
+        } catch (LeaveLoopException e) {
+            // thrown if the program encounters a leave command, but it is not
+            // inside a loop
             throw new ForthRunTimeException("encountered the word leave ouside of a loop");
         }
     }
-    
-    
+
     /**
      * reads and executes forth commands
-     * @param robot        the robot that is calling the command
-     * @param command      the name of the forth word to execute
-     * @param controller   the controller that control's the game 
-     * @param loopNumber  the number of loop counter I if this command was executed as part of a loop
-     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
-     * @throws LeaveLoopException if the forth word "leave" comes up when a loop is being run
+     * 
+     * @param robot
+     *            the robot that is calling the command
+     * @param command
+     *            the name of the forth word to execute
+     * @param controller
+     *            the controller that control's the game
+     * @param loopNumber
+     *            the number of loop counter I if this command was executed as
+     *            part of a loop
+     * @throws ForthRunTimeException
+     *             if there is an error that comes up while executing the forth
+     *             code
+     * @throws ForthParseException
+     *             if the forth parser encounters a word it doesn't know how to
+     *             handle
+     * @throws LeaveLoopException
+     *             if the forth word "leave" comes up when a loop is being run
      */
-    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack, GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException, LeaveLoopException{
-        while(!commandQueue.isEmpty()){
-            //if the robot fired at it's own space and killed itself this turn, don't execute any more commands
-            if(!robot.isAlive()){
+    private static void executeForthCommand(Queue<ForthWord> commandQueue, Robot robot, Stack<ForthWord> forthStack,
+            GameController controller, Integer loopNumber)
+                    throws ForthRunTimeException, ForthParseException, LeaveLoopException {
+        while (!commandQueue.isEmpty()) {
+            // if the robot fired at it's own space and killed itself this turn,
+            // don't execute any more commands
+            if (!robot.isAlive()) {
                 return;
             }
-            
-           if(controller.teamsAlive() <= 1){
-               //we found a winner. Stop what you're doing so we can get to the end screen
-               return;
-           }
-            
-            //find the next command
-            ForthWord nextItem = commandQueue.poll(); 
+
+            if (controller.teamsAlive() <= 1) {
+                // we found a winner. Stop what you're doing so we can get to
+                // the end screen
+                return;
+            }
+
+            // find the next command
+            ForthWord nextItem = commandQueue.poll();
 
             controller.displayMessage(nextItem.toString(), ConsoleMessageType.CONSOLE_ACTION);
 
-            //find what kind of word it is, and handle appropriately
-            if(nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral){
-                //literals are pushed to the stack
+            // find what kind of word it is, and handle appropriately
+            if (nextItem instanceof ForthBoolLiteral || nextItem instanceof ForthIntegerLiteral
+                    || nextItem instanceof ForthStringLiteral || nextItem instanceof ForthPointerLiteral) {
+                // literals are pushed to the stack
                 forthStack.push(nextItem);
-            } else if (nextItem instanceof ForthSystemWord){
-                //system words are executed in the ForthSustemCommands class
-                executeSystemCommand((ForthSystemWord)nextItem, forthStack, robot, controller);
-            } else if (nextItem instanceof ForthCustomWord){
-                //custom words are loaded from the robot, and executed in place
-                String wordString = ((ForthCustomWord)nextItem).getWordLogic(robot);
+            } else if (nextItem instanceof ForthSystemWord) {
+                // system words are executed in the ForthSustemCommands class
+                executeSystemCommand((ForthSystemWord) nextItem, forthStack, robot, controller);
+            } else if (nextItem instanceof ForthCustomWord) {
+                // custom words are loaded from the robot, and executed in place
+                String wordString = ((ForthCustomWord) nextItem).getWordLogic(robot);
                 Queue<ForthWord> wordLogic = ForthParser.parseForthBodyString(wordString, robot);
                 executeForthCommand(wordLogic, robot, forthStack, controller, null);
-            } else if(nextItem instanceof ForthConditional){
-                //conditionals are evaluated and run in place
-                executeConditional((ForthConditional)nextItem, robot, forthStack, controller, loopNumber);
-            } else if(nextItem instanceof ForthDoLoop){
-                //loops are run in place
-                executeDoLoop((ForthDoLoop)nextItem, robot, forthStack, controller);
-            } else if(nextItem instanceof ForthUntilLoop){
-                executeUntilLoop((ForthUntilLoop)nextItem, robot, forthStack, controller, loopNumber);
-            } else if(nextItem instanceof ForthLoopNumber && loopNumber != null){
-                //if the program is asking for the loop number, push it to the stack
-                ForthWord runNum = new  ForthIntegerLiteral(loopNumber.intValue());
+            } else if (nextItem instanceof ForthConditional) {
+                // conditionals are evaluated and run in place
+                executeConditional((ForthConditional) nextItem, robot, forthStack, controller, loopNumber);
+            } else if (nextItem instanceof ForthDoLoop) {
+                // loops are run in place
+                executeDoLoop((ForthDoLoop) nextItem, robot, forthStack, controller);
+            } else if (nextItem instanceof ForthUntilLoop) {
+                executeUntilLoop((ForthUntilLoop) nextItem, robot, forthStack, controller, loopNumber);
+            } else if (nextItem instanceof ForthLoopNumber && loopNumber != null) {
+                // if the program is asking for the loop number, push it to the
+                // stack
+                ForthWord runNum = new ForthIntegerLiteral(loopNumber.intValue());
                 forthStack.push(runNum);
-            } else if(nextItem instanceof ForthLeaveLoop){
-                //if the program is attempting to leave the loop, throw an exception to be caught in the loop handling methods
+            } else if (nextItem instanceof ForthLeaveLoop) {
+                // if the program is attempting to leave the loop, throw an
+                // exception to be caught in the loop handling methods
                 throw new LeaveLoopException("encountered the word leave ouside of a loop");
             } else {
-                //of nothing else works, throw an exception
-               throw new ForthRunTimeException("found unexpected word: " + nextItem); 
+                // of nothing else works, throw an exception
+                throw new ForthRunTimeException("found unexpected word: " + nextItem);
             }
-           
+
         }
     }
-    
+
     /**
      * This method is called when the program encounters a conditional
-     * @param conditional the conditional data
-     * @param robot       the robot that is running the program
-     * @param forthStack  the program's stack
-     * @param controller  the game's controller
-     * @param loopNumber  the loop index if the conditional is called from inside in a loop
-     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
-     * @throws LeaveLoopException if the forth word "leave" comes up, we throw an exception to be handled in the loop function
+     * 
+     * @param conditional
+     *            the conditional data
+     * @param robot
+     *            the robot that is running the program
+     * @param forthStack
+     *            the program's stack
+     * @param controller
+     *            the game's controller
+     * @param loopNumber
+     *            the loop index if the conditional is called from inside in a
+     *            loop
+     * @throws ForthRunTimeException
+     *             if there is an error that comes up while executing the forth
+     *             code
+     * @throws ForthParseException
+     *             if the forth parser encounters a word it doesn't know how to
+     *             handle
+     * @throws LeaveLoopException
+     *             if the forth word "leave" comes up, we throw an exception to
+     *             be handled in the loop function
      */
-    private static void executeConditional(ForthConditional conditional, Robot robot, Stack<ForthWord> forthStack, GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException, LeaveLoopException{
-        try{
+    private static void executeConditional(ForthConditional conditional, Robot robot, Stack<ForthWord> forthStack,
+            GameController controller, Integer loopNumber)
+                    throws ForthRunTimeException, ForthParseException, LeaveLoopException {
+        try {
             ForthWord first = forthStack.pop();
-            if(first instanceof ForthBoolLiteral){
-                //find and execute the proper branch of the conditional
-                boolean result = ((ForthBoolLiteral)first).getValue();
+            if (first instanceof ForthBoolLiteral) {
+                // find and execute the proper branch of the conditional
+                boolean result = ((ForthBoolLiteral) first).getValue();
                 Queue<ForthWord> commands = conditional.getCommandsForResult(result);
                 executeForthCommand(commands, robot, forthStack, controller, loopNumber);
             } else {
-              //if the stack isn't in an expected state, throw an exception
+                // if the stack isn't in an expected state, throw an exception
                 throw new ForthRunTimeException("attempting to run an if statement without a bool on top of the stack");
             }
-        } catch (EmptyStackException e){
-            //if the stack can't be popped, throw a runtime exception
+        } catch (EmptyStackException e) {
+            // if the stack can't be popped, throw a runtime exception
             throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
         }
     }
-    
+
     /**
      * This method is called when the program encounters a do loop
-     * @param conditional the loop data
-     * @param robot       the robot that is running the program
-     * @param forthStack  the program's stack
-     * @param controller  the game's controller
-     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     * 
+     * @param conditional
+     *            the loop data
+     * @param robot
+     *            the robot that is running the program
+     * @param forthStack
+     *            the program's stack
+     * @param controller
+     *            the game's controller
+     * @throws ForthRunTimeException
+     *             if there is an error that comes up while executing the forth
+     *             code
+     * @throws ForthParseException
+     *             if the forth parser encounters a word it doesn't know how to
+     *             handle
      */
-    private static void executeDoLoop(ForthDoLoop loop, Robot robot, Stack<ForthWord> forthStack, GameController controller) throws ForthRunTimeException, ForthParseException{
-        try{  
+    private static void executeDoLoop(ForthDoLoop loop, Robot robot, Stack<ForthWord> forthStack,
+            GameController controller) throws ForthRunTimeException, ForthParseException {
+        try {
             ForthWord first = forthStack.pop();
             ForthWord second = forthStack.pop();
-            if(first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral){
-                int start = (int)((ForthIntegerLiteral)first).getValue();
-                int end = (int)((ForthIntegerLiteral)second).getValue();
-                //if end is smaller than start, the loop should run once
-                if(end < start){
+            if (first instanceof ForthIntegerLiteral && second instanceof ForthIntegerLiteral) {
+                int start = (int) ((ForthIntegerLiteral) first).getValue();
+                int end = (int) ((ForthIntegerLiteral) second).getValue();
+                // if end is smaller than start, the loop should run once
+                if (end < start) {
                     end = start;
                 }
-                //run the loop the desired number of times
-                for(int i = start; i<=end; i++){
+                // run the loop the desired number of times
+                for (int i = start; i <= end; i++) {
                     Queue<ForthWord> commands = loop.getCommands();
                     executeForthCommand(commands, robot, forthStack, controller, new Integer(i));
                 }
             } else {
-              //if the stack isn't in an expected state, throw an exception
-                throw new ForthRunTimeException("attempting to run a do loop without two int values on top of the stack");
+                // if the stack isn't in an expected state, throw an exception
+                throw new ForthRunTimeException(
+                        "attempting to run a do loop without two int values on top of the stack");
             }
-        }catch (EmptyStackException e){
-          //if the stack can't be popped, throw a runtime exception
+        } catch (EmptyStackException e) {
+            // if the stack can't be popped, throw a runtime exception
             throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
-        } catch (LeaveLoopException l){
-            //if a lower level encountered the leave word, cancel the rest of the loop
+        } catch (LeaveLoopException l) {
+            // if a lower level encountered the leave word, cancel the rest of
+            // the loop
             return;
         }
     }
-    
+
     /**
      * This method is called when the program encounters an until loop
-     * @param conditional the loop data
-     * @param robot       the robot that is running the program
-     * @param forthStack  the program's stack
-     * @param controller  the game's controller
-     * @param loopNumber  if this loop was embedded in a do loop, keep the loop index available
-     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     * 
+     * @param conditional
+     *            the loop data
+     * @param robot
+     *            the robot that is running the program
+     * @param forthStack
+     *            the program's stack
+     * @param controller
+     *            the game's controller
+     * @param loopNumber
+     *            if this loop was embedded in a do loop, keep the loop index
+     *            available
+     * @throws ForthRunTimeException
+     *             if there is an error that comes up while executing the forth
+     *             code
+     * @throws ForthParseException
+     *             if the forth parser encounters a word it doesn't know how to
+     *             handle
      */
-    private static void executeUntilLoop(ForthUntilLoop loop, Robot robot, Stack<ForthWord> forthStack, GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException{
+    private static void executeUntilLoop(ForthUntilLoop loop, Robot robot, Stack<ForthWord> forthStack,
+            GameController controller, Integer loopNumber) throws ForthRunTimeException, ForthParseException {
         boolean result = false;
-        while(!result){
-            try{
-                //[p[ the latest result. If the result is still false, we will keep looping
+        while (!result) {
+            try {
+                // [p[ the latest result. If the result is still false, we will
+                // keep looping
                 Queue<ForthWord> commands = loop.getCommands();
                 executeForthCommand(commands, robot, forthStack, controller, loopNumber);
                 ForthWord first = forthStack.pop();
-                if(first instanceof ForthBoolLiteral){
+                if (first instanceof ForthBoolLiteral) {
                     result = ((ForthBoolLiteral) first).getValue();
                 } else {
-                  //if the stack isn't in an expected state, throw an exception
-                    throw new ForthRunTimeException("attempting to run an until loop that doesn't end with a bool on top of the stack");  
+                    // if the stack isn't in an expected state, throw an
+                    // exception
+                    throw new ForthRunTimeException(
+                            "attempting to run an until loop that doesn't end with a bool on top of the stack");
                 }
-            }catch (EmptyStackException e){
-              //if the stack can't be popped, throw a runtime exception
+            } catch (EmptyStackException e) {
+                // if the stack can't be popped, throw a runtime exception
                 throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
-            } catch (LeaveLoopException l){
-              //if a lower level encountered the leave word, cancel the rest of the loop
+            } catch (LeaveLoopException l) {
+                // if a lower level encountered the leave word, cancel the rest
+                // of the loop
                 return;
-            } 
+            }
         }
     }
+
     /**
      * Will execute the logic for one of the standard built in forth commands
-     * @param word         the system word we want to run
-     * @param forthStack  the current stack of forth literals
-     * @param robot      the robot that is executing this code
-     * @param controller  the game controller
-     * @throws ForthRunTimeException if there is an error that comes up while executing the forth code
-     * @throws ForthParseException if the forth parser encounters a word it doesn't know how to handle
+     * 
+     * @param word
+     *            the system word we want to run
+     * @param forthStack
+     *            the current stack of forth literals
+     * @param robot
+     *            the robot that is executing this code
+     * @param controller
+     *            the game controller
+     * @throws ForthRunTimeException
+     *             if there is an error that comes up while executing the forth
+     *             code
+     * @throws ForthParseException
+     *             if the forth parser encounters a word it doesn't know how to
+     *             handle
      */
-    private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot, GameController controller) throws ForthRunTimeException, ForthParseException{
-      try{      
-        SystemCommandType wordType = word.getType();
-        switch(wordType){
+    private static void executeSystemCommand(ForthSystemWord word, Stack<ForthWord> forthStack, Robot robot,
+            GameController controller) throws ForthRunTimeException, ForthParseException {
+        try {
+            SystemCommandType wordType = word.getType();
+            switch (wordType) {
             case NOT_FORTH_WORD:
                 break;
             case HEALTH:
                 ForthSystemCommands.health(forthStack, robot);
-                 break;
+                break;
             case MOVES_LEFT:
                 ForthSystemCommands.movesLeft(forthStack, movesAvailable);
                 break;
@@ -307,14 +396,14 @@ public class ForthInterpreter {
                 shotAvailable = false;
                 break;
             case MOVE:
-                int moveCost = ForthSystemCommands.move(forthStack, robot, controller, (int)movesAvailable);
+                int moveCost = ForthSystemCommands.move(forthStack, robot, controller, (int) movesAvailable);
                 movesAvailable = movesAvailable - moveCost;
                 break;
             case SCAN:
                 ForthSystemCommands.scan(forthStack, robot, controller);
                 break;
             case IDENTIFY:
-                ForthSystemCommands.identify(forthStack, robot, controller);  
+                ForthSystemCommands.identify(forthStack, robot, controller);
                 break;
             case MAIL_SEND:
                 ForthSystemCommands.sendMail(forthStack, robot, controller);
@@ -366,7 +455,7 @@ public class ForthInterpreter {
                 break;
             case SUBTRACT:
                 ForthSystemCommands.subtract(forthStack);
-                 break;
+                break;
             case MULTIPLY:
                 ForthSystemCommands.multiply(forthStack);
                 break;
@@ -385,13 +474,15 @@ public class ForthInterpreter {
             case SWAP:
                 ForthSystemCommands.swap(forthStack);
                 break;
+            }
+            // if the stack ever fails to pop because it's run out of entries,
+            // it will throw
+            // an empty stack exception. We can change it into our
+            // ForthRunTimeException
+        } catch (EmptyStackException e) {
+            throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
         }
-        //if the stack ever fails to pop because it's run out of entries, it will throw
-        //an empty stack exception. We can change it into our ForthRunTimeException
-      } catch (EmptyStackException e){
-          throw new ForthRunTimeException(STACK_EXCEPTION_ERROR);
-      }
-  
-   }
-    
+
+    }
+
 }

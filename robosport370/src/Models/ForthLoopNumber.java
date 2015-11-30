@@ -7,11 +7,14 @@ public class ForthLoopNumber implements ForthWord {
 
     /**
      * constructs a word that will return the loop index
-     * @param item  a string representing the index word (I)
-     * @throws ForthParseException if the string dosn't represent the I word
+     * 
+     * @param item
+     *            a string representing the index word (I)
+     * @throws ForthParseException
+     *             if the string dosn't represent the I word
      */
     public ForthLoopNumber(String item) throws ForthParseException {
-        if(!isThisKind(item)){
+        if (!isThisKind(item)) {
             throw new ForthParseException("attempted to instantiate a forth index value with " + item);
         }
     }
@@ -25,18 +28,18 @@ public class ForthLoopNumber implements ForthWord {
     }
 
     /**
-     *  @return the string value that is printed by forth in the  console
+     * @return the string value that is printed by forth in the console
      */
-    public String toString(){
+    public String toString() {
         return "pushing loop iteration number to the stack";
     }
 
-
     /**
-     * @param item a plain text string
+     * @param item
+     *            a plain text string
      * @return whether or not the string represents a loop index value
      */
-    public static boolean isThisKind(String item){
+    public static boolean isThisKind(String item) {
         return item.equals("I");
     }
 }
