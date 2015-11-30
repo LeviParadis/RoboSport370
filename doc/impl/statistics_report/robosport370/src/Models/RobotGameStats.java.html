@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>RobotGameStats.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">RobotGameStats.java</span></div><h1>RobotGameStats.java</h1><pre class="source lang-java linenums">package Models;
+
+public class RobotGameStats {
+
+  private long wins, losses, executions, gamesSurvived, gamesDied, damageGiven, damageAbsorbed,
+      kills, distanceMoved;
+  private long numDiedThisGame;
+
+  /**
+   * create a game stats object for a brand new robot script
+   */
+<span class="nc" id="L12">  public RobotGameStats() {</span>
+<span class="nc" id="L13">    this.wins = 0;</span>
+<span class="nc" id="L14">    this.losses = 0;</span>
+<span class="nc" id="L15">    this.executions = 0;</span>
+<span class="nc" id="L16">    this.gamesSurvived = 0;</span>
+<span class="nc" id="L17">    this.gamesDied = 0;</span>
+<span class="nc" id="L18">    this.damageGiven = 0;</span>
+<span class="nc" id="L19">    this.damageAbsorbed = 0;</span>
+<span class="nc" id="L20">    this.kills = 0;</span>
+<span class="nc" id="L21">    this.distanceMoved = 0;</span>
+<span class="nc" id="L22">    this.numDiedThisGame = 0;</span>
+<span class="nc" id="L23">  }</span>
+
+  /**
+   * Create a new robot stats instance to store the statistics for a robot file
+   * 
+   * @param wins the number of wins this robot has in its history from previous matches
+   * @param losses the number of losses this robot has in its history from previous matches
+   * @param executions the number of times this robot has been executed in it's history
+   * @param gamesDied the number of times this robot has died in it's previous games
+   * @param gamesSurvived the number of times this robot has survived it's previous games
+   * @param damageGiven the total amount of damage this robot has caused in it's history
+   * @param damageRecieved the total amount of damage the robot has received in it's history
+   * @param kills the total number of kills the robot has achieved in it's history
+   * @param distanceMoved the total distance the robot has moved in it's history
+   */
+<span class="fc" id="L38">  public RobotGameStats(long wins, long losses, long executions, long gamesDied, long gamesSurvived,</span>
+      long damageGiven, long damageRecieved, long kills, long distanceMoved) {
+<span class="fc" id="L40">    this.wins = wins;</span>
+<span class="fc" id="L41">    this.losses = losses;</span>
+<span class="fc" id="L42">    this.executions = executions;</span>
+<span class="fc" id="L43">    this.gamesSurvived = gamesSurvived;</span>
+<span class="fc" id="L44">    this.gamesDied = gamesDied;</span>
+<span class="fc" id="L45">    this.damageGiven = damageGiven;</span>
+<span class="fc" id="L46">    this.damageAbsorbed = damageRecieved;</span>
+<span class="fc" id="L47">    this.kills = kills;</span>
+<span class="fc" id="L48">    this.distanceMoved = distanceMoved;</span>
+<span class="fc" id="L49">    this.numDiedThisGame = 0;</span>
+<span class="fc" id="L50">  }</span>
+
+  /**
+   * at the end of a match, this function should be called to update the robot's win stats
+   * 
+   * @param numWins the amount of instances of this robot that was on the winning team
+   * @param numLosses the amount of instances of this robot that was on losing teams
+   */
+  public void finishMatch(long numWins, long numLosses) {
+    // TODO: this needs to be set up
+<span class="nc" id="L60">    long totalNumInMatch = numWins + numLosses;</span>
+<span class="nc" id="L61">    this.executions = this.executions + totalNumInMatch;</span>
+<span class="nc" id="L62">    this.gamesDied = this.gamesDied + numDiedThisGame;</span>
+<span class="nc" id="L63">    this.gamesSurvived = this.gamesSurvived + (totalNumInMatch - numDiedThisGame);</span>
+<span class="nc" id="L64">    this.wins = this.wins + numWins;</span>
+<span class="nc" id="L65">    this.losses = this.losses + numLosses;</span>
+<span class="nc" id="L66">  }</span>
+
+  public long getDamageAbsorbed() {
+<span class="nc" id="L69">    return damageAbsorbed;</span>
+  }
+
+  public long getDamageGiven() {
+<span class="nc" id="L73">    return damageGiven;</span>
+  }
+
+  public long getDistanceMoved() {
+<span class="nc" id="L77">    return distanceMoved;</span>
+  }
+
+  public long getExecutions() {
+<span class="nc" id="L81">    return executions;</span>
+  }
+
+  public long getGamesDied() {
+<span class="nc" id="L85">    return gamesDied;</span>
+  }
+
+
+  public long getGamesSurvived() {
+<span class="nc" id="L90">    return gamesSurvived;</span>
+  }
+
+  public long getKills() {
+<span class="nc" id="L94">    return kills;</span>
+  }
+
+  public long getLosses() {
+<span class="fc" id="L98">    return losses;</span>
+  }
+
+  public long getWins() {
+<span class="fc" id="L102">    return wins;</span>
+  }
+
+  /**
+   * mark that this robot has caused some damage
+   */
+  protected void incrementDamageGiven(long amountDamage) {
+    // TODO: this needs to be set up
+<span class="nc" id="L110">    this.damageGiven = this.damageGiven + amountDamage;</span>
+<span class="nc" id="L111">  }</span>
+
+  /**
+   * mark that this robot has received some damage
+   */
+  protected void incrementDamageReceived(long amountDamage) {
+<span class="fc" id="L117">    this.damageAbsorbed = this.damageAbsorbed + amountDamage;</span>
+<span class="fc" id="L118">  }</span>
+
+  /**
+   * mark the distance that this robot has moved
+   */
+  protected void incrementDistanceMoved() {
+    // TODO: this needs to be set up
+<span class="nc" id="L125">    this.distanceMoved = this.distanceMoved + 1;</span>
+<span class="nc" id="L126">  }</span>
+
+  /**
+   * mark that this robot has killed another
+   */
+  protected void incrementKills() {
+    // TODO: this needs to be set up
+<span class="nc" id="L133">    this.kills = this.kills + 1;</span>
+<span class="nc" id="L134">  }</span>
+
+  /**
+   * mark that this robot has died this game
+   */
+  protected void markAsDied() {
+<span class="fc" id="L140">    this.numDiedThisGame = this.numDiedThisGame + 1;</span>
+<span class="fc" id="L141">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

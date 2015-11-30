@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Tile.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">Tile.java</span></div><h1>Tile.java</h1><pre class="source lang-java linenums"><span class="nc" id="L1">package Models;</span>
+
+import java.util.LinkedList;
+
+
+public class Tile {
+<span class="fc" id="L7">  private enum TYPE {</span>
+<span class="fc" id="L8">    WATER(10), MOUNTAINS(3), FOREST(2), PLAINS(1);</span>
+
+    private final int cost;
+
+<span class="fc" id="L12">    TYPE(int cost) {</span>
+<span class="fc" id="L13">      this.cost = cost;</span>
+<span class="fc" id="L14">    }</span>
+
+    public int getCost() {
+<span class="fc" id="L17">      return this.cost;</span>
+    }
+
+    public TYPE getType() {
+<span class="nc bnc" id="L21" title="All 2 branches missed.">      if (this.cost == 1)</span>
+<span class="nc" id="L22">        return PLAINS;</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">      else if (this.cost == 2)</span>
+<span class="nc" id="L24">        return FOREST;</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">      else if (this.cost == 3)</span>
+<span class="nc" id="L26">        return MOUNTAINS;</span>
+      else
+<span class="nc" id="L28">        return WATER;</span>
+    }
+
+  }
+
+  private LinkedList&lt;Robot&gt; robots;
+  private int xCoordinate;
+  private int yCoordinate;
+
+  private TYPE type;
+  // private int cost;
+
+<span class="fc" id="L40">  public Tile(int xPos, int yPos) {</span>
+<span class="fc" id="L41">    this.xCoordinate = xPos;</span>
+<span class="fc" id="L42">    this.yCoordinate = yPos;</span>
+<span class="fc" id="L43">    robots = new LinkedList&lt;Robot&gt;();</span>
+<span class="fc" id="L44">  }</span>
+
+  public void addRobot(Robot robot) {
+<span class="fc" id="L47">    this.robots.add(robot);</span>
+<span class="fc" id="L48">  }</span>
+
+  /**
+   * Returns the cost to move across the tile
+   * 
+   * @return the tiles cost
+   */
+  public int getCost() {
+<span class="fc" id="L56">    return this.type.getCost();</span>
+  }
+
+  public int getNumRobots() {
+<span class="nc" id="L60">    return this.robots.size();</span>
+  }
+
+  public LinkedList&lt;Robot&gt; getRobots() {
+<span class="fc" id="L64">    return robots;</span>
+  }
+
+  public TYPE getType() {
+<span class="nc" id="L68">    return this.type.getType();</span>
+  }
+
+  public int getXCoord() {
+<span class="fc" id="L72">    return xCoordinate;</span>
+  }
+
+  public int getYCoord() {
+<span class="fc" id="L76">    return yCoordinate;</span>
+  }
+
+  public void removeRobot(Robot robot) {
+<span class="fc" id="L80">    this.robots.remove(robot);</span>
+<span class="fc" id="L81">  }</span>
+
+  public void setType(int cost) {
+<span class="fc" id="L84">    int thisCost = cost;</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">    if (thisCost == TYPE.FOREST.getCost()) {</span>
+<span class="fc" id="L86">      this.type = TYPE.FOREST;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">    } else if (thisCost == TYPE.MOUNTAINS.getCost()) {</span>
+<span class="fc" id="L88">      this.type = TYPE.MOUNTAINS;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">    } else if (thisCost == TYPE.PLAINS.getCost()) {</span>
+<span class="fc" id="L90">      this.type = TYPE.PLAINS;</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">    } else if (thisCost == TYPE.WATER.getCost()) {</span>
+<span class="fc" id="L92">      this.type = TYPE.WATER;</span>
+    }
+
+<span class="fc" id="L95">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

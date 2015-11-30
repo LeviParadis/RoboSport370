@@ -6,13 +6,16 @@ import Interfaces.ForthWord;
 public class ForthElsePlaceholder implements ForthWord {
 
     /**
-     * constructs an else placeholder value
-     * this is used when creating a conditional to know at which point to branch
-     * @param item  a string representing the else value
-     * @throws ForthParseException if the string dosn't represent the else word
+     * constructs an else placeholder value this is used when creating a
+     * conditional to know at which point to branch
+     * 
+     * @param item
+     *            a string representing the else value
+     * @throws ForthParseException
+     *             if the string dosn't represent the else word
      */
     public ForthElsePlaceholder(String item) throws ForthParseException {
-        if(!isThisKind(item)){
+        if (!isThisKind(item)) {
             throw new ForthParseException("attempted to instantiate a forth else value with " + item);
         }
     }
@@ -25,20 +28,19 @@ public class ForthElsePlaceholder implements ForthWord {
         return "else";
     }
 
-    
     /**
-     *  @return the string value that is printed by forth in the  console
+     * @return the string value that is printed by forth in the console
      */
-    public String toString(){
+    public String toString() {
         return forthStringEncoding();
     }
 
-
     /**
-     * @param item a plain text string
+     * @param item
+     *            a plain text string
      * @return whether or not the string represents an else value
      */
-    public static boolean isThisKind(String item){
+    public static boolean isThisKind(String item) {
         return item.equals("else");
     }
 

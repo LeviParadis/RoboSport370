@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ForthStringLiteral.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">ForthStringLiteral.java</span></div><h1>ForthStringLiteral.java</h1><pre class="source lang-java linenums">package Models;
+
+import Interfaces.ForthWord;
+
+public class ForthStringLiteral implements ForthWord {
+
+  /**
+   * @param item a plain text string
+   * @return whether or not the string represents a forth string value
+   */
+  public static boolean isThisKind(String item) {
+<span class="fc" id="L12">    int length = item.length();</span>
+<span class="pc bpc" id="L13" title="4 of 6 branches missed.">    return (item.length() &gt; 2 &amp;&amp; item.charAt(0) == '.' &amp;&amp; item.charAt(1) == '&quot;'</span>
+<span class="nc bnc" id="L14" title="All 2 branches missed.">        &amp;&amp; item.charAt(length - 1) == '&quot;');</span>
+  }
+
+  private String value;
+
+  /**
+   * creates a string forth word using the input string
+   * 
+   * @param value the string representing the new forth word. Can be either forth formated (with .&quot;)
+   *        or a plain text string
+   */
+<span class="nc" id="L25">  public ForthStringLiteral(String value) {</span>
+<span class="nc" id="L26">    int length = value.length();</span>
+<span class="nc bnc" id="L27" title="All 6 branches missed.">    if (value.length() &gt; 2 &amp;&amp; value.charAt(0) == '.' &amp;&amp; value.charAt(1) == '&quot;'</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        &amp;&amp; value.charAt(length - 1) == '&quot;') {</span>
+<span class="nc" id="L29">      this.value = value.substring(2, length - 1);</span>
+<span class="nc" id="L30">    } else {</span>
+<span class="nc" id="L31">      this.value = value;</span>
+    }
+<span class="nc" id="L33">  }</span>
+
+
+  @Override
+  /**
+   * @return string encoding that can read by the forth parser
+   */
+  public String forthStringEncoding() {
+<span class="nc" id="L41">    return &quot;.\&quot;&quot; + this.value + &quot;\&quot;&quot;;</span>
+  }
+
+
+  /**
+   * @return the value saved to the string
+   */
+  public String getValue() {
+<span class="nc" id="L49">    return value;</span>
+  }
+
+  /**
+   * @return the string value that is printed by forth in the console
+   */
+  @Override
+  public String toString() {
+<span class="nc" id="L57">    return &quot;pushing string to the stack: &quot; + forthStringEncoding();</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

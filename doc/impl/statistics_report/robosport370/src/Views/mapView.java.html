@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>mapView.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Views</a> &gt; <span class="el_source">mapView.java</span></div><h1>mapView.java</h1><pre class="source lang-java linenums">package Views;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.utils.Array;
+
+import Controllers.GameController;
+import Controllers.gameVariables;
+import Enums.ConsoleMessageType;
+import Enums.GameSpeed;
+import Models.Robot;
+import Models.Team;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
+
+
+/**
+ * A GUI view for the main menu
+ * 
+ * @author Corey
+ *
+ */
+public class mapView extends ScreenAdapter implements EventListener {
+  // Size of the distance between tiles
+  private static final int sizeX = 50;
+
+  private static final int sizeY = 60;
+  // The controller which called the view
+  private final GameController controller;
+
+  private float WINDOW_WIDTH;
+  private float WINDOW_HEIGHT;
+
+  // For the various sprites
+  private TextureAtlas atlas;
+  private Array&lt;Sprite&gt; tiles;
+  private Array&lt;Sprite&gt; robotSprites;
+
+  private Texture projectileTexture;
+  private Sprite projectile;
+
+  // For our explosion animation
+  private Animation explosionAnimation;
+  private TextureAtlas explosionAtlas;
+  private TextureRegion[] explosionFrames;
+  private TextureRegion currentExplosionFrame;
+  private Sprite explosionPos;
+
+  float stateTime;
+
+  // Camera settings
+  private int cameraWidth;
+  private OrthographicCamera cam;
+
+  // Some map settings
+  private int mapSize;
+  private int mapDiameter;
+
+  // Sprites for the various teams
+  // It is a set of teams, which each holds a set of sprites
+  private List&lt;List&lt;Sprite&gt;&gt; teamList;
+
+  // For rendering tweens
+  private TweenManager tweenManager;
+  private Queue&lt;AudibleTimeline&gt; timelineTweenQueue;
+
+  // For rendering sprites
+  private SpriteBatch batch;
+
+  private Stage stage;
+  private Table topTable;
+  private LabelStyle blackLabelStyle;
+  private LabelStyle redLabelStyle;
+  private LabelStyle blueLabelStyle;
+  private LabelStyle purpleLabelStyle;
+  private Label nameLabel;
+  private Label teamLabel;
+  private Label turnLabel;
+  private Label numLabel;
+  private TextButton pauseBtn;
+  private TextButton speedBtn;
+  private Label movesLabel;
+  private Label healthLabel;
+  private Label strengthLabel;
+
+  private ArrayList&lt;String&gt; consoleList;
+  private ArrayList&lt;ConsoleMessageType&gt; consoleTypeList;
+  private boolean consoleUpdatesAvailable;
+
+  // TODO For future fonts
+  // private BitmapFont font = new
+  // BitmapFont(Gdx.files.internal(&quot;assets/MoonFlower.fnt&quot;),Gdx.files.internal(&quot;assets/MoonFlower.png&quot;),false);
+
+  /**
+   * Creates a mapView screen
+   * 
+   * @param controller the controller creating this screen
+   * @param teamsInMatch The number of teams in the current game
+   */
+<span class="fc" id="L127">  public mapView(final GameController controller, List&lt;Team&gt; teamsInMatch) {</span>
+<span class="fc" id="L128">    this.controller = controller;</span>
+
+<span class="fc" id="L130">    this.stage = new Stage();</span>
+
+<span class="fc" id="L132">    WINDOW_WIDTH = Gdx.graphics.getWidth();</span>
+<span class="fc" id="L133">    WINDOW_HEIGHT = Gdx.graphics.getHeight();</span>
+
+    // Getting our texture atlas of all the sprites
+<span class="fc" id="L136">    atlas = new TextureAtlas(Gdx.files.internal(&quot;assets/game_sprites/gamesprites.pack&quot;));</span>
+
+    // Setting up the tiles
+<span class="fc" id="L139">    tiles = atlas.createSprites(&quot;tile&quot;);</span>
+
+    // Setting up the robots
+<span class="fc" id="L142">    robotSprites = atlas.createSprites(&quot;robot&quot;);</span>
+
+<span class="fc" id="L144">    projectileTexture = new Texture(&quot;assets/game_sprites/projectile.png&quot;);</span>
+<span class="fc" id="L145">    projectile = new Sprite(projectileTexture);</span>
+<span class="fc" id="L146">    projectile.setPosition(5000f, 5000f);</span>
+
+    // Setting up the explosion animation
+<span class="fc" id="L149">    explosionAtlas = new TextureAtlas(Gdx.files.internal(&quot;assets/explosion/explosion.pack&quot;),</span>
+<span class="fc" id="L150">        Gdx.files.internal(&quot;assets/explosion/&quot;));</span>
+<span class="fc" id="L151">    explosionFrames = new TextureRegion[12];</span>
+
+<span class="fc bfc" id="L153" title="All 2 branches covered.">    for (int i = 0; i &lt; 12; i++) {</span>
+<span class="fc" id="L154">      explosionFrames[i] = explosionAtlas.createSprite(&quot;explosion&quot;, i);</span>
+    }
+
+<span class="fc" id="L157">    explosionAnimation = new Animation(0.025f, explosionFrames);</span>
+<span class="fc" id="L158">    stateTime = 0f;</span>
+
+<span class="fc" id="L160">    explosionPos = new Sprite();</span>
+<span class="fc" id="L161">    explosionPos.setX(5000f);</span>
+<span class="fc" id="L162">    explosionPos.setY(5000f);</span>
+
+    // Setting up the camera based on map size
+<span class="fc" id="L165">    mapSize = gameVariables.mapSize;</span>
+<span class="fc" id="L166">    mapDiameter = mapSize * 2 - 1;</span>
+
+<span class="fc" id="L168">    cameraWidth = (int) (mapDiameter * sizeY * WINDOW_WIDTH / WINDOW_HEIGHT);</span>
+
+<span class="fc" id="L170">    cam = new OrthographicCamera(cameraWidth, cameraWidth * (WINDOW_HEIGHT / WINDOW_WIDTH));</span>
+
+<span class="fc" id="L172">    cam.position.set(3 * sizeX * mapSize / 4, 5, 0);</span>
+<span class="fc" id="L173">    cam.update();</span>
+
+    // Creates our robots
+<span class="fc" id="L176">    this.teamList = new ArrayList&lt;List&lt;Sprite&gt;&gt;();</span>
+
+<span class="fc" id="L178">    Iterator&lt;Team&gt; it = teamsInMatch.iterator();</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+<span class="fc" id="L180">      createRobots(it.next(), teamsInMatch.size());</span>
+    }
+
+<span class="fc" id="L183">    tweenManager = new TweenManager();</span>
+<span class="fc" id="L184">    Tween.registerAccessor(Sprite.class, new SpriteAccessor());</span>
+<span class="fc" id="L185">    timelineTweenQueue = new LinkedList&lt;AudibleTimeline&gt;();</span>
+<span class="fc" id="L186">    batch = new SpriteBatch();</span>
+
+
+    // add table to sides
+    // set up scroll bar style
+<span class="fc" id="L191">    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(&quot;assets/ui_atlas/ui-blue.atlas&quot;));</span>
+<span class="fc" id="L192">    Skin skin = new Skin();</span>
+<span class="fc" id="L193">    skin.addRegions(atlas);</span>
+
+
+<span class="fc" id="L196">    TextButtonStyle buttonStyle = new TextButtonStyle();</span>
+<span class="fc" id="L197">    buttonStyle.font = new BitmapFont();</span>
+<span class="fc" id="L198">    buttonStyle.up = skin.getDrawable(&quot;button_02&quot;);</span>
+<span class="fc" id="L199">    buttonStyle.down = skin.getDrawable(&quot;button_01&quot;);</span>
+
+    // put lists in scroll panes, so we can scroll to see all entries
+
+<span class="fc" id="L203">    pauseBtn = new TextButton(&quot;Pause&quot;, buttonStyle);</span>
+<span class="fc" id="L204">    pauseBtn.addListener(this);</span>
+<span class="fc" id="L205">    speedBtn = new TextButton(&quot;1X&quot;, buttonStyle);</span>
+<span class="fc" id="L206">    speedBtn.addListener(this);</span>
+
+<span class="fc" id="L208">    Table master = new Table();</span>
+<span class="fc" id="L209">    master.setSize(WINDOW_WIDTH / 3, WINDOW_HEIGHT);</span>
+<span class="fc" id="L210">    master.setPosition(WINDOW_WIDTH - (WINDOW_WIDTH / 3), 0);</span>
+<span class="fc" id="L211">    topTable = new Table();</span>
+<span class="fc" id="L212">    topTable.clearListeners();</span>
+<span class="fc" id="L213">    Table bottom = new Table();</span>
+
+<span class="fc" id="L215">    master.add(topTable);</span>
+<span class="fc" id="L216">    master.row();</span>
+<span class="fc" id="L217">    master.add(speedBtn);</span>
+<span class="fc" id="L218">    master.add(pauseBtn);</span>
+<span class="fc" id="L219">    master.row();</span>
+<span class="fc" id="L220">    master.add(bottom).padBottom(300);</span>
+<span class="fc" id="L221">    stage.addActor(master);</span>
+
+<span class="fc" id="L223">    BitmapFont font = new BitmapFont();</span>
+
+<span class="fc" id="L225">    blackLabelStyle = new LabelStyle();</span>
+<span class="fc" id="L226">    blackLabelStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L227">    blackLabelStyle.font = font;</span>
+
+<span class="fc" id="L229">    blueLabelStyle = new LabelStyle();</span>
+<span class="fc" id="L230">    blueLabelStyle.fontColor = Color.BLUE;</span>
+<span class="fc" id="L231">    blueLabelStyle.font = font;</span>
+
+<span class="fc" id="L233">    redLabelStyle = new LabelStyle();</span>
+<span class="fc" id="L234">    redLabelStyle.fontColor = Color.RED;</span>
+<span class="fc" id="L235">    redLabelStyle.font = font;</span>
+
+<span class="fc" id="L237">    purpleLabelStyle = new LabelStyle();</span>
+<span class="fc" id="L238">    purpleLabelStyle.fontColor = Color.PURPLE;</span>
+<span class="fc" id="L239">    purpleLabelStyle.font = font;</span>
+
+
+<span class="fc" id="L242">    Label titleLabel = new Label(&quot;Current Robot Information: &quot;, blackLabelStyle);</span>
+<span class="fc" id="L243">    Label nameTitle = new Label(&quot;Name: &quot;, blackLabelStyle);</span>
+<span class="fc" id="L244">    Label teamTitle = new Label(&quot;Team: &quot;, blackLabelStyle);</span>
+<span class="fc" id="L245">    Label turnTitle = new Label(&quot;Turn: &quot;, blackLabelStyle);</span>
+<span class="fc" id="L246">    Label numTitle = new Label(&quot;Member: &quot;, blackLabelStyle);</span>
+<span class="fc" id="L247">    Label healthTitle = new Label(&quot;Health: &quot;, blackLabelStyle);</span>
+<span class="fc" id="L248">    Label strengthTitle = new Label(&quot;Strength: &quot;, blackLabelStyle);</span>
+<span class="fc" id="L249">    Label movesTitle = new Label(&quot;Moves: &quot;, blackLabelStyle);</span>
+<span class="fc" id="L250">    nameLabel = new Label(&quot;&quot;, blackLabelStyle);</span>
+<span class="fc" id="L251">    teamLabel = new Label(&quot;&quot;, blackLabelStyle);</span>
+<span class="fc" id="L252">    turnLabel = new Label(&quot;&quot;, blackLabelStyle);</span>
+<span class="fc" id="L253">    numLabel = new Label(&quot;&quot;, blackLabelStyle);</span>
+<span class="fc" id="L254">    healthLabel = new Label(&quot;&quot;, blackLabelStyle);</span>
+<span class="fc" id="L255">    strengthLabel = new Label(&quot;&quot;, blackLabelStyle);</span>
+<span class="fc" id="L256">    movesLabel = new Label(&quot;&quot;, blackLabelStyle);</span>
+<span class="fc" id="L257">    bottom.add(titleLabel);</span>
+<span class="fc" id="L258">    bottom.row();</span>
+<span class="fc" id="L259">    bottom.add(nameTitle);</span>
+<span class="fc" id="L260">    bottom.add(nameLabel);</span>
+<span class="fc" id="L261">    bottom.row();</span>
+<span class="fc" id="L262">    bottom.add(teamTitle);</span>
+<span class="fc" id="L263">    bottom.add(teamLabel);</span>
+<span class="fc" id="L264">    bottom.row();</span>
+<span class="fc" id="L265">    bottom.add(numTitle);</span>
+<span class="fc" id="L266">    bottom.add(numLabel);</span>
+<span class="fc" id="L267">    bottom.row();</span>
+<span class="fc" id="L268">    bottom.add(turnTitle);</span>
+<span class="fc" id="L269">    bottom.add(turnLabel);</span>
+<span class="fc" id="L270">    bottom.row();</span>
+<span class="fc" id="L271">    bottom.add(healthTitle).padTop(20);</span>
+<span class="fc" id="L272">    bottom.add(healthLabel).padTop(20);</span>
+<span class="fc" id="L273">    bottom.row();</span>
+<span class="fc" id="L274">    bottom.add(strengthTitle);</span>
+<span class="fc" id="L275">    bottom.add(strengthLabel);</span>
+<span class="fc" id="L276">    bottom.row();</span>
+<span class="fc" id="L277">    bottom.add(movesTitle);</span>
+<span class="fc" id="L278">    bottom.add(movesLabel);</span>
+
+<span class="fc" id="L280">    this.consoleList = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L281">    this.consoleTypeList = new ArrayList&lt;ConsoleMessageType&gt;();</span>
+<span class="fc" id="L282">    this.consoleUpdatesAvailable = true;</span>
+<span class="fc" id="L283">  }</span>
+
+  /**
+   * This function finds a index (0 through 3) based on map position
+   * 
+   * @param i the current column
+   * @param j the current height
+   * @return the index based of the current map tile
+   */
+  public int chooseIndex(int i, int j) {
+    // This is essentially a bunch of magic number manipulation
+    // It generates consistent results
+    // But makes it so the map isnt either random or just all of one type of tile
+<span class="pc bpc" id="L296" title="3 of 8 branches missed.">    if (i == 9 || i == 12 || (i == 3 &amp;&amp; j &gt; 7)) {</span>
+<span class="nc" id="L297">      return 1;</span>
+    }
+<span class="fc bfc" id="L299" title="All 6 branches covered.">    if ((i == 0 || i == mapDiameter - 1) &amp;&amp; j == mapSize - mapSize / 2 - 1) {</span>
+<span class="fc" id="L300">      return 1;</span>
+    }
+<span class="pc bpc" id="L302" title="1 of 6 branches missed.">    if (j &lt; i - mapSize &amp;&amp; (i % 3 == 2 || i % 3 == 2)) {</span>
+<span class="fc" id="L303">      return 2;</span>
+    }
+<span class="fc bfc" id="L305" title="All 2 branches covered.">    if (j &gt; i + 3) {</span>
+<span class="fc" id="L306">      return 2;</span>
+    }
+
+<span class="fc bfc" id="L309" title="All 6 branches covered.">    if (j &lt; 3 &amp;&amp; (i % 3 == 2 || i % 3 == 1)) {</span>
+<span class="fc" id="L310">      return 2;</span>
+    }
+<span class="fc bfc" id="L312" title="All 8 branches covered.">    if (i &lt; (mapDiameter / 2 + 1) &amp;&amp; i &lt; (mapDiameter / 2 - 1) &amp;&amp; (j % 3 == 2 || j % 3 == 1)) {</span>
+<span class="fc" id="L313">      return 3;</span>
+    }
+<span class="fc bfc" id="L315" title="All 6 branches covered.">    if ((i - 1 == mapSize / 2) &amp;&amp; j &lt; 6 &amp;&amp; j &gt; 3) {</span>
+<span class="fc" id="L316">      return 3;</span>
+    }
+<span class="fc bfc" id="L318" title="All 4 branches covered.">    if (i == mapSize / 2 + 3 &amp;&amp; j == 6) {</span>
+<span class="fc" id="L319">      return 3;</span>
+    }
+<span class="fc bfc" id="L321" title="All 8 branches covered.">    if (i &lt; 4 &amp;&amp; i &gt; 1 &amp;&amp; j &lt; 4 &amp;&amp; j &gt; 2) {</span>
+<span class="fc" id="L322">      return 0;</span>
+    }
+<span class="fc bfc" id="L324" title="All 4 branches covered.">    if (i &gt; 5 &amp;&amp; (j % 5 == 4)) {</span>
+<span class="fc" id="L325">      return 0;</span>
+    }
+<span class="fc" id="L327">    return 1;</span>
+  }
+
+  public void createRobots(Team teamToAdd, int numTeams) {
+<span class="fc" id="L331">    Queue&lt;Robot&gt; robotList = teamToAdd.getAllRobots();</span>
+<span class="fc" id="L332">    Iterator&lt;Robot&gt; it = robotList.iterator();</span>
+<span class="fc" id="L333">    ArrayList&lt;Sprite&gt; spriteList = new ArrayList&lt;Sprite&gt;();</span>
+
+<span class="fc bfc" id="L335" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+<span class="fc" id="L336">      it.next();</span>
+<span class="fc" id="L337">      Sprite s = atlas.createSprite(&quot;robot&quot;, teamToAdd.getTeamNumber());</span>
+<span class="fc" id="L338">      setRobotStartingPosition(teamToAdd.getTeamNumber(), s, numTeams);</span>
+<span class="fc" id="L339">      spriteList.add(s);</span>
+    }
+<span class="fc" id="L341">    this.teamList.add(spriteList);</span>
+<span class="fc" id="L342">  }</span>
+
+  public void destroyRobot(int team, int robot) {
+<span class="fc" id="L345">    AudibleTimeline aTimeline = new AudibleTimeline(this);</span>
+<span class="fc" id="L346">    aTimeline.setSource(teamList.get(team).get(robot));</span>
+<span class="fc" id="L347">    aTimeline.setExplosion(explosionPos);</span>
+<span class="fc" id="L348">    int speedMils = this.controller.getAnimationSpeed();</span>
+<span class="fc" id="L349">    Timeline t = Timeline.createSequence().delay(speedMils / 1000f);</span>
+<span class="fc" id="L350">    aTimeline.setTimeline(t);</span>
+<span class="fc" id="L351">    timelineTweenQueue.add(aTimeline);</span>
+<span class="fc" id="L352">  }</span>
+
+  /**
+   * used to update the console logger
+   * 
+   * @param newMessage the latest message to display
+   * @param type Type of Console Message
+   */
+  public void displayMessage(String newMessage, ConsoleMessageType type) {
+<span class="fc" id="L361">    this.consoleList.add(newMessage);</span>
+<span class="fc" id="L362">    this.consoleTypeList.add(type);</span>
+    // we mark the table as needing updates, but we don't acyually update the table ourselves
+    // we want to leave all UI updating to the main thread, otherwise there may be crashes
+    // the main thread will mark this bool as false once it updates the table
+<span class="fc" id="L366">    this.consoleUpdatesAvailable = true;</span>
+<span class="fc" id="L367">  }</span>
+
+  @Override
+  public void dispose() {
+<span class="nc" id="L371">    batch.dispose();</span>
+<span class="nc" id="L372">  }</span>
+
+
+  /**
+   * Displays an animation of a shot being fired from robot on team to a relative position at
+   * direction and range
+   * 
+   * @param team the team number of the robot
+   * @param robot the robot number in the team
+   * @param direction the number of the direction (0 is north, increment clockwise)
+   * @param range a range from 0 to 3
+   */
+  public void fireShot(int team, int robot, int direction, int range) {
+    // Getting the xy coordinates based of the direction and range
+    Float xTranslate;
+    Float yTranslate;
+
+    double theta;
+    // In case we fire on ourselves
+<span class="pc bpc" id="L391" title="1 of 2 branches missed.">    if (range == 0) {</span>
+<span class="nc" id="L392">      theta = 0;</span>
+<span class="nc" id="L393">    } else {</span>
+<span class="fc" id="L394">      theta = -direction / ((float) range * 6) * 2 * Math.PI + Math.PI / 2;</span>
+    }
+
+<span class="fc" id="L397">    xTranslate = (float) ((float) 1.1 * sizeX * range * Math.cos(theta) - 2);</span>
+<span class="fc" id="L398">    yTranslate = (float) ((float) sizeY * range * Math.sin(theta) + 5);</span>
+
+<span class="fc" id="L400">    AudibleTimeline aTimeline = new AudibleTimeline(this);</span>
+<span class="fc" id="L401">    aTimeline.setProjectile(projectile);</span>
+<span class="fc" id="L402">    aTimeline.setSource(teamList.get(team).get(robot));</span>
+<span class="fc" id="L403">    int speedMils = this.controller.getAnimationSpeed();</span>
+<span class="fc" id="L404">    Timeline t = Timeline.createSequence()</span>
+<span class="fc" id="L405">        .push(Tween.to(projectile, SpriteAccessor.POSITION_XY, speedMils / 1000f)</span>
+<span class="fc" id="L406">            .targetRelative(xTranslate, yTranslate));</span>
+<span class="fc" id="L407">    aTimeline.setTimeline(t);</span>
+<span class="fc" id="L408">    timelineTweenQueue.add(aTimeline);</span>
+<span class="fc" id="L409">  }</span>
+
+  public Float getExplosionXPos() {
+<span class="nc" id="L412">    return explosionPos.getX();</span>
+  }
+
+  public Float getExplosionYPos() {
+<span class="nc" id="L416">    return explosionPos.getY();</span>
+  }
+
+  @Override
+  public boolean handle(Event arg0) {
+<span class="fc bfc" id="L421" title="All 4 branches covered.">    if (arg0.getTarget() instanceof TextButton &amp;&amp; ((TextButton) arg0.getTarget()).isPressed()) {</span>
+      // handle button presses
+<span class="fc" id="L423">      TextButton sender = (TextButton) arg0.getTarget();</span>
+<span class="fc bfc" id="L424" title="All 2 branches covered.">      if (sender == this.pauseBtn) {</span>
+<span class="fc bfc" id="L425" title="All 2 branches covered.">        if (this.controller.isPaused()) {</span>
+<span class="fc" id="L426">          this.controller.resume();</span>
+<span class="fc" id="L427">          pauseBtn.setText(&quot;Pause&quot;);</span>
+<span class="fc" id="L428">        } else {</span>
+<span class="fc" id="L429">          this.controller.pause();</span>
+<span class="fc" id="L430">          pauseBtn.setText(&quot;Play&quot;);</span>
+        }
+<span class="pc bpc" id="L432" title="1 of 2 branches missed.">      } else if (sender == this.speedBtn) {</span>
+<span class="fc" id="L433">        GameSpeed newSpeed = this.controller.switchGameSpeed();</span>
+<span class="pc bpc" id="L434" title="1 of 5 branches missed.">        switch (newSpeed) {</span>
+          case GAME_SPEED_1X:
+<span class="fc" id="L436">            this.speedBtn.setText(&quot;1X&quot;);</span>
+<span class="fc" id="L437">            break;</span>
+          case GAME_SPEED_2X:
+<span class="fc" id="L439">            this.speedBtn.setText(&quot;2X&quot;);</span>
+<span class="fc" id="L440">            break;</span>
+          case GAME_SPEED_4X:
+<span class="fc" id="L442">            this.speedBtn.setText(&quot;4X&quot;);</span>
+<span class="fc" id="L443">            break;</span>
+          case GAME_SPEED_16X:
+<span class="fc" id="L445">            this.speedBtn.setText(&quot;16X&quot;);</span>
+            break;
+        }
+      }
+    }
+<span class="fc" id="L450">    return false;</span>
+  }
+
+  /**
+   * Moves a robot in a certain direction
+   * 
+   * @param team the number of the team the robot is on
+   * @param robot the number of the robot on the team
+   * @param direction the direct (1 is north, 2 is north east, etc. to 6)
+   */
+  public void moveRobot(int team, int robot, int direction) {
+<span class="fc" id="L461">    int moveX = 0;</span>
+<span class="fc" id="L462">    int moveY = 0;</span>
+
+    // Doing all of our x translations
+<span class="fc bfc" id="L465" title="All 4 branches covered.">    if (direction == 1 || direction == 2) {</span>
+<span class="fc" id="L466">      moveX = sizeX;</span>
+    }
+<span class="fc bfc" id="L468" title="All 4 branches covered.">    if (direction == 4 || direction == 5) {</span>
+<span class="fc" id="L469">      moveX = -sizeX;</span>
+    }
+
+    // Doing all of our y translations
+<span class="fc bfc" id="L473" title="All 2 branches covered.">    if (direction == 0) {</span>
+<span class="fc" id="L474">      moveY = sizeY;</span>
+    }
+<span class="fc bfc" id="L476" title="All 4 branches covered.">    if (direction == 1 || direction == 5) {</span>
+<span class="fc" id="L477">      moveY = sizeY / 2;</span>
+    }
+<span class="fc bfc" id="L479" title="All 4 branches covered.">    if (direction == 2 || direction == 4) {</span>
+<span class="fc" id="L480">      moveY = -sizeY / 2;</span>
+    }
+<span class="fc bfc" id="L482" title="All 2 branches covered.">    if (direction == 3) {</span>
+<span class="fc" id="L483">      moveY = -sizeY;</span>
+    }
+<span class="fc" id="L485">    AudibleTimeline aTimeline = new AudibleTimeline(this);</span>
+<span class="fc" id="L486">    int speedMils = this.controller.getAnimationSpeed();</span>
+<span class="fc" id="L487">    aTimeline</span>
+<span class="fc" id="L488">        .setTimeline(Timeline.createSequence()</span>
+<span class="fc" id="L489">            .push(Tween</span>
+<span class="fc" id="L490">                .to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, speedMils / 1000f)</span>
+<span class="fc" id="L491">                .targetRelative(moveX, moveY)));</span>
+<span class="fc" id="L492">    timelineTweenQueue.add(aTimeline);</span>
+<span class="fc" id="L493">  }</span>
+
+  @Override
+  public void render(float delta) {
+<span class="fc" id="L497">    Gdx.gl.glClearColor(1, 1, 1, 1);</span>
+<span class="fc" id="L498">    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="fc" id="L500">    cam.update();</span>
+<span class="fc" id="L501">    batch.setProjectionMatrix(cam.combined);</span>
+
+<span class="fc" id="L503">    batch.begin();</span>
+<span class="fc" id="L504">    renderTiles();</span>
+<span class="fc" id="L505">    renderRobots();</span>
+<span class="fc" id="L506">    renderExplosion();</span>
+<span class="fc" id="L507">    renderTesting();</span>
+<span class="fc bfc" id="L508" title="All 2 branches covered.">    if (timelineTweenQueue.peek() != null) {</span>
+<span class="fc bfc" id="L509" title="All 2 branches covered.">      if (timelineTweenQueue.peek().getTimeline().isFinished()) {</span>
+<span class="fc" id="L510">        timelineTweenQueue.poll();</span>
+<span class="fc bfc" id="L511" title="All 2 branches covered.">      } else if (!timelineTweenQueue.peek().getTimeline().isStarted()) {</span>
+<span class="fc" id="L512">        timelineTweenQueue.peek().startTimeline(tweenManager);</span>
+      }
+    }
+<span class="fc" id="L515">    tweenManager.update(delta);</span>
+<span class="fc" id="L516">    projectile.draw(batch);</span>
+<span class="fc" id="L517">    batch.end();</span>
+
+    // if there is a new console message, update the console table
+<span class="fc bfc" id="L520" title="All 2 branches covered.">    if (this.consoleUpdatesAvailable) {</span>
+<span class="fc" id="L521">      this.updateConsoleTable();</span>
+    }
+
+<span class="fc" id="L524">    stage.draw();</span>
+<span class="fc" id="L525">    this.controller.checkGameComplete();</span>
+<span class="fc" id="L526">  }</span>
+
+  public void renderExplosion() {
+<span class="fc" id="L529">    stateTime += Gdx.graphics.getDeltaTime();</span>
+<span class="fc" id="L530">    currentExplosionFrame = explosionAnimation.getKeyFrame(stateTime, true);</span>
+<span class="fc" id="L531">    batch.draw(currentExplosionFrame, explosionPos.getX(), explosionPos.getY());</span>
+<span class="fc" id="L532">  }</span>
+
+  public void renderRobots() {
+    // Starts at team 1
+<span class="fc bfc" id="L536" title="All 2 branches covered.">    for (int i = 0; i &lt; teamList.size(); i++) {</span>
+<span class="fc bfc" id="L537" title="All 2 branches covered.">      for (int j = 0; j &lt; teamList.get(i).size(); j++) {</span>
+<span class="fc" id="L538">        teamList.get(i).get(j).draw(batch);</span>
+      }
+    }
+<span class="fc" id="L541">  }</span>
+
+  public void renderTesting() {
+<span class="pc bpc" id="L544" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.NUM_1)) {</span>
+<span class="nc" id="L545">      moveRobot(1, 1, 1);</span>
+    }
+<span class="pc bpc" id="L547" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.NUM_2)) {</span>
+<span class="nc" id="L548">      moveRobot(1, 1, 2);</span>
+    }
+<span class="pc bpc" id="L550" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.NUM_3)) {</span>
+<span class="nc" id="L551">      moveRobot(1, 1, 3);</span>
+    }
+<span class="pc bpc" id="L553" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.NUM_4)) {</span>
+<span class="nc" id="L554">      moveRobot(1, 1, 4);</span>
+    }
+<span class="pc bpc" id="L556" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.NUM_5)) {</span>
+<span class="nc" id="L557">      moveRobot(1, 1, 5);</span>
+    }
+<span class="pc bpc" id="L559" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.NUM_6)) {</span>
+<span class="nc" id="L560">      moveRobot(1, 1, 6);</span>
+    }
+<span class="pc bpc" id="L562" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.Q)) {</span>
+<span class="nc" id="L563">      fireShot(1, 1, 1, 1);</span>
+    }
+<span class="pc bpc" id="L565" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.W)) {</span>
+<span class="nc" id="L566">      fireShot(1, 1, 1, 2);</span>
+    }
+<span class="pc bpc" id="L568" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.E)) {</span>
+<span class="nc" id="L569">      fireShot(1, 1, 1, 3);</span>
+    }
+<span class="pc bpc" id="L571" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.A)) {</span>
+<span class="nc" id="L572">      fireShot(1, 1, 5, 1);</span>
+    }
+<span class="pc bpc" id="L574" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.S)) {</span>
+<span class="nc" id="L575">      fireShot(1, 1, 9, 2);</span>
+    }
+<span class="pc bpc" id="L577" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.D)) {</span>
+<span class="nc" id="L578">      fireShot(1, 1, 13, 3);</span>
+    }
+<span class="pc bpc" id="L580" title="1 of 2 branches missed.">    if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {</span>
+<span class="nc" id="L581">      destroyRobot(1, 1);</span>
+    }
+<span class="fc" id="L583">  }</span>
+
+  public void renderTiles() {
+<span class="fc" id="L586">    int width = mapDiameter;</span>
+<span class="fc" id="L587">    int height = mapSize;</span>
+
+<span class="fc" id="L589">    int xPos = -mapDiameter * sizeX / 2;</span>
+<span class="fc" id="L590">    int yPos = (mapSize - 2) * sizeY / 2;</span>
+
+    // TODO remove the hard coded numbers
+    // Call the controller instead, getMapSize()
+<span class="fc bfc" id="L594" title="All 2 branches covered.">    for (int i = 0; i &lt; width; i++) {</span>
+<span class="fc bfc" id="L595" title="All 2 branches covered.">      for (int j = 0; j &lt; height; j++) {</span>
+<span class="fc" id="L596">        tiles.get(chooseIndex(i, j)).setPosition(xPos, yPos);</span>
+<span class="fc" id="L597">        tiles.get(chooseIndex(i, j)).draw(batch);</span>
+<span class="fc" id="L598">        yPos = yPos - sizeY;</span>
+      }
+<span class="fc bfc" id="L600" title="All 2 branches covered.">      if ((width) / (i + 1) &gt;= 2) {</span>
+<span class="fc" id="L601">        yPos = yPos + sizeY * height + sizeY / 2;</span>
+<span class="fc" id="L602">        height++;</span>
+<span class="fc" id="L603">      } else {</span>
+<span class="fc" id="L604">        yPos = yPos + sizeY * height - sizeY / 2;</span>
+<span class="fc" id="L605">        height--;</span>
+      }
+<span class="fc" id="L607">      xPos = xPos + sizeX;</span>
+    }
+<span class="fc" id="L609">  }</span>
+
+  public void setExplosionPosition(Float x, Float y) {
+<span class="nc" id="L612">    explosionPos.setX(x);</span>
+<span class="nc" id="L613">    explosionPos.setY(y);</span>
+<span class="nc" id="L614">  }</span>
+
+  /**
+   * Sets a robot's initial position based on team size and team
+   * 
+   * @param teamNum the team number
+   * @param s the robot sprite
+   * @param numTeams The number of teams the game will have
+   */
+
+  public void setRobotStartingPosition(int teamNum, Sprite s, int numTeams) {
+<span class="fc" id="L625">    s.setPosition(-14, -23);</span>
+
+<span class="fc bfc" id="L627" title="All 2 branches covered.">    if (teamNum == 0) {</span>
+<span class="fc" id="L628">      s.translate(-(mapSize - 1) * sizeX, 0);</span>
+<span class="fc bfc" id="L629" title="All 2 branches covered.">    } else if (teamNum == 1) {</span>
+<span class="pc bpc" id="L630" title="1 of 2 branches missed.">      if (numTeams == 2) {</span>
+<span class="nc" id="L631">        s.translate((mapSize - 1) * sizeX, 0);</span>
+<span class="pc bpc" id="L632" title="1 of 2 branches missed.">      } else if (numTeams == 3) {</span>
+<span class="nc" id="L633">        s.translate((mapSize / 2) * sizeX, (0.75f * mapSize - 0.75f) * sizeY);</span>
+<span class="pc bpc" id="L634" title="1 of 2 branches missed.">      } else if (numTeams == 6) {</span>
+<span class="fc" id="L635">        s.translate(-(mapSize / 2) * sizeX, (0.75f * mapSize - 0.75f) * sizeY);</span>
+      }
+<span class="fc bfc" id="L637" title="All 2 branches covered.">    } else if (teamNum == 2) {</span>
+<span class="pc bpc" id="L638" title="1 of 2 branches missed.">      if (numTeams == 3) {</span>
+<span class="nc" id="L639">        s.translate((mapSize / 2) * sizeX, (-0.75f * mapSize + 0.75f) * sizeY);</span>
+<span class="pc bpc" id="L640" title="1 of 2 branches missed.">      } else if (numTeams == 6) {</span>
+<span class="fc" id="L641">        s.translate((mapSize / 2) * sizeX, (0.75f * mapSize - 0.75f) * sizeY);</span>
+      }
+<span class="fc bfc" id="L643" title="All 2 branches covered.">    } else if (teamNum == 3) {</span>
+<span class="fc" id="L644">      s.translate((mapSize - 1) * sizeX, 0);</span>
+<span class="fc bfc" id="L645" title="All 2 branches covered.">    } else if (teamNum == 4) {</span>
+<span class="fc" id="L646">      s.translate((mapSize / 2) * sizeX, (-0.75f * mapSize + 0.75f) * sizeY);</span>
+<span class="pc bpc" id="L647" title="1 of 2 branches missed.">    } else if (teamNum == 5) {</span>
+<span class="fc" id="L648">      s.translate(-(mapSize / 2) * sizeX, (-0.75f * mapSize + 0.75f) * sizeY);</span>
+    }
+<span class="fc" id="L650">  }</span>
+
+  /**
+   * set this screen to receive buttons whenever it becomes active
+   */
+  @Override
+  public void show() {
+<span class="fc" id="L657">    Gdx.input.setInputProcessor(stage);</span>
+<span class="fc" id="L658">  }</span>
+
+  /**
+   * Called by by the render function to update the table when updates are available Rebuilds the
+   * table using the latest console data
+   */
+  private void updateConsoleTable() {
+<span class="fc" id="L665">    this.topTable.clear();</span>
+<span class="fc" id="L666">    int size = this.consoleList.size();</span>
+<span class="fc bfc" id="L667" title="All 2 branches covered.">    for (int i = size - 21; i &lt; size; i++) {</span>
+      String message;
+      LabelStyle style;
+      try {
+<span class="fc" id="L671">        message = this.consoleList.get(i);</span>
+<span class="fc" id="L672">        ConsoleMessageType type = this.consoleTypeList.get(i);</span>
+<span class="pc bpc" id="L673" title="1 of 4 branches missed.">        switch (type) {</span>
+          case CONSOLE_ERROR:
+<span class="fc" id="L675">            style = redLabelStyle;</span>
+<span class="fc" id="L676">            break;</span>
+          case CONSOLE_ROBOT_MESSAGE:
+<span class="nc" id="L678">            style = purpleLabelStyle;</span>
+<span class="nc" id="L679">            break;</span>
+          case CONSOLE_SIMULATOR_MESSAGE:
+<span class="fc" id="L681">            style = blueLabelStyle;</span>
+<span class="fc" id="L682">            break;</span>
+          default:
+<span class="fc" id="L684">            style = blackLabelStyle;</span>
+            break;
+        }
+<span class="fc" id="L687">      } catch (IndexOutOfBoundsException e) {</span>
+<span class="fc" id="L688">        message = &quot; &quot;;</span>
+<span class="fc" id="L689">        style = blackLabelStyle;</span>
+      }
+<span class="fc" id="L691">      Label messageLabel = new Label(message, style);</span>
+<span class="fc" id="L692">      this.topTable.add(messageLabel);</span>
+<span class="fc" id="L693">      this.topTable.row();</span>
+    }
+<span class="fc" id="L695">    this.consoleUpdatesAvailable = false;</span>
+<span class="fc" id="L696">  }</span>
+
+  /**
+   * used to update the current robot's info on the screen
+   * 
+   * @param robot the robot that is running it's turn
+   * @param turnNum The turn number the controller is on
+   */
+  public void updateRobotInfo(Robot robot, int turnNum) {
+<span class="fc" id="L705">    nameLabel.setText(robot.getName());</span>
+<span class="fc" id="L706">    teamLabel.setText(&quot;&quot; + robot.getTeamNumber());</span>
+<span class="fc" id="L707">    numLabel.setText(&quot;&quot; + robot.getMemberNumber());</span>
+<span class="fc bfc" id="L708" title="All 2 branches covered.">    if (turnNum == 0) {</span>
+<span class="fc" id="L709">      turnLabel.setText(&quot;init&quot;);</span>
+<span class="fc" id="L710">    } else {</span>
+<span class="fc" id="L711">      turnLabel.setText(&quot;&quot; + turnNum);</span>
+    }
+<span class="fc" id="L713">    healthLabel.setText(&quot;&quot; + robot.getHealth());</span>
+<span class="fc" id="L714">    strengthLabel.setText(&quot;&quot; + robot.getStrength());</span>
+    // TODO: make this value change as the robot moves. Can do this in game controller, whenever a
+    // move is made
+<span class="fc" id="L717">    movesLabel.setText(&quot;&quot; + robot.getMovesPerTurn());</span>
+<span class="fc" id="L718">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

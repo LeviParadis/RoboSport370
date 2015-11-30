@@ -1,16 +1,16 @@
 package Exceptions;
 
 public class ForthParseException extends Exception {
-    
+
     /**
-     * this exception is thrown when the forth parser can't read the input string into forth logic
+     * this exception is thrown when the forth parser can't read the input
+     * string into forth logic
      */
-    
+
     private static final long serialVersionUID = 7693870929853260732L;
 
-
     public ForthParseException() {
-       super();
+        super();
     }
 
     public ForthParseException(String message) {

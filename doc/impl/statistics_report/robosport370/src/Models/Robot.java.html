@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Robot.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">Robot.java</span></div><h1>Robot.java</h1><pre class="source lang-java linenums">package Models;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+
+import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
+
+
+/**
+ * 
+ * @author Levi Paradis
+ * 
+ *         Notes for report: Replaced getWinsLossStats with getters for each win loss, and tie value
+ */
+public class Robot implements Cloneable {
+
+  private long serialNumber;
+  private String name;
+  private long baseHealth, currentHealth, movesPerTurn;
+  private int strength;
+  private int xPosition;
+  private int yPosition;
+  private long simTeamNumber, simMemberNumber;
+  private RobotGameStats stats;
+  private HashMap&lt;String, String&gt; forthVariables, forthWords;
+  private HashMap&lt;Integer, Queue&lt;ForthWord&gt;&gt; mailBox;
+
+
+
+  /**
+   * Another constructor for if you know all of the base information for a robot, but are missing
+   * stats
+   * 
+   * @param robotName Name of the robot
+   * @param serial The robot's serial number
+   * @param health The base health the robot starts with
+   * @param strength The amount of damage the robot will do
+   * @param moves The number of moves the robot can move in one turn
+   * @param vars The list of forth variables
+   * @param words The list of forth commands
+   */
+  public Robot(String robotName, long serial, long health, int strength, long moves,
+      HashMap&lt;String, String&gt; vars, HashMap&lt;String, String&gt; words) {
+<span class="nc" id="L48">    this(robotName, serial, health, strength, moves, vars, words, new RobotGameStats());</span>
+<span class="nc" id="L49">  }</span>
+
+  /**
+   * this constructor will be called to create a robot. A robot can only be created if you know all
+   * of the information needed for the robot to run a match
+   * 
+   * @param robotName Name of the robot
+   * @param serial The robot's serial number
+   * @param health The base health the robot starts with
+   * @param strength The amount of damage the robot will do
+   * @param moves The number of moves the robot can move in one turn
+   * @param vars The list of forth variables
+   * @param words The list of forth commands
+   * @param stats An object that holds the stats for this robot. If it w
+   */
+<span class="fc" id="L64">  public Robot(String robotName, long serial, long health, int strength, long moves,</span>
+      HashMap&lt;String, String&gt; vars, HashMap&lt;String, String&gt; words, RobotGameStats stats) {
+<span class="fc" id="L66">    this.name = robotName;</span>
+<span class="fc" id="L67">    this.serialNumber = serial;</span>
+<span class="fc" id="L68">    this.forthVariables = vars;</span>
+<span class="fc" id="L69">    this.forthWords = words;</span>
+<span class="fc" id="L70">    this.baseHealth = health;</span>
+<span class="fc" id="L71">    this.currentHealth = health;</span>
+<span class="fc" id="L72">    this.strength = strength;</span>
+<span class="fc" id="L73">    this.movesPerTurn = moves;</span>
+<span class="fc" id="L74">    this.mailBox = new HashMap&lt;Integer, Queue&lt;ForthWord&gt;&gt;();</span>
+<span class="fc" id="L75">    this.stats = stats;</span>
+<span class="fc" id="L76">  }</span>
+
+  /**
+   * Saves a new value into this robot's mailbox the mailbox has a capacity of 6 If the mailbox is
+   * full or the robot is destroyed, it will return false
+   * 
+   * @param objectToPush the new value to save to the mailbox
+   * @return whether the action succeeded or failed
+   */
+  public boolean addMailFromMember(int sender, ForthWord newMail) {
+<span class="nc" id="L86">    int totalMail = this.totalMailAmount();</span>
+<span class="nc" id="L87">    Integer memberNumber = new Integer(sender);</span>
+
+<span class="nc bnc" id="L89" title="All 4 branches missed.">    if (this.isAlive() &amp;&amp; totalMail &lt; 6) {</span>
+<span class="nc" id="L90">      Queue&lt;ForthWord&gt; memberMessages = this.mailBox.get(memberNumber);</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">      if (memberMessages == null) {</span>
+<span class="nc" id="L92">        memberMessages = new LinkedList&lt;ForthWord&gt;();</span>
+      }
+<span class="nc" id="L94">      memberMessages.add(newMail);</span>
+<span class="nc" id="L95">      this.mailBox.put(memberNumber, memberMessages);</span>
+<span class="nc" id="L96">      return true;</span>
+    } else {
+<span class="nc" id="L98">      return false;</span>
+    }
+  }
+
+
+  /**
+   * used to make a copy of this robot that has all the same attributes, but shares the same stats
+   * object this is so that we can have multiple copies of the robot on different teams, but they
+   * all update the same stats
+   * 
+   * @return a copy of the robot with the same stats object
+   */
+  @Override
+  public Robot clone() {
+<span class="nc" id="L112">    Robot result = new Robot(this.name, this.serialNumber, this.baseHealth, this.strength,</span>
+<span class="nc" id="L113">        this.movesPerTurn, this.forthVariables, this.forthWords, this.stats);</span>
+<span class="nc" id="L114">    return result;</span>
+
+  }
+
+  /**
+   * Destroys this robot Removes it's health, and animates it's destruction
+   */
+  public void destroy() {
+<span class="fc" id="L122">    this.currentHealth = 0;</span>
+<span class="fc" id="L123">    this.stats.markAsDied();</span>
+    // TODO: should also animate destruction, and remove the robot from the game
+<span class="fc" id="L125">  }</span>
+
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">    if (obj instanceof Robot) {</span>
+<span class="fc" id="L130">      Robot other = (Robot) obj;</span>
+<span class="fc" id="L131">      long sn = other.getSerialNumber();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">      return (sn == this.getSerialNumber());</span>
+    }
+<span class="nc" id="L134">    return false;</span>
+  }
+
+  /**
+   * @return the names of all forth variables the robot is saving
+   */
+  public Set&lt;String&gt; getAllForthVariables() {
+<span class="fc" id="L141">    return this.forthVariables.keySet();</span>
+  }
+
+  /**
+   * @return the names of all forth words the robot has
+   */
+  public Set&lt;String&gt; getAllForthWords() {
+<span class="fc" id="L148">    return this.forthWords.keySet();</span>
+  }
+
+  /**
+   * @return the health the robot starts a match with
+   */
+  public long getBaseHealth() {
+<span class="fc" id="L155">    return this.baseHealth;</span>
+  }
+
+  /**
+   * @return the value stored in the forth variable &quot;variableName&quot;
+   * @param variableName the name of the variable we are checking
+   */
+  public String getForthVariable(String variableName) {
+<span class="fc" id="L163">    return this.forthVariables.get(variableName);</span>
+  }
+
+  /**
+   * gets a string representing all the logic stored in a forth word
+   * 
+   * @param wordName the word we are looking for
+   * @return the forth logic stored as that word
+   */
+  public String getForthWord(String wordName) {
+<span class="fc" id="L173">    return this.forthWords.get(wordName);</span>
+  }
+
+
+  /**
+   * @return robot's current health
+   */
+  public long getHealth() {
+<span class="fc" id="L181">    return this.currentHealth;</span>
+  }
+
+  /**
+   * @return robot's member number for this match, assigned by the simulator
+   */
+  public long getMemberNumber() {
+<span class="fc" id="L188">    return this.simMemberNumber;</span>
+  }
+
+  /**
+   * @return the number of moves the robot can do each turn
+   */
+  public long getMovesPerTurn() {
+<span class="fc" id="L195">    return movesPerTurn;</span>
+  }
+
+  /**
+   * @return robot's name
+   */
+  public String getName() {
+<span class="fc" id="L202">    return this.name;</span>
+  }
+
+  /**
+   * @return robot's serial number
+   */
+  public long getSerialNumber() {
+<span class="fc" id="L209">    return this.serialNumber;</span>
+  }
+
+  public RobotGameStats getStats() {
+<span class="fc" id="L213">    return this.stats;</span>
+  }
+
+  /**
+   * @return the amount of damage the robot can cause to others
+   */
+  public int getStrength() {
+<span class="fc" id="L220">    return strength;</span>
+  }
+
+  /**
+   * @return robot's team number for this match, assigned by the simulator
+   */
+  public long getTeamNumber() {
+<span class="fc" id="L227">    return this.simTeamNumber;</span>
+  }
+
+  public int getXPosition() {
+<span class="fc" id="L231">    return this.xPosition;</span>
+  }
+
+  public int getYPosition() {
+<span class="fc" id="L235">    return this.yPosition;</span>
+  }
+
+
+  /**
+   * lets us know whether we have mail waiting from a specific sender
+   * 
+   * @param sender the member number of the sender we are checking for
+   * @return a bool representing whether we have mail waiting
+   */
+  public boolean hasMailFromMember(int sender) {
+<span class="nc" id="L246">    Integer memberNumber = new Integer(sender);</span>
+<span class="nc" id="L247">    Queue&lt;ForthWord&gt; memberMessages = this.mailBox.get(memberNumber);</span>
+<span class="nc bnc" id="L248" title="All 4 branches missed.">    return (memberMessages != null &amp;&amp; !memberMessages.isEmpty());</span>
+  }
+
+  /**
+   * causes damage to the robot
+   * 
+   * @param damage the amount to subtract from the robot's health
+   */
+  public void inflictDamage(int damage) {
+<span class="fc" id="L257">    this.stats.incrementDamageReceived(damage);</span>
+<span class="fc" id="L258">    this.currentHealth = this.currentHealth - damage;</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">    if (this.currentHealth &lt;= 0) {</span>
+<span class="fc" id="L260">      this.destroy();</span>
+    }
+<span class="fc" id="L262">  }</span>
+
+  /**
+   * @returns true if robot's health is above 0
+   */
+  public boolean isAlive() {
+<span class="fc bfc" id="L268" title="All 2 branches covered.">    return (this.currentHealth &gt; 0);</span>
+  }
+
+  /**
+   * Pops a value off the robot's mailbox
+   * 
+   * @returns the top value stored in the mailbox stack
+   */
+  public ForthWord popMailFromMember(int sender) throws ForthRunTimeException {
+
+<span class="nc" id="L278">    Integer member = new Integer(sender);</span>
+<span class="nc" id="L279">    Queue&lt;ForthWord&gt; memberMessages = this.mailBox.get(new Integer(member));</span>
+
+<span class="nc bnc" id="L281" title="All 4 branches missed.">    if (memberMessages != null &amp;&amp; !memberMessages.isEmpty()) {</span>
+<span class="nc" id="L282">      ForthWord message = memberMessages.poll();</span>
+<span class="nc" id="L283">      this.mailBox.put(member, memberMessages);</span>
+<span class="nc" id="L284">      return message;</span>
+    } else {
+<span class="nc" id="L286">      String errorMessage =</span>
+<span class="nc" id="L287">          &quot;robot &quot; + this.simMemberNumber + &quot; attempted to recieve mail from teammate &quot; + sender</span>
+<span class="nc" id="L288">              + &quot;, but there were no messages in the mailbox&quot;;</span>
+<span class="nc" id="L289">      throw new ForthRunTimeException(errorMessage);</span>
+    }
+  }
+
+  /**
+   * Sets a new value to the saved variable passed in
+   * 
+   * @param variableName the name of the variable to set
+   * @param newValue the value to set to that variable
+   */
+  public void setForthVariable(String variableName, String newValue) {
+<span class="fc" id="L300">    this.forthVariables.put(variableName, newValue);</span>
+<span class="fc" id="L301">  }</span>
+
+  /**
+   * The simulator will assign each robot a unique team number and member number. When a robot is
+   * assigned to a team, it will recieve these attributes
+   * 
+   * @param teamNumber
+   * @param memberNumber
+   */
+  public void setTeamIDs(int teamNumber, int memberNumber) {
+<span class="fc" id="L311">    this.simMemberNumber = memberNumber;</span>
+<span class="fc" id="L312">    this.simTeamNumber = teamNumber;</span>
+<span class="fc" id="L313">  }</span>
+
+  public void setXPosition(int newX) {
+<span class="fc" id="L316">    this.xPosition = newX;</span>
+<span class="fc" id="L317">  }</span>
+
+  public void setYPosition(int newY) {
+<span class="fc" id="L320">    this.yPosition = newY;</span>
+<span class="fc" id="L321">  }</span>
+
+  /**
+   * @return a string representation of the robot
+   */
+  @Override
+  public String toString() {
+<span class="nc" id="L328">    return name + &quot; - &quot; + serialNumber;</span>
+  }
+
+  /**
+   * tells us the amount of mail this robot has stored it should always be a number between 0 and 6
+   * 
+   * @return the total amount of mail this robot has saved
+   */
+  private int totalMailAmount() {
+<span class="nc" id="L337">    int count = 0;</span>
+<span class="nc" id="L338">    Set&lt;Integer&gt; allKeys = this.mailBox.keySet();</span>
+<span class="nc" id="L339">    Iterator&lt;Integer&gt; boxIterator = allKeys.iterator();</span>
+<span class="nc bnc" id="L340" title="All 2 branches missed.">    while (boxIterator.hasNext()) {</span>
+<span class="nc" id="L341">      Integer key = boxIterator.next();</span>
+<span class="nc" id="L342">      Queue&lt;ForthWord&gt; thisBox = this.mailBox.get(key);</span>
+<span class="nc" id="L343">      count = count + thisBox.size();</span>
+    }
+<span class="nc" id="L345">    return count;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>
