@@ -120,7 +120,7 @@ public class GameController {
     }
 
     /**
-     * Adds the robot teams to their starting positions on the map
+     * Initializes the robots on the map depending on the size of the map provided and the number of teams present.
      */
     private void initRobotPositions() {
         int numTeams = teams.size();
@@ -173,6 +173,11 @@ public class GameController {
         }
     }
 
+    /**
+     * gives the number of teams remaining with alive robots
+     * 
+     * @return the number of remaining teams
+     */
     public int teamsAlive() {
         int livingNum = 0;
         Iterator<Team> it = this.teams.iterator();
@@ -188,7 +193,7 @@ public class GameController {
 
     /**
      * Called when the user pushed the fast forward button. Finds the current
-     * speed state, and switches to the next one
+     * 	speed state, and switches to the next one
      * 
      * @return the new state, for updating ui elements
      */
@@ -271,7 +276,8 @@ public class GameController {
     }
 
     /**
-     * executes a round of turns
+     * Executes the next turn in the thread
+     * @param turnNum 
      */
     public void executeNextTurn(int turnNum) {
         displayMessage("Turn " + turnNum, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
@@ -304,6 +310,13 @@ public class GameController {
         }
     }
 
+    /**
+     * Gives the best possible path to the desired tile 
+     * @param current the tile that the robot is currently sitting on
+     * @param destination the tile that the robot wishes to go to.
+     * @param movesAvailable the number of moves that the robot is allowed to take
+     * @return the best possible path as a list
+     */
     public List<Tile> findBestPath(Tile current, Tile destination, int movesAvailable) {
         List<List<Tile>> options = new LinkedList<List<Tile>>();
 
@@ -359,6 +372,11 @@ public class GameController {
         }
     }
 
+    /**
+     * Gives the cost of the path to a tile
+     * @param list the list of tiles along the path
+     * @return the cost of the path
+     */
     private int sizeOfPath(List<Tile> list) {
         int sum = 0;
         Iterator<Tile> it = list.iterator();
@@ -369,6 +387,17 @@ public class GameController {
         return sum;
     }
 
+    /**
+     * Moves a robot along the board
+     * @param robotToMove the robot that is to be moved on the board
+     * @param TeamNumber the team number of the team that the robot is on
+     * @param range the range that the destination is from the robot
+     * @param direction the direction that the robot wishes to go
+     * @param movesLeft the amount of moves that the robot can travel
+     * 
+     * @return the number of moves left
+     * @throws RuntimeException
+     */
     public int moveRobot(Robot robotToMove, int TeamNumber, int range, int direction, int movesLeft)
             throws RuntimeException {
 

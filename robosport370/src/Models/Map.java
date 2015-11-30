@@ -13,6 +13,7 @@ public class Map {
     private int mapSize = gameVariables.mapSize;
     private int xPosMax, xPosMin, yPosMax, yPosMin;
 
+    //the linkedlist that contains all of the tiles
     LinkedList<Tile> tiles = new LinkedList<Tile>();
 
     public Map() {
@@ -139,7 +140,10 @@ public class Map {
             return yCoordinate;
         }
     }
-
+    
+    /**
+     * The possible sides of the map
+     */
     public enum SIDE_VECTORS {
         SIDE_ZERO(1, 0), SIDE_ONE(0, -1), SIDE_TWO(-1, -1), SIDE_THREE(-1, 0), SIDE_FOUR(0, 1), SIDE_FIVE(1, 1);
 
@@ -249,6 +253,10 @@ public class Map {
         return toRet;
     }
 
+    /**
+     * Returns the LinkedList of tiles
+     * @return a linkedlist containing all tiles
+     */
     public LinkedList<Tile> getTiles() {
         return this.tiles;
     }
@@ -261,6 +269,11 @@ public class Map {
         return this.mapDiameter;
     }
 
+    /**
+     * Checks to see if the provided tile is on that exist within the borders of the map.
+     * @param checkTile the tile to be tested
+     * @return true if the tile is valid otherwise false.
+     */
     public boolean isValidTile(Tile checkTile) {
         int checkX = checkTile.getXCoord();
         int checkY = checkTile.getYCoord();
@@ -279,6 +292,10 @@ public class Map {
         }
     }
 
+    /**
+     * Runs a few simple tests
+     * @param args
+     */
     public static void main(String[] args) {
         Map test = new Map();
         Tile one = new Tile(-1, -1);

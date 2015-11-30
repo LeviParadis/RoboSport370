@@ -36,6 +36,10 @@ public class Tile {
 
     }
 
+    /**
+     * Sets the type of the tile given the cost.
+     * @param cost
+     */
     public void setType(int cost) {
         int thisCost = cost;
         if (thisCost == TYPE.FOREST.getCost()) {
@@ -50,6 +54,12 @@ public class Tile {
 
     }
 
+    /**
+     * creates a new tile with the x and y coordinates provided and a new 
+     * LinkedList of robots.
+     * @param xPos the x coordinate to set the tile at
+     * @param yPos the y coordinate to set the tile at
+     */
     public Tile(int xPos, int yPos) {
         this.xCoordinate = xPos;
         this.yCoordinate = yPos;
