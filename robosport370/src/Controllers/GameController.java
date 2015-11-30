@@ -53,8 +53,6 @@ public class GameController {
      * 
      * @param allTeams
      *            an array that contains all of the teams playing the match
-     * @param hexSize
-     *            the size of the map on one side
      */
     public GameController(List<Team> allTeams) throws RuntimeException {
         if (allTeams == null) {
@@ -270,6 +268,8 @@ public class GameController {
      *            played is on
      * @param robotNum
      *            the s/n of the robot who's turn it is
+     *  
+     *  @return Robot a the robot that matches the numbers
      */
     public Robot getRobot(int teamNum, int robotNum) throws IndexOutOfBoundsException {
         return teams.get(teamNum).getTeamMember(robotNum);
@@ -277,7 +277,7 @@ public class GameController {
 
     /**
      * Executes the next turn in the thread
-     * @param turnNum 
+     * @param turnNum the current turn the controller is on
      */
     public void executeNextTurn(int turnNum) {
         displayMessage("Turn " + turnNum, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);
@@ -396,7 +396,7 @@ public class GameController {
      * @param movesLeft the amount of moves that the robot can travel
      * 
      * @return the number of moves left
-     * @throws RuntimeException
+     * @throws RuntimeException an error that is caught during runtime
      */
     public int moveRobot(Robot robotToMove, int TeamNumber, int range, int direction, int movesLeft)
             throws RuntimeException {
@@ -444,13 +444,13 @@ public class GameController {
     }
 
     /**
-     * Takes an x and y offset of range 1 and returns the direction (0->5)
+     * Takes an x and y offset of range 1 and returns the direction (0 5)
      * 
      * @param xOffset
      *            -1, 0, 1
      * @param yOffset
      *            -1, 0, 1
-     * @return the direction (0->5) the given offset points to, -1 if invalid
+     * @return the direction (0 5) the given offset points to, -1 if invalid
      *         input
      */
     public int getDirection(int xOffset, int yOffset) {
@@ -519,7 +519,7 @@ public class GameController {
      * 
      * @param r
      *            the robot asking for closest robots
-     * @return
+     * @return List a list containing the closest robots
      */
     public List<Robot> getClosest(Robot r) {
 
@@ -626,6 +626,8 @@ public class GameController {
      *            the robot to start from
      * @param to
      *            the robot we are finding the direction to
+     *            
+     * @return int an integer saying the current direction at the position
      */
     public int directionBetweenRobots(Robot from, Robot to) {
         return 0;
@@ -638,6 +640,7 @@ public class GameController {
      *            the robot to start from
      * @param to
      *            the robot we are finding the range to
+     * @return 0
      */
     public int rangeBetweenRobots(Robot from, Robot to) {
         return 0;

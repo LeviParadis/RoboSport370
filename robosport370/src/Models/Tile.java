@@ -38,7 +38,7 @@ public class Tile {
 
     /**
      * Sets the type of the tile given the cost.
-     * @param cost
+     * @param cost the cost of the movement tile
      */
     public void setType(int cost) {
         int thisCost = cost;

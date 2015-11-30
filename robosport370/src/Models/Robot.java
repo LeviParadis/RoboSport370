@@ -94,8 +94,8 @@ public class Robot implements Cloneable {
      * number. When a robot is assigned to a team, it will recieve these
      * attributes
      * 
-     * @param teamNumber
-     * @param memberNumber
+     * @param teamNumber the current team number
+     * @param memberNumber the current member number
      */
     public void setTeamIDs(int teamNumber, int memberNumber) {
         this.simMemberNumber = memberNumber;
@@ -245,7 +245,7 @@ public class Robot implements Cloneable {
     }
 
     /**
-     * @returns true if robot's health is above 0
+     * @return boolean that is true if robot's health is above 0
      */
     public boolean isAlive() {
         return (this.currentHealth > 0);
@@ -255,8 +255,9 @@ public class Robot implements Cloneable {
      * Saves a new value into this robot's mailbox the mailbox has a capacity of
      * 6 If the mailbox is full or the robot is destroyed, it will return false
      * 
-     * @param objectToPush
+     * @param sender
      *            the new value to save to the mailbox
+     * @param newMail the new mail to send from the member
      * @return whether the action succeeded or failed
      */
     public boolean addMailFromMember(int sender, ForthWord newMail) {
@@ -296,8 +297,9 @@ public class Robot implements Cloneable {
 
     /**
      * Pops a value off the robot's mailbox
-     * 
-     * @returns the top value stored in the mailbox stack
+     * @param sender the sender of the mail
+     * @return ForthWord the top value stored in the mailbox stack
+     * @throws ForthRunTimeException an exception that occurs when an unknown forth command is parsed
      */
     public ForthWord popMailFromMember(int sender) throws ForthRunTimeException {
 

@@ -74,8 +74,6 @@ public class Map {
     /**
      * This function finds a index (0 through 3) based on map position
      * 
-     * @param tile
-     *            the tile being chosen
      * @param i
      *            the current column
      * @param j
@@ -169,8 +167,9 @@ public class Map {
      * returns the direction coordinates with range 1 given the game direction
      * (0,1,2,3...)
      * 
-     * @param Direction
+     * @param direction
      *            the direction in game format (0,1,2,3...)
+     * @param range the range the current direction has
      * @return returns the type DIrection with x and y coordinates
      */
     public Point getDirection(int direction, int range) {
@@ -294,7 +293,7 @@ public class Map {
 
     /**
      * Runs a few simple tests
-     * @param args
+     * @param args main arguments
      */
     public static void main(String[] args) {
         Map test = new Map();
