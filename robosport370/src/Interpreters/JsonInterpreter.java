@@ -95,11 +95,29 @@ public class JsonInterpreter {
                 
                 JSONObject json4 = (JSONObject) parser.parse(new FileReader("resources/RobotExample4.JSON"));
                 Robot newRobot4 = robotFromJSON(json4);
+                
+                JSONObject json5 = (JSONObject) parser.parse(new FileReader("resources/RobotExample5.JSON"));
+                Robot newRobot5 = robotFromJSON(json5);
+                
+                JSONObject json6 = (JSONObject) parser.parse(new FileReader("resources/RobotExample6.JSON"));
+                Robot newRobot6 = robotFromJSON(json6);
+                
+                JSONObject json7 = (JSONObject) parser.parse(new FileReader("resources/RobotExample7.JSON"));
+                Robot newRobot7 = robotFromJSON(json7);
+                
+                JSONObject json8 = (JSONObject) parser.parse(new FileReader("resources/RobotExample8.JSON"));
+                Robot newRobot8 = robotFromJSON(json8);
+                
+             
                 Queue<Robot> list = new LinkedList<Robot>();
                 list.add(newRobot);
                 list.add(newRobot2);
                 list.add(newRobot3);
                 list.add(newRobot4);
+                list.add(newRobot5);
+                list.add(newRobot6);
+                list.add(newRobot7);
+                list.add(newRobot8);
                 return list;
             } catch (IOException | ParseException e) {
                 return null;

@@ -376,34 +376,37 @@ public class GameController {
       if(!gameMap.isValidTile(dest)){
           throw new RuntimeException("not a valid tile");
       }
-      
-      
-      List<Tile> bestPath = findBestPath( curTile, dest, movesLeft);
-      
-      if(bestPath == null){
-         throw new RuntimeException("not enough moves");
-      }
       else{
+          List<Tile> bestPath = findBestPath( curTile, dest, movesLeft);
           
-          Iterator<Tile> iter = bestPath.iterator();
-          
-          while(iter.hasNext()){
-              Tile temp = iter.next();
-              newX = temp.getXCoord();
-              newY = temp.getYCoord();
-              
-              gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
-              
-              int xOffset = newX - robotToMove.getXPosition();
-              int yOffset = newY - robotToMove.getYPosition();
-              robotToMove.setXPosition(temp.getXCoord());
-              robotToMove.setYPosition(temp.getYCoord());
-              
-              gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
-              int currentDirection = getDirection(xOffset, yOffset);
-              view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
+          if(bestPath == null){
+              throw new RuntimeException("not enough moves");
           }
+          else{
+              
+              Iterator<Tile> iter = bestPath.iterator();
+              
+              while(iter.hasNext()){
+                  Tile temp = iter.next();
+                  newX = temp.getXCoord();
+                  newY = temp.getYCoord();
+                  
+                  gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).removeRobot(robotToMove);
+                  
+                  int xOffset = newX - robotToMove.getXPosition();
+                  int yOffset = newY - robotToMove.getYPosition();
+                  robotToMove.setXPosition(temp.getXCoord());
+                  robotToMove.setYPosition(temp.getYCoord());
+                  
+                  gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition()).addRobot(robotToMove);
+                  int currentDirection = getDirection(xOffset, yOffset);
+                  view.moveRobot((int)(robotToMove.getTeamNumber()), (int)(robotToMove.getMemberNumber()), currentDirection);
+              }
+          }
+          
       }
+      
+      
     return movesLeft;
         
    }
@@ -493,18 +496,23 @@ public class GameController {
             for(int direction = 0; direction < (range*6)-1; direction++){
                 Point dirToGO = gameMap.getDirection(range, direction);
                 
-                Tile tempTile = gameMap.findTile(r.getXPosition() + (int)dirToGO.getX(), 
-                                                 r.getYPosition() + (int)dirToGO.getY());
-                //check to see if tile is on map esle skips it
-                if(gameMap.isValidTile(tempTile)){
-                    Iterator<Robot> iter = tempTile.getRobots().iterator();
-                    while(iter.hasNext() && !foundFour){
-                        closest.add(iter.next());
-                        if(closest.size() == 4) foundFour = true;
+                if(gameMap.findTile(r.getXPosition() + (int) dirToGO.getX(), 
+                        r.getYPosition() + (int) dirToGO.getY()) != null){
+                    
+                    Tile tempTile = gameMap.findTile(r.getXPosition() + (int)dirToGO.getX(), 
+                            r.getYPosition() + (int)dirToGO.getY());
+                    //check to see if tile is on map else skips it
+                    if(tempTile == null)System.out.println("Here");
+                    if(gameMap.isValidTile(tempTile)){
+                        Iterator<Robot> iter = tempTile.getRobots().iterator();
+                        while(iter.hasNext() && !foundFour){
+                            closest.add(iter.next());
+                            if(closest.size() == 4) foundFour = true;
+                        }
                     }
+                    // else tile is not on map    
+                    if(foundFour) return closest;
                 }
-                // else tile is not on map    
-                if(foundFour) return closest;
             }  
         }
         
