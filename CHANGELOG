@@ -1,5 +1,7 @@
-
 ROBOSPORT370 CHANGELOG 
+
+Alpha [0.0.21]
+-Robots no longer move off the screen when fighting
 
 Alpha [0.0.2]
 -Robots now can move and shoot at each other
