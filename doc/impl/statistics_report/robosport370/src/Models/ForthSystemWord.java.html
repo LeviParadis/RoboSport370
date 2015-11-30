@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ForthSystemWord.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">ForthSystemWord.java</span></div><h1>ForthSystemWord.java</h1><pre class="source lang-java linenums">package Models;
+
+import Enums.SystemCommandType;
+import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
+
+public class ForthSystemWord implements ForthWord {
+
+  /**
+   * @param wordName a plain text string
+   * @return whether or not the string represents a system forth command
+   */
+  public static boolean isThisKind(String wordName) {
+<span class="fc" id="L14">    SystemCommandType type = wordType(wordName);</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">    return (type != SystemCommandType.NOT_FORTH_WORD);</span>
+  }
+  /**
+   * tells us which command the plain text string represents
+   * 
+   * @param wordName the plain text string
+   * @return an enum value representing one of the system words
+   */
+  private static SystemCommandType wordType(String wordName) {
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">    if (wordName.equals(&quot;health&quot;)) {</span>
+<span class="nc" id="L25">      return SystemCommandType.HEALTH;</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;movesLeft&quot;)) {</span>
+<span class="nc" id="L27">      return SystemCommandType.MOVES_LEFT;</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;firepower&quot;)) {</span>
+<span class="nc" id="L29">      return SystemCommandType.FIRE_POWER;</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;team&quot;)) {</span>
+<span class="nc" id="L31">      return SystemCommandType.TEAM;</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;member&quot;)) {</span>
+<span class="nc" id="L33">      return SystemCommandType.MEMBER;</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;.&quot;)) {</span>
+<span class="nc" id="L35">      return SystemCommandType.CONSOLE;</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">    } else if (wordName.equals(&quot;random&quot;)) {</span>
+<span class="fc" id="L37">      return SystemCommandType.RANDOM;</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    } else if (wordName.equals(&quot;shoot!&quot;)) {</span>
+<span class="fc" id="L39">      return SystemCommandType.SHOOT;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">    } else if (wordName.equals(&quot;move!&quot;)) {</span>
+<span class="fc" id="L41">      return SystemCommandType.MOVE;</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;scan!&quot;)) {</span>
+<span class="nc" id="L43">      return SystemCommandType.SCAN;</span>
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;identify!&quot;)) {</span>
+<span class="nc" id="L45">      return SystemCommandType.IDENTIFY;</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;send!&quot;)) {</span>
+<span class="nc" id="L47">      return SystemCommandType.MAIL_SEND;</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;mesg?&quot;)) {</span>
+<span class="nc" id="L49">      return SystemCommandType.MAIL_CHECK;</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;recv!&quot;)) {</span>
+<span class="nc" id="L51">      return SystemCommandType.MAIL_RECIEVE;</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;hex&quot;)) {</span>
+<span class="nc" id="L53">      return SystemCommandType.HEX;</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;?&quot;)) {</span>
+<span class="nc" id="L55">      return SystemCommandType.VAR_CHECK;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">    } else if (wordName.equals(&quot;!&quot;)) {</span>
+<span class="fc" id="L57">      return SystemCommandType.VAR_ASSIGN;</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;and&quot;)) {</span>
+<span class="nc" id="L59">      return SystemCommandType.AND;</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;or&quot;)) {</span>
+<span class="nc" id="L61">      return SystemCommandType.OR;</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;invert&quot;)) {</span>
+<span class="nc" id="L63">      return SystemCommandType.INVERT;</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;&lt;&quot;)) {</span>
+<span class="nc" id="L65">      return SystemCommandType.LESS;</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;&lt;=&quot;)) {</span>
+<span class="nc" id="L67">      return SystemCommandType.LESS_EQUAL;</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;=&quot;)) {</span>
+<span class="nc" id="L69">      return SystemCommandType.EQUAL;</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;&lt;&gt;&quot;)) {</span>
+<span class="nc" id="L71">      return SystemCommandType.NOT_EQUAL;</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;=&gt;&quot;)) {</span>
+<span class="nc" id="L73">      return SystemCommandType.GREATER_EQUAL;</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;&gt;&quot;)) {</span>
+<span class="nc" id="L75">      return SystemCommandType.GREATER;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">    } else if (wordName.equals(&quot;+&quot;)) {</span>
+<span class="fc" id="L77">      return SystemCommandType.ADD;</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;-&quot;)) {</span>
+<span class="nc" id="L79">      return SystemCommandType.SUBTRACT;</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;*&quot;)) {</span>
+<span class="nc" id="L81">      return SystemCommandType.MULTIPLY;</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;/mod&quot;)) {</span>
+<span class="nc" id="L83">      return SystemCommandType.DIVIDE;</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;drop&quot;)) {</span>
+<span class="nc" id="L85">      return SystemCommandType.DROP;</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;dup&quot;)) {</span>
+<span class="nc" id="L87">      return SystemCommandType.DUPLICATE;</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;swap&quot;)) {</span>
+<span class="nc" id="L89">      return SystemCommandType.SWAP;</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">    } else if (wordName.equals(&quot;rot&quot;)) {</span>
+<span class="nc" id="L91">      return SystemCommandType.ROTATE;</span>
+    }
+    // command is not one of the built in commands
+<span class="fc" id="L94">    return SystemCommandType.NOT_FORTH_WORD;</span>
+  }
+
+  private String name;
+
+  private SystemCommandType kind;
+
+  /**
+   * create a forth system word from a plain text string
+   * 
+   * @param wordName the plain text version of the word
+   * @throws ForthParseException if the input word does not match a system command
+   */
+<span class="fc" id="L107">  public ForthSystemWord(String wordName) throws ForthParseException {</span>
+<span class="fc" id="L108">    SystemCommandType type = wordType(wordName);</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">    if (type == SystemCommandType.NOT_FORTH_WORD) {</span>
+<span class="nc" id="L110">      throw new ForthParseException(</span>
+<span class="nc" id="L111">          &quot;attempted to instantiate a forth system command with unknown word &quot; + wordName);</span>
+    }
+<span class="fc" id="L113">    this.kind = type;</span>
+<span class="fc" id="L114">    this.name = wordName;</span>
+<span class="fc" id="L115">  }</span>
+
+  @Override
+  /**
+   * @return string encoding that can read by the forth parser
+   */
+  public String forthStringEncoding() {
+<span class="fc" id="L122">    return this.name;</span>
+  }
+
+  /**
+   * @return which system command this represents
+   */
+  public SystemCommandType getType() {
+<span class="fc" id="L129">    return this.kind;</span>
+  }
+
+  /**
+   * @return the string value that is printed by forth in the console
+   */
+  @Override
+  public String toString() {
+<span class="fc" id="L137">    return &quot;performing action: &quot; + forthStringEncoding();</span>
+  }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

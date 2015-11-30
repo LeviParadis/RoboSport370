@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>mainMenuView.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Views</a> &gt; <span class="el_source">mainMenuView.java</span></div><h1>mainMenuView.java</h1><pre class="source lang-java linenums">package Views;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import Controllers.setupController;
+
+/**
+ * A GUI view for the main menu
+ * 
+ * @author Corey
+ * @author Levi Paradis
+ *
+ */
+public class mainMenuView extends ScreenAdapter {
+  // Constant variables for determining menu option coordinates and dimensions
+<span class="fc" id="L22">  private static final Integer menOpSrcX = 45;</span>
+
+<span class="fc" id="L24">  private static final Integer menOpSrcY = 30;</span>
+<span class="fc" id="L25">  private static final Integer menOpWidth = 170;</span>
+<span class="fc" id="L26">  private static final Integer menOpHeight = 31;</span>
+  // For ease of use when passing to the controller
+  private static final int NEW_TOURNAMENT = 1;
+
+  private static final int NEW_SIMULATION = 2;
+  private static final int NEW_ROBOT = 3;
+
+<span class="fc" id="L33">  private static final int EXIT = 4;</span>
+  // The controller which called the view
+  final setupController controller;
+  // To store the screen dimensions
+  private Integer SCREEN_WIDTH;
+  private Integer SCREEN_HEIGHT;
+
+  // For rendering sprites
+  private SpriteBatch batch;
+
+  // Art for the main menu
+  private Texture menuArtTexture;
+  private Sprite menuArtSprite;
+
+  // Art for the menu credits
+  private Texture menuCreditTexture;
+  private Sprite menuCreditSprite;
+
+  // Art for the menu options
+  private Texture menuOptionsTexture;
+  private Sprite menuOptionsTournament;
+  private Sprite menuOptionsSimulation;
+  private Sprite menuOptionsNewRobot;
+  private Sprite menuOptionsExit;
+
+  // For tracking the active option
+  private spriteMenuHandler menu;
+
+  /**
+   * Constructor for MainMenuView
+   * 
+   * @param cont the controller creating this view
+   */
+<span class="fc" id="L66">  public mainMenuView(final setupController cont) {</span>
+<span class="fc" id="L67">    controller = cont;</span>
+
+<span class="fc" id="L69">    SCREEN_WIDTH = Gdx.graphics.getWidth();</span>
+<span class="fc" id="L70">    SCREEN_HEIGHT = Gdx.graphics.getHeight();</span>
+
+<span class="fc" id="L72">    batch = new SpriteBatch();</span>
+
+<span class="fc" id="L74">    menuArtTexture = new Texture(&quot;assets/mainMenu/menu_title.png&quot;);</span>
+<span class="fc" id="L75">    menuArtSprite = new Sprite(menuArtTexture, 280, 126);</span>
+
+<span class="fc" id="L77">    menuCreditTexture = new Texture(&quot;assets/mainMenu/menu_credits.png&quot;);</span>
+<span class="fc" id="L78">    menuCreditSprite = new Sprite(menuCreditTexture, 295, 75);</span>
+
+<span class="fc" id="L80">    menuOptionsTexture = new Texture(&quot;assets/mainMenu/menu_options.png&quot;);</span>
+<span class="fc" id="L81">    menuOptionsTournament =</span>
+<span class="fc" id="L82">        new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY * 0, menOpWidth, menOpHeight);</span>
+<span class="fc" id="L83">    menuOptionsSimulation =</span>
+<span class="fc" id="L84">        new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY * 2, menOpWidth, menOpHeight);</span>
+<span class="fc" id="L85">    menuOptionsNewRobot =</span>
+<span class="fc" id="L86">        new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY * 4, menOpWidth, menOpHeight);</span>
+<span class="fc" id="L87">    menuOptionsExit =</span>
+<span class="fc" id="L88">        new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY * 6, menOpWidth, menOpHeight);</span>
+
+<span class="fc" id="L90">    menuOptionsTournament.setPosition(SCREEN_WIDTH * 0.5f - menuOptionsTournament.getWidth() / 2,</span>
+<span class="fc" id="L91">        SCREEN_HEIGHT * 0.45f - 30 * 1f);</span>
+<span class="fc" id="L92">    menuOptionsSimulation.setPosition(SCREEN_WIDTH * 0.5f - menuOptionsTournament.getWidth() / 2,</span>
+<span class="fc" id="L93">        SCREEN_HEIGHT * 0.45f - 30 * 2f);</span>
+<span class="fc" id="L94">    menuOptionsNewRobot.setPosition(SCREEN_WIDTH * .5f - menuOptionsTournament.getWidth() / 2,</span>
+<span class="fc" id="L95">        SCREEN_HEIGHT * 0.45f - 30 * 3f);</span>
+<span class="fc" id="L96">    menuOptionsExit.setPosition(SCREEN_WIDTH * 0.5f - menuOptionsTournament.getWidth() / 2,</span>
+<span class="fc" id="L97">        SCREEN_HEIGHT * 0.45f - 30 * 4f);</span>
+
+    // Add in the order for the associated constant variables
+<span class="fc" id="L100">    menu = new spriteMenuHandler(menuOptionsTournament);</span>
+<span class="fc" id="L101">    menu.addSprite(menuOptionsSimulation);</span>
+<span class="fc" id="L102">    menu.addSprite(menuOptionsNewRobot);</span>
+<span class="fc" id="L103">    menu.addSprite(menuOptionsExit);</span>
+<span class="fc" id="L104">  }</span>
+
+  /**
+   * Called to do garbage collection
+   */
+  @Override
+  public void dispose() {
+<span class="nc" id="L111">    menuArtTexture.dispose();</span>
+<span class="nc" id="L112">    menuCreditTexture.dispose();</span>
+<span class="nc" id="L113">    menuOptionsTexture.dispose();</span>
+
+<span class="nc" id="L115">    batch.dispose();</span>
+<span class="nc" id="L116">  }</span>
+
+  /**
+   * Checks the relevant key presses and acts appropriately
+   */
+  public void handleKeyPresses() {
+    // Checks for which keys have been pressed
+<span class="fc bfc" id="L123" title="All 2 branches covered.">    if (Gdx.input.isKeyJustPressed(Keys.DOWN)) {</span>
+<span class="fc" id="L124">      menu.down();</span>
+    }
+
+<span class="fc bfc" id="L127" title="All 2 branches covered.">    if (Gdx.input.isKeyJustPressed(Keys.UP)) {</span>
+<span class="fc" id="L128">      menu.up();</span>
+    }
+<span class="fc bfc" id="L130" title="All 2 branches covered.">    if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {</span>
+<span class="pc bpc" id="L131" title="3 of 5 branches missed.">      switch (menu.getIndex()) {</span>
+        case NEW_TOURNAMENT:
+<span class="fc" id="L133">          controller.notifyTournament();</span>
+<span class="fc" id="L134">          break;</span>
+        case NEW_SIMULATION:
+<span class="nc" id="L136">          controller.notifySim();</span>
+<span class="nc" id="L137">          break;</span>
+        case NEW_ROBOT:
+<span class="fc" id="L139">          controller.notifyNewRobot();</span>
+<span class="fc" id="L140">          break;</span>
+        case EXIT:
+<span class="nc" id="L142">          controller.notifyExit();</span>
+          break;
+      }
+    }
+<span class="fc" id="L146">  }</span>
+
+  /**
+   * Called every frame
+   */
+  @Override
+  public void render(float delta) {
+<span class="fc" id="L153">    Gdx.gl.glClearColor(1, 1, 1, 1);</span>
+<span class="fc" id="L154">    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="fc" id="L156">    batch.begin();</span>
+
+<span class="fc" id="L158">    handleKeyPresses();</span>
+
+    // Draw the title screen at the middle of the screen, centered
+<span class="fc" id="L161">    menuArtSprite.setPosition(SCREEN_WIDTH * 0.5f - menuArtSprite.getWidth() / 2,</span>
+<span class="fc" id="L162">        SCREEN_HEIGHT * 0.5f);</span>
+<span class="fc" id="L163">    menuArtSprite.draw(batch);</span>
+
+    // Draw the credits at the bottom right of the screen
+<span class="fc" id="L166">    menuCreditSprite.setPosition(SCREEN_WIDTH - menuCreditSprite.getWidth(), 0f);</span>
+<span class="fc" id="L167">    menuCreditSprite.draw(batch);</span>
+
+    // Draw the options
+<span class="fc" id="L170">    menuOptionsTournament.draw(batch);</span>
+<span class="fc" id="L171">    menuOptionsSimulation.draw(batch);</span>
+<span class="fc" id="L172">    menuOptionsNewRobot.draw(batch);</span>
+<span class="fc" id="L173">    menuOptionsExit.draw(batch);</span>
+
+<span class="fc" id="L175">    batch.end();</span>
+<span class="fc" id="L176">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

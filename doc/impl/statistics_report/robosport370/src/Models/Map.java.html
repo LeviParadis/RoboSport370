@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Map.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">Map.java</span></div><h1>Map.java</h1><pre class="source lang-java linenums"><span class="nc" id="L1">package Models;</span>
+
+import java.awt.Point;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import Controllers.gameVariables;
+
+public class Map {
+<span class="fc" id="L10">  public enum DIRECTION {</span>
+<span class="fc" id="L11">    NORTH(0, 1), SOUTH(0, -1), NORTH_WEST(-1, 0), NORTH_EAST(1, 1), SOUTH_WEST(-1,</span>
+<span class="fc" id="L12">        -1), SOUTH_EAST(1, 0);</span>
+
+    private final int xCoordinate;
+    private final int yCoordinate;
+
+<span class="fc" id="L17">    DIRECTION(int xCoordinate, int yCoordinate) {</span>
+<span class="fc" id="L18">      this.xCoordinate = xCoordinate;</span>
+<span class="fc" id="L19">      this.yCoordinate = yCoordinate;</span>
+<span class="fc" id="L20">    }</span>
+
+    public int getXCoord() {
+<span class="fc" id="L23">      return xCoordinate;</span>
+    }
+
+    public int getYCoord() {
+<span class="fc" id="L27">      return yCoordinate;</span>
+    }
+  }
+<span class="fc" id="L30">  public enum SIDE_VECTORS {</span>
+<span class="fc" id="L31">    SIDE_ZERO(1, 0), SIDE_ONE(0, -1), SIDE_TWO(-1, -1), SIDE_THREE(-1, 0), SIDE_FOUR(0,</span>
+<span class="fc" id="L32">        1), SIDE_FIVE(1, 1);</span>
+
+    private final int xCoordinate;
+    private final int yCoordinate;
+
+<span class="fc" id="L37">    SIDE_VECTORS(int xCoordinate, int yCoordinate) {</span>
+<span class="fc" id="L38">      this.xCoordinate = xCoordinate;</span>
+<span class="fc" id="L39">      this.yCoordinate = yCoordinate;</span>
+<span class="fc" id="L40">    }</span>
+
+    public int getXCoord() {
+<span class="fc" id="L43">      return xCoordinate;</span>
+    }
+
+    public int getYCoord() {
+<span class="fc" id="L47">      return yCoordinate;</span>
+    }
+
+  }
+  public static void main(String[] args) {
+<span class="nc" id="L52">    Map test = new Map();</span>
+<span class="nc" id="L53">    Tile one = new Tile(-1, -1);</span>
+<span class="nc" id="L54">    Tile two = new Tile(3, 4);</span>
+<span class="nc" id="L55">    System.out.println(test.getDirection(7, 2));</span>
+<span class="nc" id="L56">  }</span>
+<span class="fc" id="L57">  boolean test = false;</span>
+<span class="fc" id="L58">  private int mapDiameter = gameVariables.mapSize * 2 - 1;</span>
+
+<span class="fc" id="L60">  private int height = gameVariables.mapSize;</span>
+
+<span class="fc" id="L62">  private int mapSize = gameVariables.mapSize;</span>
+
+  private int xPosMax, xPosMin, yPosMax, yPosMin;
+
+<span class="fc" id="L66">  LinkedList&lt;Tile&gt; tiles = new LinkedList&lt;Tile&gt;();</span>
+
+<span class="fc" id="L68">  public Map() {</span>
+
+<span class="fc" id="L70">    int inity = 0;</span>
+<span class="fc" id="L71">    int blwHalfDepth = 0;</span>
+
+<span class="fc" id="L73">    xPosMax = this.mapSize - 1;</span>
+<span class="fc" id="L74">    yPosMax = this.mapSize - 1;</span>
+<span class="fc" id="L75">    xPosMin = -this.mapSize + 1;</span>
+<span class="fc" id="L76">    yPosMin = -this.mapSize + 1;</span>
+
+<span class="fc" id="L78">    int xPos = -(mapSize - 1);</span>
+<span class="fc" id="L79">    int yPos = inity;</span>
+
+<span class="fc" id="L81">    int count = 0;</span>
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">    for (int left = 0; left &lt; mapDiameter; left++) {</span>
+
+<span class="fc bfc" id="L85" title="All 2 branches covered.">      for (int y = 0; y &lt; height; y++) {</span>
+<span class="fc" id="L86">        Tile temp = new Tile(xPos, yPos);</span>
+<span class="fc" id="L87">        temp.setType(chooseIndex(left, y));</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (left &gt; ((mapDiameter - 1) / 2) + 1) {</span>
+
+<span class="fc" id="L90">          tiles.add(temp);</span>
+<span class="fc" id="L91">          yPos--;</span>
+<span class="fc" id="L92">        } else {</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">          if (height &gt; mapDiameter)</span>
+<span class="nc" id="L94">            height--;</span>
+<span class="fc" id="L95">          tiles.add(temp);</span>
+
+<span class="fc" id="L97">          yPos--;</span>
+        }
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (test) {</span>
+<span class="nc" id="L100">          System.out.print(&quot;(&quot; + temp.getXCoord() + &quot;,&quot; + temp.getYCoord() + &quot;)&quot; + temp.getCost());</span>
+        }
+
+<span class="fc" id="L103">        count++;</span>
+      }
+<span class="fc bfc" id="L105" title="All 2 branches covered.">      if (left &gt;= ((mapDiameter - 1) / 2)) {</span>
+<span class="fc" id="L106">        xPos++;</span>
+<span class="fc" id="L107">        yPos = mapSize - 1;</span>
+<span class="fc" id="L108">        height--;</span>
+<span class="fc" id="L109">      } else {</span>
+<span class="fc" id="L110">        blwHalfDepth++;</span>
+<span class="fc" id="L111">        xPos++;</span>
+<span class="fc" id="L112">        yPos = blwHalfDepth;</span>
+<span class="fc" id="L113">        height++;</span>
+      }
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">      if (test)</span>
+<span class="nc" id="L116">        System.out.println();</span>
+    }
+
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">    if (test)</span>
+<span class="nc" id="L120">      System.out.println(count);</span>
+<span class="fc" id="L121">  }</span>
+
+  /**
+   * This function finds a index (0 through 3) based on map position
+   * 
+   * @param tile the tile being chosen
+   * @param i the current column
+   * @param j the current height
+   * @return the index based of the current map tile
+   */
+  public int chooseIndex(int i, int j) {
+    // This is essentially a bunch of magic number manipulation
+    // It generates consistent results
+    // But makes it so the map isn't either random or just all of one type of tile
+<span class="pc bpc" id="L135" title="3 of 8 branches missed.">    if (i == 9 || i == 12 || (i == 3 &amp;&amp; j &gt; 7)) {</span>
+<span class="nc" id="L136">      return 1;</span>
+    }
+<span class="fc bfc" id="L138" title="All 6 branches covered.">    if ((i == 0 || i == mapDiameter - 1) &amp;&amp; j == mapSize - mapSize / 2 - 1) {</span>
+<span class="fc" id="L139">      return 1;</span>
+    }
+<span class="pc bpc" id="L141" title="1 of 6 branches missed.">    if (j &lt; i - mapSize &amp;&amp; (i % 3 == 2 || i % 3 == 2)) {</span>
+<span class="fc" id="L142">      return 2;</span>
+    }
+<span class="fc bfc" id="L144" title="All 2 branches covered.">    if (j &gt; i + 3) {</span>
+<span class="fc" id="L145">      return 2;</span>
+    }
+
+<span class="fc bfc" id="L148" title="All 6 branches covered.">    if (j &lt; 3 &amp;&amp; (i % 3 == 2 || i % 3 == 1)) {</span>
+<span class="fc" id="L149">      return 2;</span>
+    }
+<span class="fc bfc" id="L151" title="All 8 branches covered.">    if (i &lt; (mapDiameter / 2 + 1) &amp;&amp; i &lt; (mapDiameter / 2 - 1) &amp;&amp; (j % 3 == 2 || j % 3 == 1)) {</span>
+<span class="fc" id="L152">      return 3;</span>
+    }
+<span class="fc bfc" id="L154" title="All 6 branches covered.">    if ((i - 1 == mapSize / 2) &amp;&amp; j &lt; 6 &amp;&amp; j &gt; 3) {</span>
+<span class="fc" id="L155">      return 3;</span>
+    }
+<span class="fc bfc" id="L157" title="All 4 branches covered.">    if (i == mapSize / 2 + 3 &amp;&amp; j == 6) {</span>
+<span class="fc" id="L158">      return 3;</span>
+    }
+<span class="fc bfc" id="L160" title="All 8 branches covered.">    if (i &lt; 4 &amp;&amp; i &gt; 1 &amp;&amp; j &lt; 4 &amp;&amp; j &gt; 2) {</span>
+<span class="fc" id="L161">      return 10;</span>
+    }
+<span class="fc bfc" id="L163" title="All 4 branches covered.">    if (i &gt; 5 &amp;&amp; (j % 5 == 4)) {</span>
+<span class="fc" id="L164">      return 10;</span>
+    }
+<span class="fc" id="L166">    return 1;</span>
+  }
+
+  /**
+   * Returns the desired tile if it exist on the map
+   * 
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the tile desired if found otherwise returns null
+   */
+  public Tile findTile(int x, int y) {
+<span class="fc" id="L177">    Tile toRet = null;</span>
+
+<span class="fc" id="L179">    Iterator&lt;Tile&gt; iter = tiles.iterator();</span>
+<span class="fc" id="L180">    boolean found = false;</span>
+<span class="fc bfc" id="L181" title="All 4 branches covered.">    while (iter.hasNext() &amp;&amp; !found) {</span>
+<span class="fc" id="L182">      Tile temp = iter.next();</span>
+
+<span class="fc bfc" id="L184" title="All 4 branches covered.">      if (temp.getXCoord() == x &amp;&amp; temp.getYCoord() == y) {</span>
+<span class="fc" id="L185">        toRet = temp;</span>
+<span class="fc" id="L186">        found = true;</span>
+      }
+    }
+<span class="fc" id="L189">    return toRet;</span>
+  }
+
+  /**
+   * returns the direction coordinates with range 1 given the game direction (0,1,2,3...)
+   * 
+   * @param Direction the direction in game format (0,1,2,3...)
+   * @return returns the type DIrection with x and y coordinates
+   */
+  public Point getDirection(int direction, int range) {
+    int side;
+    int depthSide;
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">    if (range == 0) {</span>
+<span class="nc" id="L202">      side = 0;</span>
+<span class="nc" id="L203">      depthSide = 0;</span>
+<span class="nc" id="L204">    } else {</span>
+<span class="fc" id="L205">      side = direction / range;</span>
+<span class="fc" id="L206">      depthSide = direction % range;</span>
+    }
+
+
+    int retX, retY;
+
+<span class="fc" id="L212">    int x = 0, y = 0, sideX = 0, sideY = 0;</span>
+
+
+<span class="fc bfc" id="L215" title="All 2 branches covered.">    if (side == 0) {</span>
+<span class="fc" id="L216">      y = DIRECTION.NORTH.getYCoord();</span>
+<span class="fc" id="L217">      x = DIRECTION.NORTH.getXCoord();</span>
+<span class="fc" id="L218">      sideX = SIDE_VECTORS.SIDE_ZERO.getXCoord();</span>
+<span class="fc" id="L219">      sideY = SIDE_VECTORS.SIDE_ZERO.getYCoord();</span>
+
+<span class="fc bfc" id="L221" title="All 2 branches covered.">    } else if (side == 1) {</span>
+<span class="fc" id="L222">      y = DIRECTION.NORTH_EAST.getYCoord();</span>
+<span class="fc" id="L223">      x = DIRECTION.NORTH_EAST.getXCoord();</span>
+<span class="fc" id="L224">      sideX = SIDE_VECTORS.SIDE_ONE.getXCoord();</span>
+<span class="fc" id="L225">      sideY = SIDE_VECTORS.SIDE_ONE.getYCoord();</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">    } else if (side == 2) {</span>
+<span class="fc" id="L227">      y = DIRECTION.SOUTH_EAST.getYCoord();</span>
+<span class="fc" id="L228">      x = DIRECTION.SOUTH_EAST.getXCoord();</span>
+<span class="fc" id="L229">      sideX = SIDE_VECTORS.SIDE_TWO.getXCoord();</span>
+<span class="fc" id="L230">      sideY = SIDE_VECTORS.SIDE_TWO.getYCoord();</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">    } else if (side == 3) {</span>
+<span class="fc" id="L232">      y = DIRECTION.SOUTH.getYCoord();</span>
+<span class="fc" id="L233">      x = DIRECTION.SOUTH.getXCoord();</span>
+<span class="fc" id="L234">      sideX = SIDE_VECTORS.SIDE_THREE.getXCoord();</span>
+<span class="fc" id="L235">      sideY = SIDE_VECTORS.SIDE_THREE.getYCoord();</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">    } else if (side == 4) {</span>
+<span class="fc" id="L237">      y = DIRECTION.SOUTH_WEST.getYCoord();</span>
+<span class="fc" id="L238">      x = DIRECTION.SOUTH_WEST.getXCoord();</span>
+<span class="fc" id="L239">      sideX = SIDE_VECTORS.SIDE_FOUR.getXCoord();</span>
+<span class="fc" id="L240">      sideY = SIDE_VECTORS.SIDE_FOUR.getYCoord();</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">    } else if (side == 5) {</span>
+<span class="fc" id="L242">      y = DIRECTION.NORTH_WEST.getYCoord();</span>
+<span class="fc" id="L243">      x = DIRECTION.NORTH_WEST.getXCoord();</span>
+<span class="fc" id="L244">      sideX = SIDE_VECTORS.SIDE_FIVE.getXCoord();</span>
+<span class="fc" id="L245">      sideY = SIDE_VECTORS.SIDE_FIVE.getYCoord();</span>
+    }
+
+<span class="fc" id="L248">    retX = range * x + depthSide * sideX;</span>
+<span class="fc" id="L249">    retY = range * y + depthSide * sideY;</span>
+
+<span class="fc" id="L251">    return new Point(retX, retY);</span>
+
+
+  }
+
+  public int getMapDiameter() {
+<span class="nc" id="L257">    return this.mapDiameter;</span>
+  }
+
+  public int getMapSize() {
+<span class="fc" id="L261">    return this.mapSize;</span>
+  }
+
+  public LinkedList&lt;Tile&gt; getTiles() {
+<span class="nc" id="L265">    return this.tiles;</span>
+  }
+
+  public boolean isValidTile(Tile checkTile) {
+<span class="fc" id="L269">    int checkX = checkTile.getXCoord();</span>
+<span class="fc" id="L270">    int checkY = checkTile.getYCoord();</span>
+
+<span class="fc bfc" id="L272" title="All 2 branches covered.">    if (checkX == 0) {</span>
+      // if x is 0, y can range from yMin to yMax
+<span class="pc bpc" id="L274" title="2 of 4 branches missed.">      return (checkY &gt;= this.yPosMin &amp;&amp; checkY &lt;= this.yPosMax);</span>
+<span class="pc bpc" id="L275" title="1 of 4 branches missed.">    } else if (checkX &lt; 0 &amp;&amp; checkX &gt;= xPosMin) {</span>
+      // if x is negative, y can range from yMin to (yMax + x)
+<span class="pc bpc" id="L277" title="2 of 4 branches missed.">      return (checkY &gt;= this.yPosMin &amp;&amp; checkY &lt;= (this.yPosMax + checkX));</span>
+<span class="pc bpc" id="L278" title="2 of 4 branches missed.">    } else if (checkX &gt; 0 &amp;&amp; checkX &lt;= xPosMax) {</span>
+      // if x is positive, y can range from (yMin + x) to yMax
+<span class="pc bpc" id="L280" title="2 of 4 branches missed.">      return (checkY &gt;= (this.yPosMin + checkX) &amp;&amp; checkY &lt;= this.yPosMax);</span>
+    } else {
+<span class="nc" id="L282">      return false;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

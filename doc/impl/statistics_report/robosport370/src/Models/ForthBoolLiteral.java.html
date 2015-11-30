@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ForthBoolLiteral.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">ForthBoolLiteral.java</span></div><h1>ForthBoolLiteral.java</h1><pre class="source lang-java linenums">package Models;
+
+import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
+
+public class ForthBoolLiteral implements ForthWord {
+
+  /**
+   * @param wordString a plain text string
+   * @return whether or not the string represents a bool value
+   */
+  public static boolean isThisKind(String wordString) {
+<span class="pc bpc" id="L13" title="2 of 4 branches missed.">    return (wordString.equals(&quot;true&quot;) || wordString.equals(&quot;false&quot;));</span>
+  }
+
+  private boolean value;
+
+
+
+  /**
+   * Instantiate directly with a bool value
+   * 
+   * @param value the value to create a forth bool with
+   */
+<span class="nc" id="L25">  public ForthBoolLiteral(boolean value) {</span>
+<span class="nc" id="L26">    this.value = value;</span>
+<span class="nc" id="L27">  }</span>
+
+  /**
+   * instantiate with a string
+   * 
+   * @param wordString a string containing true or false
+   * @throws ForthParseException thrown if the string doesn't represent a bool
+   */
+<span class="nc" id="L35">  public ForthBoolLiteral(String wordString) throws ForthParseException {</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">    if (wordString.equals(&quot;true&quot;)) {</span>
+<span class="nc" id="L37">      this.value = true;</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">    } else if (wordString.equals(&quot;false&quot;)) {</span>
+<span class="nc" id="L39">      this.value = false;</span>
+<span class="nc" id="L40">    } else {</span>
+<span class="nc" id="L41">      throw new ForthParseException(&quot;attempted to instantiate a forth Bool with &quot; + wordString);</span>
+    }
+<span class="nc" id="L43">  }</span>
+
+
+  @Override
+  /**
+   * @return string encoding that can read by the forth parser
+   */
+  public String forthStringEncoding() {
+<span class="nc bnc" id="L51" title="All 2 branches missed.">    if (value) {</span>
+<span class="nc" id="L52">      return &quot;true&quot;;</span>
+    } else {
+<span class="nc" id="L54">      return &quot;false&quot;;</span>
+    }
+  }
+
+  /**
+   * 
+   * @return the bool value saved in the word
+   */
+  public boolean getValue() {
+<span class="nc" id="L63">    return value;</span>
+  }
+
+  /**
+   * @return the string value that is printed by forth in the console
+   */
+  @Override
+  public String toString() {
+<span class="nc" id="L71">    return &quot;pushing bool to stack: &quot; + forthStringEncoding();</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>EditRobotView.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Views</a> &gt; <span class="el_source">EditRobotView.java</span></div><h1>EditRobotView.java</h1><pre class="source lang-java linenums">package Views;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.json.simple.JSONArray;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+
+import Controllers.EditRobotController;
+import Interpreters.JsonInterpreter;
+import Models.Robot;
+
+public class EditRobotView extends AddRobotView {
+
+<span class="fc" id="L23">  private static final TextureAtlas redAtlas =</span>
+<span class="fc" id="L24">      new TextureAtlas(Gdx.files.internal(&quot;assets/ui_atlas/ui-red.atlas&quot;));</span>
+  private TextButton retireButton;
+
+  public EditRobotView(EditRobotController controller, Robot robot) {
+<span class="fc" id="L28">    super(controller);</span>
+<span class="fc" id="L29">    this.titleLabel.setText(&quot;Editing &quot; + robot.getName());</span>
+
+    // hide the name and team fields
+<span class="fc" id="L32">    this.table.removeActor(this.nameField);</span>
+<span class="fc" id="L33">    this.table.removeActor(this.teamField);</span>
+<span class="fc" id="L34">    this.table.removeActor(this.teamLabel);</span>
+<span class="fc" id="L35">    this.table.removeActor(this.nameLabel);</span>
+
+<span class="fc" id="L37">    int width = Gdx.graphics.getWidth();</span>
+<span class="fc" id="L38">    int height = Gdx.graphics.getHeight();</span>
+
+    // add a retire button
+<span class="fc" id="L41">    BitmapFont font = new BitmapFont();// (Gdx.files.internal(&quot;assets/MoonFlower.fnt&quot;),Gdx.files.internal(&quot;assets/MoonFlower.png&quot;),false);</span>
+<span class="fc" id="L42">    Skin skin = new Skin();</span>
+<span class="fc" id="L43">    skin.addRegions(redAtlas);</span>
+
+<span class="fc" id="L45">    TextButtonStyle textButtonStyle = new TextButtonStyle();</span>
+<span class="fc" id="L46">    textButtonStyle.font = font;</span>
+<span class="fc" id="L47">    textButtonStyle.up = skin.getDrawable(&quot;button_02&quot;);</span>
+<span class="fc" id="L48">    textButtonStyle.down = skin.getDrawable(&quot;button_01&quot;);</span>
+
+<span class="fc" id="L50">    retireButton = new TextButton(&quot;Retire Robot&quot;, textButtonStyle);</span>
+<span class="fc" id="L51">    retireButton.setPosition(width / 2 - 250, height - 150);</span>
+<span class="fc" id="L52">    retireButton.setSize(500, 50);</span>
+<span class="fc" id="L53">    retireButton.addListener(this);</span>
+<span class="fc" id="L54">    this.stage.addActor(retireButton);</span>
+
+    // set fields to start at the robot's stats
+
+    // set the forth code field
+<span class="fc" id="L59">    Set&lt;String&gt; vars = robot.getAllForthVariables();</span>
+<span class="fc" id="L60">    Set&lt;String&gt; wordNames = robot.getAllForthWords();</span>
+<span class="fc" id="L61">    HashMap&lt;String, String&gt; fullWords = new HashMap&lt;String, String&gt;();</span>
+<span class="fc" id="L62">    Iterator&lt;String&gt; it = wordNames.iterator();</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+<span class="fc" id="L64">      String wordName = it.next();</span>
+<span class="fc" id="L65">      String wordValue = robot.getForthWord(wordName);</span>
+<span class="fc" id="L66">      fullWords.put(wordName, wordValue);</span>
+    }
+<span class="fc" id="L68">    JSONArray json = JsonInterpreter.forthCodeToJson(vars, fullWords);</span>
+<span class="fc" id="L69">    this.forthField.setText(json.toJSONString());</span>
+
+
+
+    // for the health and power stats, we know that the base health is 1,
+    // and points can be used for either health or power. We can mark boxes as health
+    // points until health == 1, and then we can mark the power boxes
+<span class="fc" id="L76">    int healthValue = (int) robot.getHealth();</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">    if (healthValue &gt; 1) {</span>
+<span class="fc" id="L78">      this.health1.setChecked(true);</span>
+<span class="fc" id="L79">      healthValue--;</span>
+<span class="fc" id="L80">    } else {</span>
+<span class="nc" id="L81">      this.power1.setChecked(true);</span>
+    }
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">    if (healthValue &gt; 1) {</span>
+<span class="nc" id="L84">      this.health2.setChecked(true);</span>
+<span class="nc" id="L85">      healthValue--;</span>
+<span class="nc" id="L86">    } else {</span>
+<span class="fc" id="L87">      this.power2.setChecked(true);</span>
+    }
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    if (healthValue &gt; 1) {</span>
+<span class="nc" id="L90">      this.health3.setChecked(true);</span>
+<span class="nc" id="L91">      healthValue--;</span>
+<span class="nc" id="L92">    } else {</span>
+<span class="fc" id="L93">      this.power3.setChecked(true);</span>
+    }
+
+
+
+<span class="fc" id="L98">  }</span>
+
+  @Override
+  /**
+   * Handle the user pressing the retire button
+   */
+  public boolean handle(Event arg0) {
+<span class="fc" id="L105">    super.handle(arg0);</span>
+<span class="fc bfc" id="L106" title="All 4 branches covered.">    if (arg0.getTarget() instanceof TextButton &amp;&amp; ((TextButton) arg0.getTarget()).isPressed()) {</span>
+<span class="fc" id="L107">      TextButton sender = (TextButton) arg0.getTarget();</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">      if (sender == this.retireButton) {</span>
+<span class="nc" id="L109">        ((EditRobotController) this.controller).notifyRetire();</span>
+      }
+    }
+<span class="fc" id="L112">    return false;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

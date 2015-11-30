@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ForthParseException.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Exceptions</a> &gt; <span class="el_source">ForthParseException.java</span></div><h1>ForthParseException.java</h1><pre class="source lang-java linenums">package Exceptions;
+
+public class ForthParseException extends Exception {
+
+  /**
+   * this exception is thrown when the forth parser can't read the input string into forth logic
+   */
+
+  private static final long serialVersionUID = 7693870929853260732L;
+
+
+  public ForthParseException() {
+<span class="nc" id="L13">    super();</span>
+<span class="nc" id="L14">  }</span>
+
+  public ForthParseException(String message) {
+<span class="nc" id="L17">    super(message);</span>
+<span class="nc" id="L18">  }</span>
+
+  public ForthParseException(String message, Throwable cause) {
+<span class="nc" id="L21">    super(message, cause);</span>
+<span class="nc" id="L22">  }</span>
+
+  public ForthParseException(String message, Throwable cause, boolean enableSuppression,
+      boolean writableStackTrace) {
+<span class="nc" id="L26">    super(message, cause, enableSuppression, writableStackTrace);</span>
+<span class="nc" id="L27">  }</span>
+
+  public ForthParseException(Throwable cause) {
+<span class="nc" id="L30">    super(cause);</span>
+<span class="nc" id="L31">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>AddRobotController.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Controllers</a> &gt; <span class="el_source">AddRobotController.java</span></div><h1>AddRobotController.java</h1><pre class="source lang-java linenums">package Controllers;
+
+import javax.swing.JOptionPane;
+
+import Interpreters.JsonInterpreter;
+
+public class AddRobotController {
+
+<span class="fc" id="L9">  public AddRobotController() {</span>
+
+<span class="fc" id="L11">  }</span>
+
+  /**
+   * Called when the user presses the cancel button
+   */
+  public void notifyCancel() {
+<span class="nc" id="L17">    UIManager manager = UIManager.sharedInstance();</span>
+<span class="nc" id="L18">    manager.popScreen();</span>
+<span class="nc" id="L19">  }</span>
+
+
+  /**
+   * Called when the user presses the confirm button
+   * 
+   * @param name the text in the name field at the time of the button press
+   * @param team the text in the team field at the time of the button press
+   * @param forth the text in the forth field at the time of the button press
+   * @param movesLeft the number of moves for the checkbox values at the time of the button press
+   * @param firePower the amount of power for the checkbox values at the time of the button press
+   * @param health the amount of health for the checkbox values at the time of the button press
+   */
+  public void notifyDone(String name, String team, String forth, int movesLeft, int firePower,
+      int health) {
+    try {
+<span class="nc" id="L35">      JsonInterpreter.registerRobot(name, team, firePower, health, movesLeft, forth);</span>
+<span class="nc" id="L36">      UIManager manager = UIManager.sharedInstance();</span>
+<span class="nc" id="L37">      manager.popScreen();</span>
+<span class="nc" id="L38">    } catch (RuntimeException e) {</span>
+<span class="nc" id="L39">      JOptionPane.showMessageDialog(null, e.getMessage());</span>
+    }
+<span class="nc" id="L41">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

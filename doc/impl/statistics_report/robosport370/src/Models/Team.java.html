@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Team.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">Team.java</span></div><h1>Team.java</h1><pre class="source lang-java linenums">package Models;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class Team {
+  // the list of robots in the team. It's a queue so we can keep track of turn orders if we choose
+  // to
+  private Queue&lt;Robot&gt; robotList;
+  // a number assigned to this team by the simulator for id purposes
+  private int teamNumber;
+  // teams starting direction on map
+  private int teamStartDirection;
+
+  /**
+   * Default Constructor
+   * 
+   * @param robots a list of robots to make up the team
+   * @param uniqueNumber a number assigned to this team by the simulator for id purposes
+   */
+<span class="fc" id="L22">  public Team(Queue&lt;Robot&gt; robots, int uniqueNumber) {</span>
+
+<span class="fc" id="L24">    this.robotList = robots;</span>
+<span class="fc" id="L25">    this.teamNumber = uniqueNumber;</span>
+
+    // assign each robot it's id information for this game
+<span class="fc" id="L28">    Iterator&lt;Robot&gt; robotIterator = robots.iterator();</span>
+<span class="fc" id="L29">    int i = 0;</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">    while (robotIterator.hasNext()) {</span>
+<span class="fc" id="L31">      Robot thisRobot = robotIterator.next();</span>
+<span class="fc" id="L32">      thisRobot.setTeamIDs(uniqueNumber, i);</span>
+<span class="fc" id="L33">      i++;</span>
+    }
+    // increment unique number, so the next team will have a different number than this
+<span class="fc" id="L36">    uniqueNumber++;</span>
+<span class="fc" id="L37">  }</span>
+
+
+  /**
+   * @return an ordered list of all robots on the team
+   */
+  public Queue&lt;Robot&gt; getAllRobots() {
+<span class="fc" id="L44">    return this.robotList;</span>
+  }
+
+  /**
+   * @return an ordered list of all robots on the team that are still alive
+   */
+  public Queue&lt;Robot&gt; getLivingRobots() {
+<span class="fc" id="L51">    Queue&lt;Robot&gt; allRobots = this.getAllRobots();</span>
+
+<span class="fc" id="L53">    Queue&lt;Robot&gt; livingSet = new LinkedList&lt;Robot&gt;();</span>
+<span class="fc" id="L54">    Iterator&lt;Robot&gt; robotIterator = allRobots.iterator();</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">    while (robotIterator.hasNext()) {</span>
+<span class="fc" id="L56">      Robot thisRobot = robotIterator.next();</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">      if (thisRobot.isAlive()) {</span>
+<span class="fc" id="L58">        livingSet.add(thisRobot);</span>
+      }
+    }
+<span class="fc" id="L61">    return livingSet;</span>
+  }
+
+  public int getTeamDirection() {
+<span class="nc" id="L65">    return this.teamStartDirection;</span>
+  }
+
+
+  public Robot getTeamMember(int memberNumber) throws IndexOutOfBoundsException {
+<span class="nc" id="L70">    Robot[] array = (Robot[]) this.robotList.toArray();</span>
+<span class="nc" id="L71">    int size = array.length;</span>
+<span class="nc bnc" id="L72" title="All 4 branches missed.">    if (memberNumber &gt;= size || memberNumber &lt; 0) {</span>
+<span class="nc" id="L73">      throw new IndexOutOfBoundsException();</span>
+    } else {
+<span class="nc" id="L75">      return array[memberNumber];</span>
+    }
+  }
+
+  /**
+   * @return the team's name in a format for display
+   */
+  public String getTeamName() {
+<span class="fc" id="L83">    return &quot;Team &quot; + this.teamNumber;</span>
+
+  }
+
+  /**
+   * @return the team's unique number
+   */
+  public int getTeamNumber() {
+<span class="fc" id="L91">    return teamNumber;</span>
+  }
+
+  /**
+   * @return the number of robots that are still alive on the team
+   */
+  public int numberOfLivingRobots() {
+<span class="fc" id="L98">    Queue&lt;Robot&gt; livingSet = this.getLivingRobots();</span>
+<span class="fc" id="L99">    return livingSet.size();</span>
+  }
+
+  /**
+   * 
+   * Sets which part of the map that the team starts on
+   * 
+   * @param dir the direction to se the team
+   */
+  public void setTeamDirection(int dir) {
+<span class="fc" id="L109">    this.teamStartDirection = dir;</span>
+<span class="fc" id="L110">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

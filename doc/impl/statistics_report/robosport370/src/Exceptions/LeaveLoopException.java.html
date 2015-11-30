@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>LeaveLoopException.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Exceptions</a> &gt; <span class="el_source">LeaveLoopException.java</span></div><h1>LeaveLoopException.java</h1><pre class="source lang-java linenums">package Exceptions;
+
+public class LeaveLoopException extends Exception {
+
+  /**
+   * this exception is thrown when the forth interpreter encounters the leave word It should be
+   * caught in a loop handler function
+   */
+  private static final long serialVersionUID = -3088501869185907133L;
+
+  public LeaveLoopException() {
+<span class="nc" id="L12">    super();</span>
+<span class="nc" id="L13">  }</span>
+
+  public LeaveLoopException(String message) {
+<span class="nc" id="L16">    super(message);</span>
+<span class="nc" id="L17">  }</span>
+
+  public LeaveLoopException(String message, Throwable cause) {
+<span class="nc" id="L20">    super(message, cause);</span>
+<span class="nc" id="L21">  }</span>
+
+  public LeaveLoopException(String message, Throwable cause, boolean enableSuppression,
+      boolean writableStackTrace) {
+<span class="nc" id="L25">    super(message, cause, enableSuppression, writableStackTrace);</span>
+<span class="nc" id="L26">  }</span>
+
+  public LeaveLoopException(Throwable cause) {
+<span class="nc" id="L29">    super(cause);</span>
+<span class="nc" id="L30">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

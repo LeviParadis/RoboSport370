@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>setupController.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Controllers</a> &gt; <span class="el_source">setupController.java</span></div><h1>setupController.java</h1><pre class="source lang-java linenums">package Controllers;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import javax.swing.JOptionPane;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+
+import Interfaces.PickRobotsDelegate;
+import Models.Robot;
+import Models.Team;
+import Views.ManageRobotView;
+import Views.PickRobotsView;
+import Views.setupView;
+
+
+/**
+ * @author Corey
+ * @author Levi setupController handles the main menu and setup screens while interfacing with the
+ *         models
+ *
+ */
+public class setupController implements PickRobotsDelegate {
+  private Music introMusic;
+  public int mapSize;
+  public boolean isTournament, isSimulation;
+  public List&lt;Team&gt; selectedTeams;
+
+
+
+<span class="fc" id="L34">  public setupController() {</span>
+<span class="fc" id="L35">    introMusic = Gdx.audio.newMusic(Gdx.files.internal(&quot;assets/sound/Bit Quest.mp3&quot;));</span>
+<span class="fc" id="L36">    introMusic.setLooping(true);</span>
+<span class="fc" id="L37">    introMusic.setVolume(0.6f);</span>
+<span class="fc" id="L38">    introMusic.play();</span>
+<span class="fc" id="L39">    mapSize = 5;</span>
+<span class="fc" id="L40">    isTournament = false;</span>
+<span class="fc" id="L41">    isSimulation = false;</span>
+
+    // This is for testing my first screen
+<span class="fc" id="L44">    this.selectedTeams = new LinkedList&lt;Team&gt;();</span>
+<span class="fc" id="L45">  }</span>
+
+  public void notifyContinue() {
+    try {
+<span class="fc" id="L49">      new GameController(this.selectedTeams);</span>
+<span class="pc" id="L50">    } catch (RuntimeException e) {</span>
+<span class="nc" id="L51">      System.out.println(e);</span>
+<span class="nc" id="L52">      JOptionPane.showMessageDialog(null, e.getMessage());</span>
+    }
+<span class="fc" id="L54">  }</span>
+
+  public void notifyDebug() {
+<span class="fc" id="L57">    gameVariables.isDebug = true;</span>
+<span class="fc" id="L58">  }</span>
+
+  /**
+   * gets called when Setup view selects return
+   */
+  /**
+   * changes the screen when continue is pressed
+   */
+  // public void notifyAddTeam(){
+
+
+  /*
+   * if(this.selectedTeams.size() &lt; 6){
+   * 
+   * Queue&lt;Robot&gt; robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null,
+   * null, null); Team newTeam = new Team(robotList, this.selectedTeams.size());
+   * this.selectedTeams.add(newTeam);
+   * 
+   * System.out.println(this.selectedTeams); } else { System.out.println(&quot;already 6 teams&quot;); }
+   */
+  // }
+
+  public void notifyDeleteTeam() {
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">    if (!this.selectedTeams.isEmpty()) {</span>
+<span class="fc" id="L82">      this.selectedTeams.remove(this.selectedTeams.size() - 1);</span>
+<span class="fc" id="L83">      System.out.println(this.selectedTeams);</span>
+<span class="fc" id="L84">    } else {</span>
+<span class="nc" id="L85">      System.out.println(&quot;already empty&quot;);</span>
+    }
+<span class="fc" id="L87">  }</span>
+
+  /**
+   * gets called when the Main Menu view selects exit
+   */
+  public void notifyExit() {
+<span class="nc" id="L93">    Gdx.app.exit();</span>
+<span class="nc" id="L94">  }</span>
+
+  /**
+   * Handles storing the mapsize data
+   */
+  public void notifyMapSize() {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">    if (this.mapSize &lt; 11) {</span>
+<span class="fc" id="L101">      this.mapSize = this.mapSize + 2;</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    } else if (this.mapSize &gt;= 11) {</span>
+<span class="fc" id="L103">      this.mapSize = this.mapSize - 6;</span>
+    }
+<span class="fc" id="L105">    gameVariables.mapSize = this.mapSize;</span>
+<span class="fc" id="L106">  }</span>
+
+  public void notifyNewRobot() {
+<span class="fc" id="L109">    ManageRobotController cont = new ManageRobotController();</span>
+<span class="fc" id="L110">    ManageRobotView view = new ManageRobotView(cont);</span>
+<span class="fc" id="L111">    UIManager manager = UIManager.sharedInstance();</span>
+<span class="fc" id="L112">    manager.pushScreen(view);</span>
+<span class="fc" id="L113">  }</span>
+
+  public void notifyNewTeam() {
+
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">    if (this.selectedTeams.size() &lt; 6) {</span>
+<span class="fc" id="L118">      PickRobotsController cont = new PickRobotsController(4, 4, this);</span>
+<span class="fc" id="L119">      PickRobotsView view = new PickRobotsView(cont);</span>
+<span class="fc" id="L120">      UIManager manager = UIManager.sharedInstance();</span>
+<span class="fc" id="L121">      manager.pushScreen(view);</span>
+    }
+<span class="fc" id="L123">  }</span>
+
+  /**
+   * gets called when Setup view selects return
+   */
+  public void notifyReturn() {
+<span class="nc" id="L129">    UIManager manager = UIManager.sharedInstance();</span>
+<span class="nc" id="L130">    manager.popScreen();</span>
+<span class="nc" id="L131">    this.selectedTeams.clear();</span>
+<span class="nc" id="L132">  }</span>
+
+  /**
+   * Gets called when the Main Menu view selects a simulation
+   */
+  public void notifySim() {
+<span class="nc" id="L138">    UIManager manager = UIManager.sharedInstance();</span>
+<span class="nc" id="L139">    manager.pushScreen(new setupView(this));</span>
+<span class="nc" id="L140">    gameVariables.isSim = true;</span>
+<span class="nc" id="L141">  }</span>
+
+  /**
+   * Gets called when the Main Menu view selects tournament
+   * 
+   */
+  public void notifyTournament() {
+<span class="fc" id="L148">    UIManager manager = UIManager.sharedInstance();</span>
+
+<span class="fc" id="L150">    manager.pushScreen(new setupView(this));</span>
+    // System.out.println(&quot;Tournament&quot;);
+<span class="fc" id="L152">  }</span>
+
+  @Override
+  public void robotListFinished(Queue&lt;Robot&gt; listSelected) {
+
+<span class="fc" id="L157">    Team newTeam = new Team(listSelected, this.selectedTeams.size());</span>
+<span class="fc" id="L158">    this.selectedTeams.add(newTeam);</span>
+
+<span class="fc" id="L160">    UIManager manager = UIManager.sharedInstance();</span>
+<span class="fc" id="L161">    manager.popScreen();</span>
+<span class="fc" id="L162">  }</span>
+
+  @Override
+  public void robotsListCancelled() {
+<span class="nc" id="L166">    UIManager manager = UIManager.sharedInstance();</span>
+<span class="nc" id="L167">    manager.popScreen();</span>
+<span class="nc" id="L168">  }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>
