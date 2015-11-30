@@ -274,6 +274,9 @@ public class Map {
      * @return true if the tile is valid otherwise false.
      */
     public boolean isValidTile(Tile checkTile) {
+        if(checkTile == null){
+            return false;
+        }
         int checkX = checkTile.getXCoord();
         int checkY = checkTile.getYCoord();
 
