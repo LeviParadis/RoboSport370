@@ -1,4 +1,13 @@
-ROBOSPORT370 CHANGELOG [0.1.0]
+
+ROBOSPORT370 CHANGELOG 
+
+Alpha [0.0.2]
+-Robots now can move and shoot at each other
+-Robots will fight until a winner is determined
+-Robots will move around map using the logic they are provided
+
+
+Alpha[0.0.1]
 
 db5167f (HEAD -> master, origin/master) Updating Changelog
 3d409a8 Giving Changelog .md format
