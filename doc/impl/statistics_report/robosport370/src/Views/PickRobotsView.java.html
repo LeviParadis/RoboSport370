@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>PickRobotsView.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Views</a> &gt; <span class="el_source">PickRobotsView.java</span></div><h1>PickRobotsView.java</h1><pre class="source lang-java linenums">package Views;
+
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import javax.swing.JOptionPane;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
+
+import Controllers.PickRobotsController;
+import Models.Robot;
+
+public class PickRobotsView extends ScreenAdapter implements EventListener {
+
+<span class="fc" id="L37">  private static final TextureAtlas atlas =</span>
+<span class="fc" id="L38">      new TextureAtlas(Gdx.files.internal(&quot;assets/ui_atlas/ui-blue.atlas&quot;));</span>
+<span class="fc" id="L39">  private static final TextureAtlas grayAtlas =</span>
+<span class="fc" id="L40">      new TextureAtlas(Gdx.files.internal(&quot;assets/ui_atlas/ui-gray.atlas&quot;));</span>
+<span class="fc" id="L41">  private static final TextureAtlas commonAtlas =</span>
+<span class="fc" id="L42">      new TextureAtlas(Gdx.files.internal(&quot;assets/ui_atlas/ui-commons.atlas&quot;));</span>
+  private final Stage stage;
+
+  private TextButton confirmButton;
+  private TextButton searchButton;
+  private TextButton backButton;
+
+  private Table searchTable;
+  private Table resultsTable;
+  private Table rosterTable;
+  private Table robotInfoTable;
+
+  private CheckBoxStyle checkboxStyle;
+
+
+  private Queue&lt;Robot&gt; robotList;
+  private Queue&lt;Robot&gt; rosterList;
+  private Robot hoveredRobot;
+
+  private PickRobotsController controller;
+
+
+  private TextField nameSearchField;
+  private TextField teamSearchField;
+  private TextField minWinsSearchField;
+  private TextField maxWinsSearchField;
+  private TextField minLossesSearchField;
+  private TextField maxLossesSearchField;
+  private TextField minGamesPlayedSearchField;
+  private TextField maxGamesPlayedSearchField;
+  private CheckBox versionsSearchBox;
+
+
+  /**
+   * Set up the controller
+   * 
+   * @param controller the controller we are setting up
+   */
+<span class="fc" id="L80">  public PickRobotsView(PickRobotsController controller) {</span>
+<span class="fc" id="L81">    robotList = new LinkedList&lt;Robot&gt;();</span>
+<span class="fc" id="L82">    rosterList = new LinkedList&lt;Robot&gt;();</span>
+
+<span class="fc" id="L84">    this.controller = controller;</span>
+
+<span class="fc" id="L86">    int width = Gdx.graphics.getWidth();</span>
+<span class="fc" id="L87">    int height = Gdx.graphics.getHeight();</span>
+
+    // set up the stage
+<span class="fc" id="L90">    stage = new Stage();</span>
+
+<span class="fc" id="L92">    BitmapFont font = new BitmapFont();</span>
+<span class="fc" id="L93">    Skin skin = new Skin();</span>
+<span class="fc" id="L94">    skin.addRegions(atlas);</span>
+
+<span class="fc" id="L96">    Skin inactiveSkin = new Skin();</span>
+<span class="fc" id="L97">    inactiveSkin.addRegions(grayAtlas);</span>
+
+<span class="fc" id="L99">    Skin selectionSkin = new Skin();</span>
+<span class="fc" id="L100">    selectionSkin.addRegions(commonAtlas);</span>
+
+
+    // set up button styles
+<span class="fc" id="L104">    TextButtonStyle buttonStyle = new TextButtonStyle();</span>
+<span class="fc" id="L105">    buttonStyle.font = font;</span>
+<span class="fc" id="L106">    buttonStyle.up = skin.getDrawable(&quot;button_02&quot;);</span>
+<span class="fc" id="L107">    buttonStyle.down = skin.getDrawable(&quot;button_01&quot;);</span>
+<span class="fc" id="L108">    buttonStyle.disabled = inactiveSkin.getDrawable(&quot;button_01&quot;);</span>
+
+    // set up text field styles
+<span class="fc" id="L111">    TextFieldStyle textFieldStyle = new TextFieldStyle();</span>
+<span class="fc" id="L112">    textFieldStyle.background = skin.getDrawable(&quot;textbox_01&quot;);</span>
+<span class="fc" id="L113">    textFieldStyle.font = font;</span>
+<span class="fc" id="L114">    textFieldStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L115">    textFieldStyle.cursor = skin.getDrawable(&quot;textbox_cursor_02&quot;);</span>
+<span class="fc" id="L116">    textFieldStyle.selection = selectionSkin.getDrawable(&quot;transparent-black-30&quot;);</span>
+
+
+    // set up label styles
+<span class="fc" id="L120">    LabelStyle labelStyle = new LabelStyle();</span>
+<span class="fc" id="L121">    labelStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L122">    labelStyle.font = font;</span>
+
+    // set up checkbox styles
+<span class="fc" id="L125">    checkboxStyle = new CheckBoxStyle();</span>
+<span class="fc" id="L126">    checkboxStyle.checkboxOn = skin.getDrawable(&quot;checkbox_on&quot;);</span>
+<span class="fc" id="L127">    checkboxStyle.checkboxOff = skin.getDrawable(&quot;checkbox_off&quot;);</span>
+<span class="fc" id="L128">    checkboxStyle.checkboxOffDisabled = inactiveSkin.getDrawable(&quot;checkbox_off&quot;);</span>
+<span class="fc" id="L129">    checkboxStyle.checkboxOnDisabled = inactiveSkin.getDrawable(&quot;checkbox_on&quot;);</span>
+<span class="fc" id="L130">    checkboxStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L131">    checkboxStyle.font = font;</span>
+
+
+    // set up the title
+    String titleString;
+<span class="fc bfc" id="L136" title="All 2 branches covered.">    if (controller.getMaxSelectable() == 1) {</span>
+<span class="fc" id="L137">      titleString = &quot;Select a Robot&quot;;</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">    } else if (controller.getMinimumSelectable() == controller.getMinimumSelectable()) {</span>
+<span class="fc" id="L139">      titleString = &quot;Select &quot; + controller.getMinimumSelectable() + &quot; Robots&quot;;</span>
+<span class="fc" id="L140">    } else {</span>
+<span class="nc" id="L141">      titleString = &quot;Select &quot; + controller.getMinimumSelectable() + &quot; - &quot;</span>
+<span class="nc" id="L142">          + controller.getMinimumSelectable() + &quot; Robots&quot;;</span>
+    }
+<span class="fc" id="L144">    Label titleLabel = new Label(titleString, labelStyle);</span>
+<span class="fc" id="L145">    titleLabel.setPosition(width / 2 - 100, height - 50);</span>
+<span class="fc" id="L146">    titleLabel.setFontScale(2);</span>
+
+    // set up buttons on the bottom
+<span class="fc" id="L149">    backButton = new TextButton(&quot;Cancel&quot;, buttonStyle);</span>
+<span class="fc" id="L150">    backButton.setPosition(100, 50);</span>
+<span class="fc" id="L151">    backButton.setSize(500, 50);</span>
+<span class="fc" id="L152">    backButton.addListener(this);</span>
+
+
+<span class="fc" id="L155">    confirmButton = new TextButton(&quot;Confirm&quot;, buttonStyle);</span>
+<span class="fc" id="L156">    confirmButton.setPosition(width - 600, 50);</span>
+<span class="fc" id="L157">    confirmButton.setSize(500, 50);</span>
+<span class="fc" id="L158">    confirmButton.addListener(this);</span>
+
+<span class="fc" id="L160">    searchButton = new TextButton(&quot;Search&quot;, buttonStyle);</span>
+<span class="fc" id="L161">    searchButton.setPosition(width - 200, 50);</span>
+<span class="fc" id="L162">    searchButton.setSize(500, 50);</span>
+<span class="fc" id="L163">    searchButton.addListener(this);</span>
+
+
+    // set up tables
+<span class="fc" id="L167">    Table masterTable = new Table();</span>
+<span class="fc" id="L168">    masterTable.setFillParent(true);</span>
+
+<span class="fc" id="L170">    Table searchTable = new Table();</span>
+<span class="fc" id="L171">    searchTable.setColor(Color.BLUE);</span>
+<span class="fc" id="L172">    resultsTable = new Table();</span>
+<span class="fc" id="L173">    rosterTable = new Table();</span>
+<span class="fc" id="L174">    robotInfoTable = new Table();</span>
+
+<span class="fc" id="L176">    Label searchTitle = new Label(&quot;Search&quot;, labelStyle);</span>
+<span class="fc" id="L177">    Label resultsTitle = new Label(&quot;Robot List&quot;, labelStyle);</span>
+<span class="fc" id="L178">    Label rosterTitle = new Label(&quot;Selected List&quot;, labelStyle);</span>
+<span class="fc" id="L179">    Label infoTitle = new Label(&quot;Robot Info (Hover Over Name)&quot;, labelStyle);</span>
+
+    // set up scroll bar style
+<span class="fc" id="L182">    ScrollPaneStyle scrollStyle = new ScrollPaneStyle();</span>
+<span class="fc" id="L183">    scrollStyle.vScrollKnob = skin.getDrawable(&quot;slider_back_ver&quot;);</span>
+<span class="fc" id="L184">    scrollStyle.hScrollKnob = skin.getDrawable(&quot;slider_back_hor&quot;);</span>
+
+    // put lists in scroll panes, so we can scroll to see all entries
+<span class="fc" id="L187">    ScrollPane scrollResults = new ScrollPane(resultsTable, scrollStyle);</span>
+<span class="fc" id="L188">    scrollResults.setFadeScrollBars(false);</span>
+<span class="fc" id="L189">    ScrollPane scrollRoster = new ScrollPane(rosterTable, scrollStyle);</span>
+<span class="fc" id="L190">    scrollRoster.setFadeScrollBars(false);</span>
+
+    // set up the master table, that contains all other tables
+    // gives us our 4 column layout
+<span class="fc" id="L194">    masterTable.add(searchTitle);</span>
+<span class="fc" id="L195">    masterTable.add(resultsTitle);</span>
+<span class="fc" id="L196">    masterTable.add(rosterTitle);</span>
+<span class="fc" id="L197">    masterTable.add(infoTitle);</span>
+<span class="fc" id="L198">    masterTable.row();</span>
+<span class="fc" id="L199">    masterTable.add(searchTable).width(200).padRight(80);</span>
+<span class="fc" id="L200">    masterTable.add(scrollResults).width(200).height(400).padRight(80);</span>
+<span class="fc" id="L201">    masterTable.add(scrollRoster).width(200).height(400);</span>
+<span class="fc" id="L202">    masterTable.add(robotInfoTable).width(200);</span>
+
+    // set up search filter column
+<span class="fc" id="L205">    Label nameSearchLabel = new Label(&quot;Robot Name:&quot;, labelStyle);</span>
+<span class="fc" id="L206">    Label teamSearchLabel = new Label(&quot;Team Name:&quot;, labelStyle);</span>
+<span class="fc" id="L207">    Label minWinsSearchLabel = new Label(&quot;Min Wins:&quot;, labelStyle);</span>
+<span class="fc" id="L208">    Label maxWinsSearchLabel = new Label(&quot;Max Wins:&quot;, labelStyle);</span>
+<span class="fc" id="L209">    Label minLossesSearchLabel = new Label(&quot;Min Losses:&quot;, labelStyle);</span>
+<span class="fc" id="L210">    Label maxLossesSearchLabel = new Label(&quot;Max Losses:&quot;, labelStyle);</span>
+<span class="fc" id="L211">    Label minGamesPlayedSearchLabel = new Label(&quot;Min Matches:&quot;, labelStyle);</span>
+<span class="fc" id="L212">    Label maxGamesPlayedSearchLabel = new Label(&quot;Max Matches:&quot;, labelStyle);</span>
+<span class="fc" id="L213">    Label allVersionsSearchLabel = new Label(&quot;All Versions:&quot;, labelStyle);</span>
+<span class="fc" id="L214">    nameSearchField = new TextField(&quot;*&quot;, textFieldStyle);</span>
+<span class="fc" id="L215">    teamSearchField = new TextField(&quot;C3&quot;, textFieldStyle);</span>
+<span class="fc" id="L216">    minWinsSearchField = new TextField(&quot;0&quot;, textFieldStyle);</span>
+<span class="fc" id="L217">    maxWinsSearchField = new TextField(&quot;1000&quot;, textFieldStyle);</span>
+<span class="fc" id="L218">    minLossesSearchField = new TextField(&quot;0&quot;, textFieldStyle);</span>
+<span class="fc" id="L219">    maxLossesSearchField = new TextField(&quot;1000&quot;, textFieldStyle);</span>
+<span class="fc" id="L220">    minGamesPlayedSearchField = new TextField(&quot;0&quot;, textFieldStyle);</span>
+<span class="fc" id="L221">    maxGamesPlayedSearchField = new TextField(&quot;1000&quot;, textFieldStyle);</span>
+<span class="fc" id="L222">    versionsSearchBox = new CheckBox(&quot;&quot;, checkboxStyle);</span>
+<span class="fc" id="L223">    versionsSearchBox.setChecked(true);</span>
+<span class="fc" id="L224">    searchTable.row();</span>
+<span class="fc" id="L225">    searchTable.add(nameSearchLabel).padBottom(5);</span>
+<span class="fc" id="L226">    searchTable.add(nameSearchField).padBottom(5);</span>
+<span class="fc" id="L227">    searchTable.row();</span>
+<span class="fc" id="L228">    searchTable.add(teamSearchLabel).padBottom(5);</span>
+<span class="fc" id="L229">    searchTable.add(teamSearchField).padBottom(5);</span>
+<span class="fc" id="L230">    searchTable.row();</span>
+<span class="fc" id="L231">    searchTable.add(minWinsSearchLabel).padBottom(5);</span>
+<span class="fc" id="L232">    searchTable.add(minWinsSearchField).padBottom(5);</span>
+<span class="fc" id="L233">    searchTable.row();</span>
+<span class="fc" id="L234">    searchTable.add(maxWinsSearchLabel).padBottom(5);</span>
+<span class="fc" id="L235">    searchTable.add(maxWinsSearchField).padBottom(5);</span>
+<span class="fc" id="L236">    searchTable.row();</span>
+<span class="fc" id="L237">    searchTable.add(minLossesSearchLabel).padBottom(5);</span>
+<span class="fc" id="L238">    searchTable.add(minLossesSearchField).padBottom(5);</span>
+<span class="fc" id="L239">    searchTable.row();</span>
+<span class="fc" id="L240">    searchTable.add(maxLossesSearchLabel).padBottom(5);</span>
+<span class="fc" id="L241">    searchTable.add(maxLossesSearchField).padBottom(5);</span>
+<span class="fc" id="L242">    searchTable.row();</span>
+<span class="fc" id="L243">    searchTable.add(minGamesPlayedSearchLabel).padBottom(5);</span>
+<span class="fc" id="L244">    searchTable.add(minGamesPlayedSearchField).padBottom(5);</span>
+<span class="fc" id="L245">    searchTable.row();</span>
+<span class="fc" id="L246">    searchTable.add(maxGamesPlayedSearchLabel).padBottom(5);</span>
+<span class="fc" id="L247">    searchTable.add(maxGamesPlayedSearchField).padBottom(5);</span>
+<span class="fc" id="L248">    searchTable.row();</span>
+<span class="fc" id="L249">    searchTable.add(allVersionsSearchLabel).padBottom(5);</span>
+<span class="fc" id="L250">    searchTable.add(versionsSearchBox).padBottom(5);</span>
+<span class="fc" id="L251">    searchTable.row();</span>
+<span class="fc" id="L252">    searchTable.add(searchButton);</span>
+
+    // add actors to stage
+<span class="fc" id="L255">    stage.addActor(titleLabel);</span>
+<span class="fc" id="L256">    stage.addActor(backButton);</span>
+<span class="fc" id="L257">    stage.addActor(confirmButton);</span>
+<span class="fc" id="L258">    stage.addActor(masterTable);</span>
+
+    // refresh list once, to update the confirm button's state in case it should be disabled
+<span class="fc" id="L261">    this.refreshRosterList();</span>
+
+<span class="fc" id="L263">  }</span>
+
+
+  /**
+   * Called to do garbage collection
+   */
+  @Override
+  public void dispose() {
+<span class="nc" id="L271">    this.stage.dispose();</span>
+<span class="nc" id="L272">  }</span>
+
+  @Override
+  /**
+   * We use this to handle button presses, check box marks, and other events
+   */
+  public boolean handle(Event arg0) {
+<span class="fc bfc" id="L279" title="All 2 branches covered.">    if (arg0.getTarget() instanceof CheckBox) {</span>
+      // handle check box marks
+<span class="fc" id="L281">      CheckBox checked = (CheckBox) arg0.getTarget();</span>
+<span class="fc" id="L282">      boolean isChecked = checked.isChecked();</span>
+<span class="fc" id="L283">      Robot selectedRobot = (Robot) arg0.getTarget().getUserObject();</span>
+
+<span class="fc" id="L285">      handleCheckBoxEvent(checked, isChecked, selectedRobot);</span>
+
+<span class="fc bfc" id="L287" title="All 2 branches covered.">    } else if (arg0.getTarget() instanceof TextButton</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">        &amp;&amp; ((TextButton) arg0.getTarget()).isPressed()) {</span>
+      // handle button presses
+<span class="fc" id="L290">      TextButton sender = (TextButton) arg0.getTarget();</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">      if (sender == this.confirmButton) {</span>
+<span class="fc" id="L292">        this.controller.notifyConfirm(this.rosterList);</span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">      } else if (sender == this.backButton) {</span>
+<span class="fc" id="L294">        this.controller.notifyCancel();</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">      } else if (sender == this.searchButton) {</span>
+<span class="fc" id="L296">        handleSearchButtonPress();</span>
+      }
+<span class="fc bfc" id="L298" title="All 2 branches covered.">    } else if (arg0.getTarget() instanceof Label</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        &amp;&amp; arg0.getTarget().getUserObject() instanceof Robot) {</span>
+      // handle label hovers
+<span class="fc" id="L301">      Robot currentRobot = (Robot) arg0.getTarget().getUserObject();</span>
+<span class="fc" id="L302">      hoveredRobot = currentRobot;</span>
+<span class="fc" id="L303">      refreshInfoList();</span>
+    }
+<span class="fc" id="L305">    return false;</span>
+  }
+
+
+  /**
+   * Function to handle check box checks. Will update the data models accordingly, and refresh views
+   * 
+   * @param checked the box that was checked
+   * @param isChecked the check state of the box
+   * @param selectedRobot the robot associated with this check box
+   */
+  protected void handleCheckBoxEvent(CheckBox checked, boolean isChecked, Robot selectedRobot) {
+<span class="pc bpc" id="L317" title="1 of 2 branches missed.">    if (checked.getParent() == this.resultsTable) {</span>
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">      if (isChecked) {</span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        if (rosterList.size() &lt; controller.getMaxSelectable()) {</span>
+<span class="fc" id="L320">          rosterList.add(selectedRobot);</span>
+<span class="fc" id="L321">        } else {</span>
+<span class="nc" id="L322">          checked.setChecked(false);</span>
+        }
+<span class="nc" id="L324">      } else {</span>
+<span class="nc" id="L325">        rosterList.remove(selectedRobot);</span>
+      }
+<span class="nc" id="L327">    } else {</span>
+<span class="nc" id="L328">      rosterList.remove(selectedRobot);</span>
+    }
+<span class="fc" id="L330">    refreshRosterList();</span>
+<span class="fc" id="L331">    refreshResultsList();</span>
+<span class="fc" id="L332">  }</span>
+
+
+  /**
+   * Called when the user presses the search button. Will retrieve new robots from the server, and
+   * update the view
+   */
+  protected void handleSearchButtonPress() {
+<span class="fc" id="L340">    String name = nameSearchField.getText();</span>
+<span class="fc" id="L341">    String team = teamSearchField.getText();</span>
+<span class="fc" id="L342">    String minWins = minWinsSearchField.getText();</span>
+<span class="fc" id="L343">    String maxWins = maxWinsSearchField.getText();</span>
+<span class="fc" id="L344">    String minLosses = minLossesSearchField.getText();</span>
+<span class="fc" id="L345">    String maxLosses = maxLossesSearchField.getText();</span>
+<span class="fc" id="L346">    String minGamesPlayed = minGamesPlayedSearchField.getText();</span>
+<span class="fc" id="L347">    String maxGamesPlayed = maxGamesPlayedSearchField.getText();</span>
+<span class="fc" id="L348">    boolean allVersions = versionsSearchBox.isChecked();</span>
+    try {
+<span class="fc" id="L350">      this.robotList = this.controller.notifySearch(name, team, minWins, maxWins, minLosses,</span>
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">          maxLosses, minGamesPlayed, maxGamesPlayed, !allVersions);</span>
+<span class="pc" id="L352">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L353">      JOptionPane.showMessageDialog(null, &quot;Min and Max Values Must be Integers&quot;);</span>
+    }
+<span class="fc" id="L355">    refreshResultsList();</span>
+<span class="fc" id="L356">  }</span>
+
+  /**
+   * Called when the robot's info needs to be updated. Will be called when the user hovers over a
+   * new robot
+   */
+  public void refreshInfoList() {
+<span class="fc" id="L363">    LabelStyle labelStyle = new LabelStyle();</span>
+<span class="fc" id="L364">    labelStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L365">    labelStyle.font = new BitmapFont();</span>
+
+<span class="fc" id="L367">    this.robotInfoTable.clear();</span>
+<span class="fc" id="L368">    Label nameInfoLabel = new Label(&quot;Name:&quot;, labelStyle);</span>
+<span class="fc" id="L369">    Label winsInfoLabel = new Label(&quot;Total Wins:&quot;, labelStyle);</span>
+<span class="fc" id="L370">    Label lossesInfoLabel = new Label(&quot;Total Losses:&quot;, labelStyle);</span>
+<span class="fc" id="L371">    Label healthInfoLabel = new Label(&quot;Starting Health:&quot;, labelStyle);</span>
+<span class="fc" id="L372">    Label powerInfoLabel = new Label(&quot;Damage Per Shot:&quot;, labelStyle);</span>
+<span class="fc" id="L373">    Label movementInfoLabel = new Label(&quot;Moves Per Turn:&quot;, labelStyle);</span>
+
+<span class="fc" id="L375">    Label nameRobotLabel = new Label(hoveredRobot.getName(), labelStyle);</span>
+<span class="fc" id="L376">    Label winsRobotLabel = new Label(String.valueOf(hoveredRobot.getStats().getWins()), labelStyle);</span>
+<span class="fc" id="L377">    Label lossesRobotLabel =</span>
+<span class="fc" id="L378">        new Label(String.valueOf(hoveredRobot.getStats().getLosses()), labelStyle);</span>
+<span class="fc" id="L379">    Label healthRobotLabel = new Label(String.valueOf(hoveredRobot.getBaseHealth()), labelStyle);</span>
+<span class="fc" id="L380">    Label powerRobotLabel = new Label(String.valueOf(hoveredRobot.getStrength()), labelStyle);</span>
+<span class="fc" id="L381">    Label movementRobotLabel =</span>
+<span class="fc" id="L382">        new Label(String.valueOf(hoveredRobot.getMovesPerTurn()), labelStyle);</span>
+
+<span class="fc" id="L384">    this.robotInfoTable.row();</span>
+<span class="fc" id="L385">    this.robotInfoTable.add(nameInfoLabel).padBottom(5);</span>
+<span class="fc" id="L386">    this.robotInfoTable.add(nameRobotLabel).padBottom(5);</span>
+<span class="fc" id="L387">    this.robotInfoTable.row();</span>
+<span class="fc" id="L388">    this.robotInfoTable.add(winsInfoLabel).padBottom(5);</span>
+<span class="fc" id="L389">    this.robotInfoTable.add(winsRobotLabel).padBottom(5);</span>
+<span class="fc" id="L390">    this.robotInfoTable.row();</span>
+<span class="fc" id="L391">    this.robotInfoTable.add(lossesInfoLabel).padBottom(5);</span>
+<span class="fc" id="L392">    this.robotInfoTable.add(lossesRobotLabel).padBottom(5);</span>
+<span class="fc" id="L393">    this.robotInfoTable.row();</span>
+<span class="fc" id="L394">    this.robotInfoTable.add(healthInfoLabel).padBottom(5);</span>
+<span class="fc" id="L395">    this.robotInfoTable.add(healthRobotLabel).padBottom(5);</span>
+<span class="fc" id="L396">    this.robotInfoTable.row();</span>
+<span class="fc" id="L397">    this.robotInfoTable.add(powerInfoLabel).padBottom(5);</span>
+<span class="fc" id="L398">    this.robotInfoTable.add(powerRobotLabel).padBottom(5);</span>
+<span class="fc" id="L399">    this.robotInfoTable.row();</span>
+<span class="fc" id="L400">    this.robotInfoTable.add(movementInfoLabel).padBottom(5);</span>
+<span class="fc" id="L401">    this.robotInfoTable.add(movementRobotLabel).padBottom(5);</span>
+<span class="fc" id="L402">    this.robotInfoTable.padLeft(100);</span>
+<span class="fc" id="L403">  }</span>
+
+  /**
+   * called when the list of robots needs to be updated Will be called when the user performs does a
+   * new search
+   */
+  public void refreshResultsList() {
+<span class="fc" id="L410">    LabelStyle labelStyle = new LabelStyle();</span>
+<span class="fc" id="L411">    labelStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L412">    labelStyle.font = new BitmapFont();</span>
+
+<span class="fc" id="L414">    this.resultsTable.clear();</span>
+<span class="fc" id="L415">    Iterator&lt;Robot&gt; it = this.robotList.iterator();</span>
+
+<span class="fc bfc" id="L417" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+      // set show the robot's name and a check box for each robot in the list
+<span class="fc" id="L419">      Robot next = it.next();</span>
+<span class="fc" id="L420">      Label nameLabel = new Label(next.getName(), labelStyle);</span>
+<span class="fc" id="L421">      CheckBox box = new CheckBox(&quot;&quot;, checkboxStyle);</span>
+
+<span class="fc bfc" id="L423" title="All 2 branches covered.">      if (this.rosterList.contains(next)) {</span>
+        // if the robot is already in the roster, check the box
+<span class="fc" id="L425">        box.setChecked(true);</span>
+<span class="fc bfc" id="L426" title="All 2 branches covered.">      } else if (rosterList.size() &gt;= this.controller.getMaxSelectable()) {</span>
+        // if we've added the max already, disable all unchecked boxes
+<span class="fc" id="L428">        box.setDisabled(true);</span>
+      }
+
+<span class="fc" id="L431">      box.setUserObject(next);</span>
+<span class="fc" id="L432">      box.addListener(this);</span>
+<span class="fc" id="L433">      nameLabel.setUserObject(next);</span>
+<span class="fc" id="L434">      nameLabel.addListener(this);</span>
+<span class="fc" id="L435">      this.resultsTable.add(nameLabel).padBottom(10).padRight(50);</span>
+<span class="fc" id="L436">      this.resultsTable.add(box).padBottom(10);</span>
+<span class="fc" id="L437">      this.resultsTable.row();</span>
+    }
+<span class="fc" id="L439">  }</span>
+
+  /**
+   * called when the current roster list needs to be updated Will be called when the user selects or
+   * removes a robot from the list
+   */
+  public void refreshRosterList() {
+<span class="fc" id="L446">    LabelStyle labelStyle = new LabelStyle();</span>
+<span class="fc" id="L447">    labelStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L448">    labelStyle.font = new BitmapFont();</span>
+
+<span class="fc" id="L450">    this.rosterTable.clear();</span>
+<span class="fc" id="L451">    Iterator&lt;Robot&gt; it = this.rosterList.iterator();</span>
+
+<span class="fc bfc" id="L453" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+      // set show the robot's name and a check box for each robot in the list
+<span class="fc" id="L455">      Robot next = it.next();</span>
+<span class="fc" id="L456">      Label nameLabel = new Label(next.getName(), labelStyle);</span>
+<span class="fc" id="L457">      nameLabel.addListener(this);</span>
+<span class="fc" id="L458">      nameLabel.setUserObject(next);</span>
+<span class="fc" id="L459">      CheckBox box = new CheckBox(&quot;&quot;, checkboxStyle);</span>
+<span class="fc" id="L460">      box.setUserObject(next);</span>
+<span class="fc" id="L461">      box.setChecked(true);</span>
+<span class="fc" id="L462">      box.addListener(this);</span>
+<span class="fc" id="L463">      this.rosterTable.add(nameLabel).padBottom(10).padRight(50);</span>
+<span class="fc" id="L464">      this.rosterTable.add(box).padBottom(10);</span>
+<span class="fc" id="L465">      this.rosterTable.row();</span>
+    }
+<span class="fc" id="L467">    int size = this.rosterList.size();</span>
+
+<span class="fc bfc" id="L469" title="All 2 branches covered.">    this.confirmButton.setDisabled(size &lt; controller.getMinimumSelectable());</span>
+
+<span class="fc" id="L471">  }</span>
+
+  /**
+   * render the scene
+   */
+  @Override
+  public void render(float delta) {
+<span class="fc" id="L478">    Gdx.gl.glClearColor(1, 1, 1, 1);</span>
+<span class="fc" id="L479">    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+<span class="fc" id="L480">    stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));</span>
+<span class="fc" id="L481">    stage.draw();</span>
+<span class="fc" id="L482">  }</span>
+
+  /**
+   * set this screen to receive buttons whenever it becomes active
+   */
+  @Override
+  public void show() {
+<span class="fc" id="L489">    Gdx.input.setInputProcessor(stage);</span>
+<span class="fc" id="L490">  }</span>
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

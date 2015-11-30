@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>setupView.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Views</a> &gt; <span class="el_source">setupView.java</span></div><h1>setupView.java</h1><pre class="source lang-java linenums">package Views;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+
+import Controllers.setupController;
+import Models.Team;
+
+/**
+ * A GUI view for the setup screen
+ * 
+ * @author Corey Reviewed by:
+ *
+ */
+public class setupView extends ScreenAdapter {
+  // Constants for the switch statement
+  private static final int ADD_TEAM = 1;
+
+  private static final int DELETE_TEAM = 2;
+  private static final int TOGGLE_MAP_SIZE = 3;
+
+  private static final int TOGGLE_DEBUG_MODE = 4;
+  private static final int CONTINUE = 5;
+  private static final int RETURN = 6;
+<span class="fc" id="L43">  private static final Integer menOpSrcX = 0;</span>
+<span class="fc" id="L44">  private static final Integer menOpSrcY = 31;</span>
+<span class="fc" id="L45">  private static final Integer menOpWidth = 190;</span>
+
+<span class="fc" id="L47">  private static final Integer menOpHeight = 30;</span>
+
+  // The controller which called the view
+  final setupController controller;
+  // To store the screen dimensions
+  private Integer SCREEN_WIDTH;
+  private Integer SCREEN_HEIGHT;
+  // For rendering sprites
+  private SpriteBatch batch;
+  // setupOption texture variables and sprites
+  private Texture setupOptions;
+  private Sprite addTeam;
+  private Integer teamIndex;
+  private HashMap&lt;Integer, hideableSprite&gt; teamMap;
+  private myTextInputListener listener;
+  private Sprite deleteTeam;
+  private Sprite mapToggle;
+  private Sprite debugToggle;
+  private Sprite continueSprite;
+  private Sprite returnSprite;
+
+  // For tracking the active option on the menu
+  private spriteMenuHandler setupMenu;
+
+  // sprites to represent the teams
+  private hideableSprite team1;
+  private hideableSprite team2;
+  private hideableSprite team3;
+  private hideableSprite team4;
+  private hideableSprite team5;
+  private hideableSprite team6;
+
+  // sprites to represent the configuration info
+  private Sprite configuration;
+  private Sprite debugMode;
+  private boolean debug;
+  private Sprite mapSize;
+  private Integer mapSizeIndex;
+
+  // setupDecor texture variables
+  private Texture setupdecor;
+  private Sprite setuptitle;
+  private TextureRegion robotFrame;
+  private TextureRegion[] robots;
+  private Animation robotAnimation;
+  private Float stateTime;
+  private Sprite bluePanel;
+  private Sprite yellowPanel;
+  private Sprite greenPanel;
+
+  private Stage stage;
+  private Table teamList;
+
+<span class="fc" id="L100">  private BitmapFont font = new BitmapFont(Gdx.files.internal(&quot;assets/MoonFlower.fnt&quot;),</span>
+<span class="fc" id="L101">      Gdx.files.internal(&quot;assets/MoonFlower.png&quot;), false);</span>
+
+  /**
+   * Constructor for SetupView
+   * 
+   * @param cont the controller creating this view
+   */
+<span class="fc" id="L108">  public setupView(final setupController cont) {</span>
+    // Initailizing the controller, constants, and batch
+<span class="fc" id="L110">    controller = cont;</span>
+
+<span class="fc" id="L112">    stage = new Stage();</span>
+
+<span class="fc" id="L114">    SCREEN_WIDTH = Gdx.graphics.getWidth();</span>
+<span class="fc" id="L115">    SCREEN_HEIGHT = Gdx.graphics.getHeight();</span>
+
+<span class="fc" id="L117">    batch = new SpriteBatch();</span>
+
+    // Loading the setup options into their sprites
+<span class="fc" id="L120">    setupOptions = new Texture(&quot;assets/setupMenu/setupoptions.png&quot;);</span>
+
+<span class="fc" id="L122">    addTeam = new Sprite(setupOptions, menOpSrcX, menOpSrcY * 0, menOpWidth, menOpHeight);</span>
+<span class="fc" id="L123">    deleteTeam = new Sprite(setupOptions, menOpSrcX, menOpSrcY * 2, menOpWidth, menOpHeight);</span>
+<span class="fc" id="L124">    mapToggle = new Sprite(setupOptions, menOpSrcX, menOpSrcY * 4, menOpWidth, menOpHeight);</span>
+<span class="fc" id="L125">    debugToggle = new Sprite(setupOptions, menOpSrcX, menOpSrcY * 6, menOpWidth, menOpHeight);</span>
+<span class="fc" id="L126">    continueSprite = new Sprite(setupOptions, menOpSrcX, menOpSrcY * 8, menOpWidth, menOpHeight);</span>
+<span class="fc" id="L127">    returnSprite = new Sprite(setupOptions, menOpSrcX, menOpSrcY * 10, menOpWidth, menOpHeight);</span>
+
+    // Populating a menu with our sprites
+<span class="fc" id="L130">    setupMenu = new spriteMenuHandler(addTeam);</span>
+<span class="fc" id="L131">    setupMenu.addSprite(deleteTeam);</span>
+<span class="fc" id="L132">    setupMenu.addSprite(mapToggle);</span>
+<span class="fc" id="L133">    setupMenu.addSprite(debugToggle);</span>
+<span class="fc" id="L134">    setupMenu.addSprite(continueSprite);</span>
+<span class="fc" id="L135">    setupMenu.addSprite(returnSprite);</span>
+
+    // Giving the setup options positions on the screen
+<span class="fc" id="L138">    addTeam.setPosition(SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.75f);</span>
+<span class="fc" id="L139">    deleteTeam.setPosition(SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.70f);</span>
+<span class="fc" id="L140">    mapToggle.setPosition(SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.65f);</span>
+<span class="fc" id="L141">    debugToggle.setPosition(SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.6f);</span>
+<span class="fc" id="L142">    continueSprite.setPosition(SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.55f);</span>
+<span class="fc" id="L143">    returnSprite.setPosition(SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.5f);</span>
+
+
+
+    // Giving the team sprites and positions
+<span class="fc" id="L148">    teamIndex = 0;</span>
+<span class="fc" id="L149">    listener = new myTextInputListener();</span>
+<span class="fc" id="L150">    team1 = new hideableSprite(setupOptions, 215, 2, 50, 20);</span>
+<span class="fc" id="L151">    team2 = new hideableSprite(setupOptions, 215, 52, 50, 20);</span>
+<span class="fc" id="L152">    team3 = new hideableSprite(setupOptions, 215, 102, 50, 20);</span>
+<span class="fc" id="L153">    team4 = new hideableSprite(setupOptions, 215, 152, 50, 20);</span>
+<span class="fc" id="L154">    team5 = new hideableSprite(setupOptions, 215, 202, 50, 20);</span>
+<span class="fc" id="L155">    team6 = new hideableSprite(setupOptions, 215, 252, 50, 20);</span>
+<span class="fc" id="L156">    teamMap = new HashMap&lt;Integer, hideableSprite&gt;();</span>
+<span class="fc" id="L157">    teamMap.put(1, team1);</span>
+<span class="fc" id="L158">    teamMap.put(2, team2);</span>
+<span class="fc" id="L159">    teamMap.put(3, team3);</span>
+<span class="fc" id="L160">    teamMap.put(4, team4);</span>
+<span class="fc" id="L161">    teamMap.put(5, team5);</span>
+<span class="fc" id="L162">    teamMap.put(6, team6);</span>
+
+<span class="fc" id="L164">    team1.setPosition(SCREEN_WIDTH * 0.67f, SCREEN_HEIGHT * 0.74f);</span>
+<span class="fc" id="L165">    team2.setPosition(SCREEN_WIDTH * 0.67f, SCREEN_HEIGHT * 0.70f);</span>
+<span class="fc" id="L166">    team3.setPosition(SCREEN_WIDTH * 0.67f, SCREEN_HEIGHT * 0.66f);</span>
+<span class="fc" id="L167">    team4.setPosition(SCREEN_WIDTH * 0.67f, SCREEN_HEIGHT * 0.62f);</span>
+<span class="fc" id="L168">    team5.setPosition(SCREEN_WIDTH * 0.67f, SCREEN_HEIGHT * 0.58f);</span>
+<span class="fc" id="L169">    team6.setPosition(SCREEN_WIDTH * 0.67f, SCREEN_HEIGHT * 0.54f);</span>
+
+    // Getting a positioning the configuration info
+<span class="fc" id="L172">    configuration = new Sprite(setupOptions, 290, 0, 150, 25);</span>
+<span class="fc" id="L173">    debugMode = new Sprite(setupOptions, 290, 26, 110, 25);</span>
+<span class="fc" id="L174">    debug = false;</span>
+<span class="fc" id="L175">    mapSize = new Sprite(setupOptions, 290, 78, 100, 25);</span>
+<span class="fc" id="L176">    mapSizeIndex = 5;</span>
+
+
+<span class="fc" id="L179">    configuration.setPosition(SCREEN_WIDTH * 0.64f, SCREEN_HEIGHT * 0.33f);</span>
+<span class="fc" id="L180">    debugMode.setPosition(SCREEN_WIDTH * 0.64f, SCREEN_HEIGHT * 0.25f);</span>
+<span class="fc" id="L181">    mapSize.setPosition(SCREEN_WIDTH * 0.64f, SCREEN_HEIGHT * 0.29f);</span>
+
+    // Creating the decor texture
+<span class="fc" id="L184">    setupdecor = new Texture(&quot;assets/setupMenu/setupdecor.png&quot;);</span>
+    // Making the title sprite and positioning it
+<span class="fc" id="L186">    setuptitle = new Sprite(setupdecor, 0, 0, 155, 50);</span>
+<span class="fc" id="L187">    setuptitle.setPosition(SCREEN_WIDTH * 0.215f, SCREEN_HEIGHT * 0.85f);</span>
+    // Setting up the bouncing robots animation
+<span class="fc" id="L189">    robots = new TextureRegion[2];</span>
+<span class="fc" id="L190">    robots[0] = new Sprite(setupdecor, 0, 55, 250, 50);</span>
+<span class="fc" id="L191">    robots[1] = new Sprite(setupdecor, 0, 110, 250, 50);</span>
+<span class="fc" id="L192">    robotAnimation = new Animation(0.6f, robots);</span>
+<span class="fc" id="L193">    stateTime = 0f;</span>
+    // Giving the panels to sprites and positioning them
+<span class="fc" id="L195">    bluePanel = new Sprite(setupdecor, 0, 170, 260, 320);</span>
+<span class="fc" id="L196">    yellowPanel = new Sprite(setupdecor, 270, 15, 220, 305);</span>
+<span class="fc" id="L197">    greenPanel = new Sprite(setupdecor, 270, 340, 240, 170);</span>
+
+<span class="fc" id="L199">    bluePanel.setPosition(SCREEN_WIDTH * 0.18f, SCREEN_HEIGHT * 0.45f);</span>
+<span class="fc" id="L200">    yellowPanel.setPosition(SCREEN_WIDTH * 0.6f, SCREEN_HEIGHT * 0.48f);</span>
+<span class="fc" id="L201">    greenPanel.setPosition(SCREEN_WIDTH * 0.6f, SCREEN_HEIGHT * 0.2f);</span>
+
+<span class="fc" id="L203">    this.teamList = new Table();</span>
+<span class="fc" id="L204">    teamList.setPosition(880, SCREEN_HEIGHT - 285);</span>
+<span class="fc" id="L205">    teamList.setFillParent(false);</span>
+<span class="fc" id="L206">    this.stage.addActor(teamList);</span>
+<span class="fc" id="L207">    this.updateTeamTable(new LinkedList&lt;Team&gt;());</span>
+<span class="fc" id="L208">  }</span>
+
+  // TODO All of these funtions either do or may require functions call to the controller
+  public void addTeam() {
+
+<span class="fc" id="L213">    controller.notifyNewTeam();</span>
+<span class="fc" id="L214">    this.updateTeamTable(controller.selectedTeams);</span>
+
+<span class="fc" id="L216">  }</span>
+
+  public void continueSetup() {
+<span class="fc" id="L219">    controller.notifyContinue();</span>
+<span class="fc" id="L220">  }</span>
+
+  public void deleteTeam() {
+<span class="fc" id="L223">    controller.notifyDeleteTeam();</span>
+<span class="fc" id="L224">    this.updateTeamTable(controller.selectedTeams);</span>
+<span class="fc" id="L225">  }</span>
+
+  /**
+   * Called to do garbage collection
+   */
+  @Override
+  public void dispose() {
+<span class="nc" id="L232">    setupOptions.dispose();</span>
+<span class="nc" id="L233">    setupdecor.dispose();</span>
+<span class="nc" id="L234">    batch.dispose();</span>
+<span class="nc" id="L235">    this.stage.dispose();</span>
+<span class="nc" id="L236">  }</span>
+
+  /**
+   * Manages any key presses since last render
+   */
+  public void handleKeyPresses() {
+    // Checks for which keys have been pressed
+<span class="fc bfc" id="L243" title="All 2 branches covered.">    if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {</span>
+<span class="pc bpc" id="L244" title="2 of 7 branches missed.">      switch (setupMenu.getIndex()) {</span>
+        case ADD_TEAM:
+<span class="fc" id="L246">          addTeam();</span>
+<span class="fc" id="L247">          break;</span>
+        case DELETE_TEAM:
+<span class="fc" id="L249">          deleteTeam();</span>
+<span class="fc" id="L250">          break;</span>
+        case TOGGLE_MAP_SIZE:
+<span class="fc" id="L252">          toggleMapSize();</span>
+<span class="fc" id="L253">          break;</span>
+        case TOGGLE_DEBUG_MODE:
+<span class="fc" id="L255">          toggleDebugMode();</span>
+<span class="fc" id="L256">          break;</span>
+        case CONTINUE:
+<span class="fc" id="L258">          continueSetup();</span>
+<span class="fc" id="L259">          break;</span>
+        case RETURN:
+<span class="nc" id="L261">          returnSetup();</span>
+          break;
+      }
+    }
+<span class="fc bfc" id="L265" title="All 2 branches covered.">    if (Gdx.input.isKeyJustPressed(Keys.DOWN)) {</span>
+<span class="fc" id="L266">      setupMenu.down();</span>
+    }
+<span class="fc bfc" id="L268" title="All 2 branches covered.">    if (Gdx.input.isKeyJustPressed(Keys.UP)) {</span>
+<span class="fc" id="L269">      setupMenu.up();</span>
+    }
+<span class="fc" id="L271">  }</span>
+
+  /**
+   * Called every frame
+   */
+  @Override
+  public void render(float delta) {
+<span class="fc" id="L278">    Gdx.gl.glClearColor(1, 1, 1, 1);</span>
+<span class="fc" id="L279">    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="fc" id="L281">    batch.begin();</span>
+
+<span class="fc" id="L283">    handleKeyPresses();</span>
+
+<span class="fc" id="L285">    renderDecor();</span>
+<span class="fc" id="L286">    renderConfigOptions();</span>
+<span class="fc" id="L287">    renderSetupOptions();</span>
+<span class="fc" id="L288">    renderTeamOptions();</span>
+
+<span class="fc" id="L290">    font.draw(batch, &quot;Teams&quot;, SCREEN_WIDTH * 0.65f, SCREEN_HEIGHT * 0.9f);</span>
+
+<span class="fc" id="L292">    batch.end();</span>
+
+<span class="fc" id="L294">    stage.draw();</span>
+<span class="fc" id="L295">  }</span>
+
+  /**
+   * Renders all of the configuration sprites onto the screen
+   */
+  public void renderConfigOptions() {
+<span class="fc" id="L301">    configuration.draw(batch);</span>
+<span class="fc" id="L302">    debugMode.draw(batch);</span>
+<span class="fc" id="L303">    mapSize.draw(batch);</span>
+<span class="fc" id="L304">  }</span>
+
+  /**
+   * Renders all of the decorative sprites onto the screen
+   */
+  public void renderDecor() {
+<span class="fc" id="L310">    bluePanel.draw(batch);</span>
+<span class="fc" id="L311">    yellowPanel.draw(batch);</span>
+<span class="fc" id="L312">    greenPanel.draw(batch);</span>
+<span class="fc" id="L313">    setuptitle.draw(batch);</span>
+
+    // Adds a animation to the robots
+<span class="fc" id="L316">    stateTime += Gdx.graphics.getDeltaTime();</span>
+<span class="fc" id="L317">    robotFrame = robotAnimation.getKeyFrame(stateTime, true);</span>
+<span class="fc" id="L318">    batch.draw(robotFrame, 250, 300);</span>
+<span class="fc" id="L319">  }</span>
+
+  /**
+   * Renders the setup option sprites onto the screen
+   */
+  public void renderSetupOptions() {
+<span class="fc" id="L325">    addTeam.draw(batch);</span>
+<span class="fc" id="L326">    deleteTeam.draw(batch);</span>
+<span class="fc" id="L327">    mapToggle.draw(batch);</span>
+<span class="fc" id="L328">    debugToggle.draw(batch);</span>
+<span class="fc" id="L329">    continueSprite.draw(batch);</span>
+<span class="fc" id="L330">    returnSprite.draw(batch);</span>
+<span class="fc" id="L331">  }</span>
+
+  /**
+   * Renders the team number sprites to the screen
+   */
+  public void renderTeamOptions() {
+    // This will check out listener for a filepath
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">    if (listener.getInput() != null) {</span>
+      // TODO Pass the filepath to the controller
+<span class="nc" id="L340">      teamIndex++;</span>
+<span class="nc" id="L341">      teamMap.get(teamIndex).setVisible(true);</span>
+<span class="nc" id="L342">      listener = new myTextInputListener();</span>
+    }
+
+<span class="fc" id="L345">    team1.draw(batch);</span>
+<span class="fc" id="L346">    team2.draw(batch);</span>
+<span class="fc" id="L347">    team3.draw(batch);</span>
+<span class="fc" id="L348">    team4.draw(batch);</span>
+<span class="fc" id="L349">    team5.draw(batch);</span>
+<span class="fc" id="L350">    team6.draw(batch);</span>
+<span class="fc" id="L351">  }</span>
+
+  public void returnSetup() {
+<span class="nc" id="L354">    controller.notifyReturn();</span>
+<span class="nc" id="L355">  }</span>
+
+  /**
+   * set this screen to receive buttons whenever it becomes active. Also, refresh the list of teams
+   */
+  @Override
+  public void show() {
+<span class="fc" id="L362">    Gdx.input.setInputProcessor(stage);</span>
+<span class="fc" id="L363">    this.updateTeamTable(controller.selectedTeams);</span>
+<span class="fc" id="L364">  }</span>
+
+  public void toggleDebugMode() {
+<span class="fc" id="L367">    controller.notifyDebug();</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">    debug = !debug;</span>
+
+    // Switch to debug mode
+<span class="fc bfc" id="L371" title="All 2 branches covered.">    if (debug) {</span>
+<span class="fc" id="L372">      debugMode.scroll(0, debugMode.getHeight() / debugMode.getTexture().getHeight());</span>
+<span class="fc" id="L373">    }</span>
+    // Switch to not debug mode
+    else {
+<span class="fc" id="L376">      debugMode.scroll(0, -debugMode.getHeight() / debugMode.getTexture().getHeight());</span>
+    }
+<span class="fc" id="L378">  }</span>
+
+  public void toggleMapSize() {
+<span class="fc" id="L381">    controller.notifyMapSize();</span>
+<span class="fc bfc" id="L382" title="All 2 branches covered.">    if (mapSizeIndex &lt; 11) {</span>
+<span class="fc" id="L383">      mapSize.scroll(0, mapSize.getHeight() / mapSize.getTexture().getHeight());</span>
+<span class="fc" id="L384">      mapSizeIndex = mapSizeIndex + 2;</span>
+<span class="pc bpc" id="L385" title="1 of 2 branches missed.">    } else if (mapSizeIndex &gt;= 11) {</span>
+<span class="fc" id="L386">      mapSize.scroll(0, -3 * mapSize.getHeight() / mapSize.getTexture().getHeight());</span>
+<span class="fc" id="L387">      mapSizeIndex = mapSizeIndex - 6;</span>
+    }
+<span class="fc" id="L389">  }</span>
+
+  public void updateTeamTable(List&lt;Team&gt; teams) {
+<span class="fc" id="L392">    LabelStyle labelStyle = new LabelStyle();</span>
+<span class="fc" id="L393">    labelStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L394">    labelStyle.font = font;</span>
+
+<span class="fc" id="L396">    this.teamList.clear();</span>
+
+<span class="fc" id="L398">    Iterator&lt;Team&gt; it = teams.iterator();</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+<span class="fc" id="L400">      Team next = it.next();</span>
+<span class="fc" id="L401">      Label newLabel = new Label(next.getTeamName(), labelStyle);</span>
+<span class="fc" id="L402">      this.teamList.add(newLabel).width(50).padBottom(3);</span>
+<span class="fc" id="L403">      this.teamList.row();</span>
+    }
+
+<span class="fc bfc" id="L406" title="All 2 branches covered.">    if (teams.isEmpty()) {</span>
+<span class="fc" id="L407">      Label newLabel = new Label(&quot;No Teams&quot;, labelStyle);</span>
+<span class="fc" id="L408">      this.teamList.add(newLabel).width(50).padBottom(3);</span>
+<span class="fc" id="L409">      this.teamList.row();</span>
+    }
+<span class="fc" id="L411">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

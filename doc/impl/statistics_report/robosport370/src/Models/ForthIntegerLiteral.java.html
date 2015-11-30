@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ForthIntegerLiteral.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">ForthIntegerLiteral.java</span></div><h1>ForthIntegerLiteral.java</h1><pre class="source lang-java linenums">package Models;
+
+import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
+
+public class ForthIntegerLiteral implements ForthWord {
+
+  /**
+   * @param wordString a plain text string
+   * @return whether or not the string represents an integer value
+   */
+  public static boolean isThisKind(String wordString) {
+    try {
+<span class="fc" id="L14">      Integer.parseInt(wordString);</span>
+<span class="fc" id="L15">      return true;</span>
+<span class="fc" id="L16">    } catch (NumberFormatException e) {</span>
+<span class="fc" id="L17">      return false;</span>
+    }
+  }
+
+  private long value;
+
+  /**
+   * creates a forth integer from a long value
+   * 
+   * @param value the interger to save as a forth word
+   */
+<span class="fc" id="L28">  public ForthIntegerLiteral(long value) {</span>
+<span class="fc" id="L29">    this.value = value;</span>
+<span class="fc" id="L30">  }</span>
+
+  /**
+   * creates a forth integer word from a plain text string
+   * 
+   * @param wordString a string containing an integer
+   * @throws ForthParseException thrown if the string doesn't represent an integer
+   */
+<span class="fc" id="L38">  public ForthIntegerLiteral(String wordString) throws ForthParseException {</span>
+    try {
+<span class="fc" id="L40">      this.value = Integer.parseInt(wordString);</span>
+<span class="pc" id="L41">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L42">      throw new ForthParseException(&quot;attempted to instantiate a forth integer with &quot; + wordString);</span>
+    }
+<span class="fc" id="L44">  }</span>
+
+  @Override
+  /**
+   * @return string encoding that can read by the forth parser
+   */
+  public String forthStringEncoding() {
+<span class="fc" id="L51">    return Long.toString(this.value);</span>
+  }
+
+  /**
+   * @return the integer value saved in the forth word
+   */
+  public long getValue() {
+<span class="fc" id="L58">    return value;</span>
+  }
+
+  /**
+   * @return the string value that is printed by forth in the console
+   */
+  @Override
+  public String toString() {
+<span class="fc" id="L66">    return &quot;pushing int to stack: &quot; + forthStringEncoding();</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

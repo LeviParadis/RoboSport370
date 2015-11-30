@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>endView.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Views</a> &gt; <span class="el_source">endView.java</span></div><h1>endView.java</h1><pre class="source lang-java linenums">package Views;
+
+import java.util.Iterator;
+import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+
+import Controllers.EndController;
+import Models.Robot;
+import Models.Team;
+
+public class endView extends ScreenAdapter implements EventListener {
+
+  private EndController controller;
+  private final Stage stage;
+
+  private TextButton mainMenuButton;
+  private TextButton displayResultsButton;
+  private TextButton exitButton;
+
+  private List&lt;Team&gt; teamsList;
+
+  /**
+   * Set up the buttons for the view
+   * 
+   * @param controller the manage robot controller to handle the button presses
+   * @param teams The the teams that will displayed on the end view
+   */
+<span class="fc" id="L43">  public endView(EndController controller, List&lt;Team&gt; teams) {</span>
+<span class="fc" id="L44">    this.controller = controller;</span>
+<span class="fc" id="L45">    this.teamsList = teams;</span>
+
+<span class="fc" id="L47">    int width = Gdx.graphics.getWidth();</span>
+<span class="fc" id="L48">    int height = Gdx.graphics.getHeight();</span>
+
+    // set up the stage
+<span class="fc" id="L51">    stage = new Stage();</span>
+
+<span class="fc" id="L53">    TextureAtlas blueAtlas = new TextureAtlas(Gdx.files.internal(&quot;assets/ui_atlas/ui-blue.atlas&quot;));</span>
+<span class="fc" id="L54">    BitmapFont font = new BitmapFont();</span>
+<span class="fc" id="L55">    BitmapFont fontTitle = new BitmapFont();</span>
+<span class="fc" id="L56">    Skin skin = new Skin();</span>
+<span class="fc" id="L57">    skin.addRegions(blueAtlas);</span>
+
+    // set up the buttons
+
+<span class="fc" id="L61">    TextButtonStyle textButtonStyle = new TextButtonStyle();</span>
+<span class="fc" id="L62">    textButtonStyle.font = font;</span>
+<span class="fc" id="L63">    textButtonStyle.up = skin.getDrawable(&quot;button_02&quot;);</span>
+<span class="fc" id="L64">    textButtonStyle.down = skin.getDrawable(&quot;button_01&quot;);</span>
+
+<span class="fc" id="L66">    mainMenuButton = new TextButton(&quot;Main Menu&quot;, textButtonStyle);</span>
+<span class="fc" id="L67">    mainMenuButton.addListener(this);</span>
+
+<span class="fc" id="L69">    displayResultsButton = new TextButton(&quot;Display Results&quot;, textButtonStyle);</span>
+<span class="fc" id="L70">    displayResultsButton.addListener(this);</span>
+
+<span class="fc" id="L72">    exitButton = new TextButton(&quot;Exit Game&quot;, textButtonStyle);</span>
+<span class="fc" id="L73">    exitButton.addListener(this);</span>
+
+    // LabelsStyles for screen
+<span class="fc" id="L76">    LabelStyle titleStyle = new LabelStyle();</span>
+<span class="fc" id="L77">    titleStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L78">    titleStyle.font = fontTitle;</span>
+
+<span class="fc" id="L80">    LabelStyle labelStyle = new LabelStyle();</span>
+<span class="fc" id="L81">    labelStyle.fontColor = Color.BLACK;</span>
+<span class="fc" id="L82">    labelStyle.font = font;</span>
+
+<span class="fc" id="L84">    LabelStyle aliveStyle = new LabelStyle();</span>
+<span class="fc" id="L85">    aliveStyle.fontColor = Color.GREEN;</span>
+<span class="fc" id="L86">    aliveStyle.font = font;</span>
+
+<span class="fc" id="L88">    LabelStyle deadStyle = new LabelStyle();</span>
+<span class="fc" id="L89">    deadStyle.fontColor = Color.RED;</span>
+<span class="fc" id="L90">    deadStyle.font = font;</span>
+
+    // title label
+<span class="fc" id="L93">    Label title = new Label(&quot;GAME OVER&quot;, titleStyle);</span>
+<span class="fc" id="L94">    title.setFontScaleX(2);</span>
+<span class="fc" id="L95">    title.setFontScaleY(3);</span>
+<span class="fc" id="L96">    title.setPosition(width / 2 - 87, height - 50);</span>
+
+    // Add teams and there robots (color coded: green is alive, red is dead) to screen
+<span class="fc" id="L99">    Table statsTable = new Table();</span>
+<span class="fc" id="L100">    Iterator&lt;Team&gt; tIt = teamsList.iterator();</span>
+
+<span class="fc bfc" id="L102" title="All 2 branches covered.">    while (tIt.hasNext()) {</span>
+<span class="fc" id="L103">      Team currentTeam = tIt.next();</span>
+<span class="fc" id="L104">      Label teamName = new Label(currentTeam.getTeamName(), labelStyle);</span>
+<span class="fc" id="L105">      Table teamTable = new Table();</span>
+<span class="fc" id="L106">      teamTable.add(teamName).padBottom(10);</span>
+
+<span class="fc" id="L108">      Iterator&lt;Robot&gt; rIt = currentTeam.getAllRobots().iterator();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">      while (rIt.hasNext()) {</span>
+<span class="fc" id="L110">        Robot currentRobot = rIt.next();</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (currentRobot.isAlive()) {</span>
+<span class="fc" id="L112">          Label robotName = new Label(currentRobot.getName(), aliveStyle);</span>
+<span class="fc" id="L113">          teamTable.row();</span>
+<span class="fc" id="L114">          teamTable.add(robotName).padBottom(5).width(40);</span>
+<span class="fc" id="L115">        } else {</span>
+<span class="fc" id="L116">          Label robotName = new Label(currentRobot.getName(), deadStyle);</span>
+<span class="fc" id="L117">          teamTable.row();</span>
+<span class="fc" id="L118">          teamTable.add(robotName).padBottom(5);</span>
+        }
+      }
+<span class="fc" id="L121">      statsTable.add(teamTable).padLeft(25).padRight(25);</span>
+    }
+
+
+    // set up the master table
+<span class="fc" id="L126">    Table masterTable = new Table();</span>
+<span class="fc" id="L127">    masterTable.setFillParent(true);</span>
+<span class="fc" id="L128">    masterTable.add(statsTable).padBottom(25);</span>
+<span class="fc" id="L129">    masterTable.row();</span>
+<span class="fc" id="L130">    masterTable.add(mainMenuButton).width(500).height(75).padBottom(25);</span>
+<span class="fc" id="L131">    masterTable.row();</span>
+<span class="fc" id="L132">    masterTable.add(exitButton).width(500).height(75).padBottom(25);</span>
+<span class="fc" id="L133">    stage.addActor(title);</span>
+<span class="fc" id="L134">    stage.addActor(masterTable);</span>
+<span class="fc" id="L135">  }</span>
+
+  /**
+   * Called to do garbage collection
+   */
+  @Override
+  public void dispose() {
+<span class="nc" id="L142">    this.stage.dispose();</span>
+<span class="nc" id="L143">  }</span>
+
+  @Override
+  /**
+   * We use this to handle button presses
+   */
+  public boolean handle(Event arg0) {
+<span class="pc bpc" id="L150" title="1 of 4 branches missed.">    if (arg0.getTarget() instanceof TextButton &amp;&amp; ((TextButton) arg0.getTarget()).isPressed()) {</span>
+<span class="nc" id="L151">      TextButton sender = (TextButton) arg0.getTarget();</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">      if (sender == mainMenuButton) {</span>
+<span class="nc" id="L153">        controller.notifyMainMenuPressed();</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">      } else if (sender == exitButton) {</span>
+<span class="nc" id="L155">        controller.notifyExitButtonPressed();</span>
+      }
+    }
+<span class="fc" id="L158">    return false;</span>
+  }
+
+  @Override
+  public void render(float delta) {
+<span class="fc" id="L163">    Gdx.gl.glClearColor(1, 1, 1, 1);</span>
+<span class="fc" id="L164">    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+<span class="fc" id="L165">    stage.draw();</span>
+<span class="fc" id="L166">  }</span>
+
+  /**
+   * set this screen to receive buttons whenever it becomes active
+   */
+  @Override
+  public void show() {
+<span class="fc" id="L173">    Gdx.input.setInputProcessor(stage);</span>
+<span class="fc" id="L174">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

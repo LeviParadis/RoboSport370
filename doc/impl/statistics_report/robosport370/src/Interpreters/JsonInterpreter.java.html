@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>JsonInterpreter.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Interpreters</a> &gt; <span class="el_source">JsonInterpreter.java</span></div><h1>JsonInterpreter.java</h1><pre class="source lang-java linenums">package Interpreters;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+
+import Enums.JSONConstants;
+import Models.Robot;
+import Models.RobotGameStats;
+
+<span class="nc" id="L24">public class JsonInterpreter {</span>
+
+  public static final String ROBOT_LIBRARIAN_URL =
+      &quot;http://localhost:8080/CrunchifyTutorials/api/crunchifyService&quot;;
+
+
+  private static JSONObject contactLibrarian(JSONObject inputJSON) throws RuntimeException {
+<span class="nc" id="L31">    Client client = Client.create();</span>
+<span class="nc" id="L32">    WebResource webResource = client.resource(ROBOT_LIBRARIAN_URL);</span>
+
+<span class="nc" id="L34">    ClientResponse clientResponse =</span>
+<span class="nc" id="L35">        webResource.accept(&quot;application/json&quot;).get(ClientResponse.class);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">    if (clientResponse.getStatus() != 200) {</span>
+<span class="nc" id="L37">      throw new RuntimeException(&quot;Failed&quot; + clientResponse.toString());</span>
+    }
+
+    try {
+<span class="nc" id="L41">      JSONObject resObj =</span>
+<span class="nc" id="L42">          (JSONObject) new JSONParser().parse(clientResponse.getEntity(String.class));</span>
+<span class="nc" id="L43">      return resObj;</span>
+<span class="nc" id="L44">    } catch (ParseException e) {</span>
+<span class="nc" id="L45">      throw new RuntimeException(&quot;Could not Parse Response From Server&quot;);</span>
+    }
+  }
+
+  private static JSONArray createComparisonJSON(Integer minValueOrNull, Integer maxValueOrNull) {
+<span class="fc" id="L50">    JSONArray result = new JSONArray();</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">    if (minValueOrNull != null) {</span>
+<span class="fc" id="L52">      JSONObject minJSON = new JSONObject();</span>
+<span class="fc" id="L53">      minJSON.put(JSONConstants.COMPARISON_MIN, minValueOrNull);</span>
+<span class="fc" id="L54">      result.add(minJSON);</span>
+    }
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">    if (maxValueOrNull != null) {</span>
+<span class="fc" id="L57">      JSONObject maxJSON = new JSONObject();</span>
+<span class="fc" id="L58">      maxJSON.put(JSONConstants.COMPARISON_MAX, maxValueOrNull);</span>
+<span class="fc" id="L59">      result.add(maxJSON);</span>
+    }
+<span class="fc" id="L61">    return result;</span>
+  }
+
+
+  public static JSONArray forthCodeToJson(Set&lt;String&gt; vars, HashMap&lt;String, String&gt; words) {
+<span class="fc" id="L66">    JSONArray forthArr = new JSONArray();</span>
+
+<span class="fc" id="L68">    Iterator&lt;String&gt; varIt = vars.iterator();</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">    while (varIt.hasNext()) {</span>
+<span class="fc" id="L70">      String varName = varIt.next();</span>
+<span class="fc" id="L71">      JSONObject newVar = new JSONObject();</span>
+<span class="fc" id="L72">      newVar.put(JSONConstants.FORTH_VAR, varName);</span>
+<span class="fc" id="L73">      forthArr.add(newVar);</span>
+    }
+
+<span class="fc" id="L76">    Set&lt;String&gt; allWordKeys = words.keySet();</span>
+<span class="fc" id="L77">    Iterator&lt;String&gt; wordIt = allWordKeys.iterator();</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">    while (wordIt.hasNext()) {</span>
+<span class="fc" id="L79">      String wordName = wordIt.next();</span>
+<span class="fc" id="L80">      String wordValue = words.get(wordName);</span>
+<span class="fc" id="L81">      JSONObject newWord = new JSONObject();</span>
+<span class="fc" id="L82">      newWord.put(JSONConstants.FORTH_WORD_NAME, wordName);</span>
+<span class="fc" id="L83">      newWord.put(JSONConstants.FORTH_WORD_BODY, wordValue);</span>
+<span class="fc" id="L84">      JSONObject wordOuter = new JSONObject();</span>
+<span class="fc" id="L85">      wordOuter.put(JSONConstants.FORTH_WORD, newWord);</span>
+<span class="fc" id="L86">      forthArr.add(wordOuter);</span>
+    }
+
+
+<span class="fc" id="L90">    return forthArr;</span>
+
+  }
+
+  /**
+   * returns a specific robot
+   * 
+   * @param serial the serial number of the robot to search for
+   * @return the robot object
+   */
+  public static Robot getRobot(long serial) {
+    // create the json object
+<span class="nc" id="L102">    JSONObject json = new JSONObject();</span>
+<span class="nc" id="L103">    json.put(JSONConstants.SERIAL, new Integer((int) serial));</span>
+<span class="nc" id="L104">    json.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_ALL);</span>
+<span class="nc" id="L105">    json.put(JSONConstants.LIST_TYPE_TAG, JSONConstants.LIST_TYPE_FULL);</span>
+
+<span class="nc" id="L107">    JSONObject root = new JSONObject();</span>
+<span class="nc" id="L108">    root.put(JSONConstants.LIST_TAG, json);</span>
+
+<span class="nc" id="L110">    JSONObject response = contactLibrarian(root);</span>
+<span class="nc" id="L111">    Robot newRobot = robotFromJSON(response);</span>
+
+    // TODO: implement
+<span class="nc" id="L114">    JSONParser parser = new JSONParser();</span>
+    try {
+<span class="nc" id="L116">      JSONObject jsonRobot =</span>
+<span class="nc" id="L117">          (JSONObject) parser.parse(new FileReader(&quot;resources/RobotExample.JSON&quot;));</span>
+<span class="nc" id="L118">      Robot robot = robotFromJSON(jsonRobot);</span>
+<span class="nc" id="L119">      return robot;</span>
+<span class="nc" id="L120">    } catch (IOException | ParseException e) {</span>
+<span class="nc" id="L121">      return null;</span>
+    }
+  }
+
+  /**
+   * lists all robots that meet the passed in parameters. All parameters are optional except
+   * currentVersionOnly
+   * 
+   * @param name the name of the robot we are searching for. Can be a regular expression
+   * @param team the name of the team of the robots we are looking for
+   * @param minWins the minimum number of wins of the robots we should return
+   * @param maxWins the maximum number of wins of the robots we should return
+   * @param minLosses the minimum number of losses of the robots we should return
+   * @param maxLosses the maximum number of losses of the robots we should return
+   * @param minMatches the minimum number of matches of the robots we should return
+   * @param maxMatches the maximum number of matches of the robots we should return
+   * @param currentVersionOnly determines whether we should show all version of robots, or just the
+   *        latest
+   * @return a list of robots that match the above parameters
+   */
+  public static Queue&lt;Robot&gt; listRobots(boolean currentVersionOnly, String name, String team,
+      Integer minWins, Integer maxWins, Integer minLosses, Integer maxLosses, Integer minMatches,
+      Integer maxMatches) {
+
+    // create the json object
+<span class="fc" id="L146">    JSONObject root = new JSONObject();</span>
+
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">    if (name != null) {</span>
+<span class="fc" id="L149">      root.put(JSONConstants.NAME, name);</span>
+    }
+
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">    if (team != null) {</span>
+<span class="fc" id="L153">      root.put(JSONConstants.TEAM, team);</span>
+    }
+
+<span class="pc bpc" id="L156" title="3 of 4 branches missed.">    if (minWins != null || maxWins != null) {</span>
+<span class="fc" id="L157">      JSONArray wins = createComparisonJSON(minWins, maxWins);</span>
+<span class="fc" id="L158">      root.put(JSONConstants.WINS, wins);</span>
+    }
+
+<span class="pc bpc" id="L161" title="3 of 4 branches missed.">    if (minLosses != null || maxLosses != null) {</span>
+<span class="fc" id="L162">      JSONArray losses = createComparisonJSON(minLosses, maxLosses);</span>
+<span class="fc" id="L163">      root.put(JSONConstants.LOSSES, losses);</span>
+    }
+
+<span class="pc bpc" id="L166" title="3 of 4 branches missed.">    if (minMatches != null || maxMatches != null) {</span>
+<span class="fc" id="L167">      JSONArray matches = createComparisonJSON(minMatches, maxMatches);</span>
+<span class="fc" id="L168">      root.put(JSONConstants.MATCHES, matches);</span>
+    }
+
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">    if (currentVersionOnly) {</span>
+<span class="nc" id="L172">      root.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_LATEST);</span>
+<span class="nc" id="L173">    } else {</span>
+<span class="fc" id="L174">      root.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_ALL);</span>
+    }
+
+<span class="fc" id="L177">    root.put(JSONConstants.LIST_TYPE_TAG, JSONConstants.LIST_TYPE_FULL);</span>
+
+
+
+    // TODO: implement
+<span class="fc" id="L182">    JSONParser parser = new JSONParser();</span>
+    try {
+<span class="fc" id="L184">      JSONObject json = (JSONObject) parser.parse(new FileReader(&quot;resources/RobotExample.JSON&quot;));</span>
+<span class="fc" id="L185">      Robot newRobot = robotFromJSON(json);</span>
+
+<span class="fc" id="L187">      JSONObject json2 = (JSONObject) parser.parse(new FileReader(&quot;resources/RobotExample2.JSON&quot;));</span>
+<span class="fc" id="L188">      Robot newRobot2 = robotFromJSON(json2);</span>
+
+<span class="fc" id="L190">      JSONObject json3 = (JSONObject) parser.parse(new FileReader(&quot;resources/RobotExample3.JSON&quot;));</span>
+<span class="fc" id="L191">      Robot newRobot3 = robotFromJSON(json3);</span>
+
+<span class="fc" id="L193">      JSONObject json4 = (JSONObject) parser.parse(new FileReader(&quot;resources/RobotExample4.JSON&quot;));</span>
+<span class="fc" id="L194">      Robot newRobot4 = robotFromJSON(json4);</span>
+<span class="fc" id="L195">      Queue&lt;Robot&gt; list = new LinkedList&lt;Robot&gt;();</span>
+<span class="fc" id="L196">      list.add(newRobot);</span>
+<span class="fc" id="L197">      list.add(newRobot2);</span>
+<span class="fc" id="L198">      list.add(newRobot3);</span>
+<span class="fc" id="L199">      list.add(newRobot4);</span>
+<span class="fc" id="L200">      return list;</span>
+<span class="nc" id="L201">    } catch (IOException | ParseException e) {</span>
+<span class="nc" id="L202">      return null;</span>
+    }
+  }
+
+  /**
+   * registers a robot. Returns whether the registration was a success
+   * 
+   * @param name the new robot's name
+   * @param team the new robot's team
+   * @param firepower the new robot's firepower
+   * @param health the new robot's health
+   * @param movement the max number of moves the new robot can make in a turn
+   * @param forthCode a text string representing the robot's forth code
+   * @return a bool indicating whether the registration was a success
+   */
+  public static boolean registerRobot(String name, String team, long firepower, long health,
+      long movement, String forthCode) throws RuntimeException {
+
+
+
+<span class="nc" id="L222">    JSONObject json = new JSONObject();</span>
+<span class="nc" id="L223">    json.put(JSONConstants.NAME, name);</span>
+<span class="nc" id="L224">    json.put(JSONConstants.TEAM, team);</span>
+<span class="nc" id="L225">    json.put(JSONConstants.STRENGTH, firepower);</span>
+<span class="nc" id="L226">    json.put(JSONConstants.HEALTH, health);</span>
+<span class="nc" id="L227">    json.put(JSONConstants.MOVES_PER_TURN, name);</span>
+<span class="nc" id="L228">    json.put(JSONConstants.FORTH_CODE, forthCode);</span>
+
+<span class="nc" id="L230">    JSONObject root = new JSONObject();</span>
+<span class="nc" id="L231">    root.put(JSONConstants.REGISTER_TAG, json);</span>
+
+<span class="nc" id="L233">    contactLibrarian(root);</span>
+
+<span class="nc" id="L235">    return true;</span>
+  }
+
+  /**
+   * retires a robot
+   * 
+   * @param serialNumber the serial number of the robot we want to retire
+   */
+  public static void retireRobot(long serialNumber) throws RuntimeException {
+    // TODO: implement
+<span class="nc" id="L245">  }</span>
+
+
+  /**
+   * allows us to make changes to the attributes of a particular robot
+   * 
+   * @param serialNumber the serial number of the robot we want to change
+   * @param newFirepower the new firepower value
+   * @param newHealth the new health value
+   * @param newMovement the new number of moves per turn
+   * @param newForthCode the new forth code
+   * @return boolean indicating whether the revision was a success
+   */
+  public static boolean reviseRobot(long serialNumber, long newFirepower, long newHealth,
+      long newMovement, String newForthCode) {
+    // TODO: implement
+<span class="nc" id="L261">    return true;</span>
+  }
+
+
+
+  /**
+   * Creates a robot object from a standard robot JSON file Accepts a cache of robot stats files, so
+   * we can map similar robots to the same stats object
+   * 
+   * @param json a JSONObject representing the robot
+   * @return a robot object with the information saved in the JSON file
+   */
+  protected static Robot robotFromJSON(JSONObject json) {
+
+<span class="fc" id="L275">    JSONObject root = (JSONObject) json.get(JSONConstants.BASE_TAG);</span>
+
+    // get the identification information
+<span class="fc" id="L278">    String name = (String) root.get(JSONConstants.NAME);</span>
+<span class="fc" id="L279">    long serial = (long) root.get(JSONConstants.SERIAL);</span>
+
+    RobotGameStats stats;
+
+    // get the robot's stats record
+<span class="fc" id="L284">    long wins = (long) root.get(JSONConstants.WINS);</span>
+<span class="fc" id="L285">    long losses = (long) root.get(JSONConstants.LOSSES);</span>
+<span class="fc" id="L286">    long executions = (long) root.get(JSONConstants.EXECUTIONS);</span>
+<span class="fc" id="L287">    long gamesDied = (long) root.get(JSONConstants.GAMES_DIED);</span>
+<span class="fc" id="L288">    long gamesSurvived = (long) root.get(JSONConstants.GAMES_LIVED);</span>
+<span class="fc" id="L289">    long damageGiven = (long) root.get(JSONConstants.DAMAGE_GIVEN);</span>
+<span class="fc" id="L290">    long damageRecieved = (long) root.get(JSONConstants.DAMAGE_TAKEN);</span>
+<span class="fc" id="L291">    long kills = (long) root.get(JSONConstants.KILLS);</span>
+<span class="fc" id="L292">    long distanceMoved = (long) root.get(JSONConstants.DISTANCE_MOVED);</span>
+<span class="fc" id="L293">    stats = new RobotGameStats(wins, losses, executions, gamesDied, gamesSurvived, damageGiven,</span>
+<span class="fc" id="L294">        damageRecieved, kills, distanceMoved);</span>
+
+
+    // get the robot's attributes
+<span class="fc" id="L298">    long health = (long) root.get(JSONConstants.HEALTH);</span>
+<span class="fc" id="L299">    long strength = (long) root.get(JSONConstants.STRENGTH);</span>
+<span class="fc" id="L300">    long moves = (long) root.get(JSONConstants.MOVES_PER_TURN);</span>
+
+
+    // find the forth code from the json
+<span class="fc" id="L304">    JSONArray forth = (JSONArray) root.get(JSONConstants.FORTH_CODE);</span>
+<span class="fc" id="L305">    HashMap&lt;String, String&gt; variableList = new HashMap&lt;String, String&gt;();</span>
+<span class="fc" id="L306">    HashMap&lt;String, String&gt; wordList = new HashMap&lt;String, String&gt;();</span>
+<span class="fc bfc" id="L307" title="All 2 branches covered.">    for (int i = 0; i &lt; forth.size(); i++) {</span>
+<span class="fc" id="L308">      JSONObject thisObject = (JSONObject) forth.get(i);</span>
+
+      // check to see if this forth element is a variable
+<span class="fc bfc" id="L311" title="All 2 branches covered.">      if (thisObject.get(JSONConstants.FORTH_VAR) != null) {</span>
+        // store the variable with an empty assignment
+<span class="fc" id="L313">        String varName = (String) thisObject.get(JSONConstants.FORTH_VAR);</span>
+<span class="fc" id="L314">        variableList.put(varName, &quot;0&quot;);</span>
+
+        // otherwise, it should be a word
+<span class="pc bpc" id="L317" title="1 of 2 branches missed.">      } else if (thisObject.get(JSONConstants.FORTH_WORD) != null) {</span>
+<span class="fc" id="L318">        JSONObject word = (JSONObject) thisObject.get(JSONConstants.FORTH_WORD);</span>
+<span class="fc" id="L319">        String wordName = (String) word.get(JSONConstants.FORTH_WORD_NAME);</span>
+<span class="fc" id="L320">        String wordBody = (String) word.get(JSONConstants.FORTH_WORD_BODY);</span>
+<span class="fc" id="L321">        wordList.put(wordName, wordBody);</span>
+      }
+    }
+
+
+    // create a robot from the information in the json
+<span class="fc" id="L327">    Robot newRobot =</span>
+<span class="fc" id="L328">        new Robot(name, serial, health, (int) strength, moves, variableList, wordList, stats);</span>
+<span class="fc" id="L329">    return newRobot;</span>
+  }
+
+  // the json library we use creates warnings when we try to write to JSON files, so we will
+  // have to suppress warnings in this function where it writes to JSON
+  @SuppressWarnings(&quot;unchecked&quot;)
+  /**
+   * @return a formated JSON object from all the stats from a robot
+   */
+  private static JSONObject statsToJSON(RobotGameStats stats) {
+<span class="nc" id="L339">    JSONObject root = new JSONObject();</span>
+<span class="nc" id="L340">    root.put(JSONConstants.LOSSES, stats.getLosses());</span>
+<span class="nc" id="L341">    root.put(JSONConstants.WINS, stats.getWins());</span>
+<span class="nc" id="L342">    root.put(JSONConstants.EXECUTIONS, stats.getExecutions());</span>
+<span class="nc" id="L343">    root.put(JSONConstants.GAMES_LIVED, stats.getGamesSurvived());</span>
+<span class="nc" id="L344">    root.put(JSONConstants.GAMES_DIED, stats.getGamesSurvived());</span>
+<span class="nc" id="L345">    root.put(JSONConstants.DAMAGE_TAKEN, stats.getDamageAbsorbed());</span>
+<span class="nc" id="L346">    root.put(JSONConstants.DAMAGE_GIVEN, stats.getDamageGiven());</span>
+<span class="nc" id="L347">    root.put(JSONConstants.KILLS, stats.getKills());</span>
+<span class="nc" id="L348">    root.put(JSONConstants.DISTANCE_MOVED, stats.getDistanceMoved());</span>
+<span class="nc" id="L349">    return root;</span>
+  }
+
+  /**
+   * updates a robot's stats on the server
+   * 
+   * @param serialNumber the serial number of the robot to update
+   * @param currentStats the stats we want to update
+   * @return boolean if stats were updated
+   */
+  public static boolean updateStats(long serialNumber, RobotGameStats currentStats) {
+    // TODO: implement
+<span class="nc" id="L361">    return true;</span>
+  }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ForthCustomWord.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Models</a> &gt; <span class="el_source">ForthCustomWord.java</span></div><h1>ForthCustomWord.java</h1><pre class="source lang-java linenums">package Models;
+
+import Exceptions.ForthParseException;
+import Interfaces.ForthWord;
+
+public class ForthCustomWord implements ForthWord {
+  /**
+   * @param wordString a plain text string
+   * @param robot the robot that is running the program
+   * @return whether or not the string represents a custom word
+   */
+  public static boolean isThisKind(String wordString, Robot robot) {
+<span class="nc bnc" id="L13" title="All 2 branches missed.">    return (robot.getForthWord(wordString) != null);</span>
+  }
+
+  private String value;
+
+  /**
+   * construct a new forth custom word
+   * 
+   * @param value the word's value
+   * @param r the robot running the program, so the custom word can be verified
+   * @throws ForthParseException thrown if the string doesn't represent one of the robot's words
+   */
+<span class="nc" id="L25">  public ForthCustomWord(String value, Robot r) throws ForthParseException {</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">    if (!isThisKind(value, r)) {</span>
+<span class="nc" id="L27">      throw new ForthParseException(</span>
+<span class="nc" id="L28">          &quot;attempted to instantiate a forth custom word variable with &quot; + value);</span>
+    }
+<span class="nc" id="L30">    this.value = value;</span>
+<span class="nc" id="L31">  }</span>
+
+  @Override
+  /**
+   * @return string encoding that can read by the forth parser
+   */
+  public String forthStringEncoding() {
+<span class="nc" id="L38">    return this.value;</span>
+  }
+
+
+  /**
+   * @return the custom variable's name
+   */
+  public String getName() {
+<span class="nc" id="L46">    return value;</span>
+  }
+
+
+  /**
+   * @param r the robot that is running the program
+   * @return a string representation of the custom word's forth logic
+   */
+  public String getWordLogic(Robot r) {
+<span class="nc" id="L55">    return r.getForthWord(this.value);</span>
+  }
+
+
+  /**
+   * @return the string value that is printed by forth in the console
+   */
+  @Override
+  public String toString() {
+<span class="nc" id="L64">    return &quot;performing custom function: &quot; + forthStringEncoding();</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>UIManager.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Controllers</a> &gt; <span class="el_source">UIManager.java</span></div><h1>UIManager.java</h1><pre class="source lang-java linenums">package Controllers;
+
+import java.util.Stack;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
+import Views.mainMenuView;
+
+public class UIManager extends Game {
+
+  public static UIManager manager;
+
+  public static void main(String[] args) {
+    // TODO Auto-generated method stub
+<span class="fc" id="L18">    LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();</span>
+<span class="fc" id="L19">    config.title = &quot;RobotSport370&quot;;</span>
+<span class="fc" id="L20">    config.height = 800;</span>
+<span class="fc" id="L21">    config.width = 1280;</span>
+<span class="fc" id="L22">    new LwjglApplication(UIManager.sharedInstance(), config);</span>
+
+<span class="fc" id="L24">  }</span>
+
+  public static UIManager sharedInstance() {
+<span class="fc bfc" id="L27" title="All 2 branches covered.">    if (manager == null) {</span>
+<span class="fc" id="L28">      manager = new UIManager();</span>
+    }
+<span class="fc" id="L30">    return manager;</span>
+  }
+
+
+  private Stack&lt;Screen&gt; screenStack;
+
+<span class="fc" id="L36">  public UIManager() {}</span>
+
+  @Override
+  /**
+   * Set up initial values. It should initially load an instance of the main menu and it's view
+   */
+  public void create() {
+<span class="fc" id="L43">    setupController initialController = new setupController();</span>
+<span class="fc" id="L44">    mainMenuView initialView = new mainMenuView(initialController);</span>
+
+<span class="fc" id="L46">    this.screenStack = new Stack&lt;Screen&gt;();</span>
+
+<span class="fc" id="L48">    this.pushScreen(initialView);</span>
+<span class="fc" id="L49">  }</span>
+
+  /**
+   * goes back to the previous view in the stack
+   */
+  public void popScreen() {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">    if (screenStack.size() &lt;= 1) {</span>
+<span class="nc" id="L56">      return;</span>
+    }
+<span class="fc" id="L58">    screenStack.pop();</span>
+
+
+<span class="fc" id="L61">    Screen newScreen = screenStack.peek();</span>
+<span class="fc" id="L62">    this.setScreen(newScreen);</span>
+<span class="fc" id="L63">  }</span>
+
+  /**
+   * Goes back to the first screen in the view stack (welcome screen)
+   */
+  public void popToRootScreen() {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">    while (this.screenStack.size() &gt; 1) {</span>
+<span class="fc" id="L70">      screenStack.pop();</span>
+    }
+<span class="fc" id="L72">    this.setScreen(screenStack.peek());</span>
+<span class="fc" id="L73">  }</span>
+
+  /**
+   * adds a new screen to the stack of view stack
+   * 
+   * @param newScreen the new screen to add on to the stack
+   */
+  public void pushScreen(Screen newScreen) {
+<span class="fc" id="L81">    this.screenStack.push(newScreen);</span>
+<span class="fc" id="L82">    this.setScreen(newScreen);</span>
+<span class="fc" id="L83">  }</span>
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>

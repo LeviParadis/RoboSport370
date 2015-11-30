@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>GameController.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=2;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">UIManager (Nov 29, 2015 6:20:02 PM)</a> &gt; <a href="../../index.html" class="el_group">robosport370</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">Controllers</a> &gt; <span class="el_source">GameController.java</span></div><h1>GameController.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">package Controllers;</span>
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import Enums.ConsoleMessageType;
+import Enums.GameSpeed;
+import Exceptions.ForthParseException;
+import Exceptions.ForthRunTimeException;
+import Interfaces.ForthWord;
+import Interpreters.ForthInterpreter;
+import Models.Map;
+import Models.Robot;
+import Models.Team;
+import Models.Tile;
+import Views.endView;
+import Views.mapView;
+
+public class GameController {
+
+<span class="fc" id="L25">  private static int TURN_LIMIT = 500;</span>
+  /** All of the teams to be run in the simulation. */
+  private ArrayList&lt;Team&gt; teams;
+
+  /** The map that holds the information for calculations and the size */
+  private Map gameMap;
+
+  private mapView view;
+
+  private boolean isPaused;
+
+
+  private Thread executionThread;
+
+  /**
+   * setting this enum will automatically change the animation speed and the delay duration
+   */
+  private GameSpeed speedMultiplier;
+
+  /** how long it takes for each animation to complete in milliseconds */
+<span class="fc" id="L45">  private int animationSpeed = 400;</span>
+
+  /** how long it waits in between actions in milliseconds */
+<span class="fc" id="L48">  private int delayDuration = 500;</span>
+
+  private boolean gameComplete;
+
+  /**
+   * initializes the teams and ??sets their position on the map??
+   * 
+   * @param allTeams an array that contains all of the teams playing the match
+   * @param hexSize the size of the map on one side
+   */
+<span class="fc" id="L58">  public GameController(List&lt;Team&gt; allTeams) throws RuntimeException {</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">    if (allTeams == null) {</span>
+<span class="nc" id="L60">      throw new RuntimeException(&quot;There must be teams added to begin the game&quot;);</span>
+<span class="pc bpc" id="L61" title="3 of 6 branches missed.">    } else if (allTeams.size() != 2 &amp;&amp; allTeams.size() != 3 &amp;&amp; allTeams.size() != 6) {</span>
+<span class="nc" id="L62">      throw new RuntimeException(&quot;You must select either 2, 3, or 6 teams&quot;);</span>
+    }
+
+<span class="fc" id="L65">    this.gameComplete = false;</span>
+<span class="fc" id="L66">    this.speedMultiplier = GameSpeed.GAME_SPEED_1X;</span>
+<span class="fc" id="L67">    gameMap = new Map();</span>
+<span class="fc" id="L68">    this.view = new mapView(this, allTeams);</span>
+
+<span class="fc" id="L70">    teams = new ArrayList&lt;Team&gt;();</span>
+<span class="fc" id="L71">    Iterator&lt;Team&gt; it = allTeams.iterator();</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+<span class="fc" id="L73">      Team nextTeam = it.next();</span>
+<span class="fc" id="L74">      teams.add(nextTeam.getTeamNumber(), nextTeam);</span>
+    }
+
+<span class="fc" id="L77">    initRobotPositions();</span>
+<span class="fc" id="L78">    this.executionThread = new Thread() {</span>
+      @Override
+      public void run() {
+        // init robots
+<span class="fc" id="L82">        initRobots();</span>
+
+<span class="fc" id="L84">        int i = 1;</span>
+<span class="pc bpc" id="L85" title="1 of 4 branches missed.">        while (teamsAlive() &gt; 1 &amp;&amp; i &lt; TURN_LIMIT) {</span>
+<span class="fc" id="L86">          executeNextTurn(i);</span>
+<span class="fc" id="L87">          i++;</span>
+        }
+<span class="fc" id="L89">        displayMessage(&quot;done&quot;, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);</span>
+<span class="fc" id="L90">        gameComplete = true;</span>
+<span class="fc" id="L91">      }</span>
+    };
+
+<span class="fc" id="L94">    executionThread.start();</span>
+
+<span class="fc" id="L96">    UIManager manager = UIManager.sharedInstance();</span>
+<span class="fc" id="L97">    manager.pushScreen(this.view);</span>
+<span class="fc" id="L98">  }</span>
+
+  public void checkGameComplete() {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">    if (this.gameComplete) {</span>
+<span class="fc" id="L102">      this.endGame();</span>
+    }
+<span class="fc" id="L104">  }</span>
+
+  /**
+   * Tells us the direction between two robots
+   * 
+   * @param from the robot to start from
+   * @param to the robot we are finding the direction to
+   */
+  public int directionBetweenRobots(Robot from, Robot to) {
+<span class="nc" id="L113">    return 0;</span>
+  }
+
+  /**
+   * Will be called by the forth interpreter to show new actions for display in the interface Will
+   * be called anytime the robot does anything, so the user can be updated as to what is happening
+   * 
+   * @param newActionMessage the latest action being run by a robot
+   * @param type the type of message to display
+   */
+  public void displayMessage(String newActionMessage, ConsoleMessageType type) {
+<span class="fc" id="L124">    this.view.displayMessage(newActionMessage, type);</span>
+    // sleep in between messages, so that we get an even printing speed
+    // do not progress to the next action if we are paused
+    try {
+      do {
+<span class="fc" id="L129">        Thread.sleep(this.delayDuration);</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">      } while (this.isPaused);</span>
+<span class="pc" id="L131">    } catch (InterruptedException e) {</span>
+<span class="nc" id="L132">      e.printStackTrace();</span>
+    }
+<span class="fc" id="L134">  }</span>
+
+  /**
+   * calls the endgame controller
+   */
+  public void endGame() {
+    // TODO new EndController();
+<span class="fc" id="L141">    UIManager manager = UIManager.sharedInstance();</span>
+<span class="fc" id="L142">    EndController cont = new EndController();</span>
+<span class="fc" id="L143">    endView endView = new endView(cont, teams);</span>
+<span class="fc" id="L144">    manager.pushScreen(endView);</span>
+<span class="fc" id="L145">  }</span>
+
+
+  /**
+   * executes a round of turns
+   */
+  public void executeNextTurn(int turnNum) {
+<span class="fc" id="L152">    displayMessage(&quot;Turn &quot; + turnNum, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);</span>
+<span class="fc" id="L153">    Iterator&lt;Team&gt; teamIt = this.teams.iterator();</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">    while (teamIt.hasNext()) {</span>
+<span class="fc" id="L155">      Team nextTeam = teamIt.next();</span>
+<span class="fc" id="L156">      displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);</span>
+<span class="fc" id="L157">      Queue&lt;Robot&gt; robotList = nextTeam.getLivingRobots();</span>
+<span class="fc" id="L158">      Iterator&lt;Robot&gt; robotIt = robotList.iterator();</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">      while (robotIt.hasNext()) {</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (teamsAlive() &lt;= 1) {</span>
+          // we have a winner. Break
+<span class="nc" id="L162">          return;</span>
+        }
+
+<span class="fc" id="L165">        Robot nextRobot = robotIt.next();</span>
+<span class="fc" id="L166">        view.updateRobotInfo(nextRobot, turnNum);</span>
+<span class="fc" id="L167">        displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);</span>
+        try {
+<span class="fc" id="L169">          ForthInterpreter.executeTurn(nextRobot, this);</span>
+<span class="pc" id="L170">        } catch (ForthRunTimeException | ForthParseException e) {</span>
+<span class="nc" id="L171">          e.printStackTrace();</span>
+          // this is thrown when forth encounters an error that it can't handle.
+          // Display the error, and end the turn
+<span class="nc" id="L174">          displayMessage(&quot;Error: &quot; + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);</span>
+<span class="nc" id="L175">          displayMessage(&quot;Ending Turn&quot;, ConsoleMessageType.CONSOLE_ERROR);</span>
+        }
+      }
+    }
+<span class="fc" id="L179">  }</span>
+
+  public List&lt;Tile&gt; findBestPath(Tile current, Tile destination, int movesAvailable) {
+<span class="fc" id="L182">    List&lt;List&lt;Tile&gt;&gt; options = new LinkedList&lt;List&lt;Tile&gt;&gt;();</span>
+
+    // iterate through all neighbor tiles
+<span class="fc bfc" id="L185" title="All 2 branches covered.">    for (int dir = 0; dir &lt; 6; dir++) {</span>
+<span class="fc" id="L186">      Point destPt = gameMap.getDirection(dir, 1);</span>
+<span class="fc" id="L187">      int newX = (int) destPt.getX() + current.getXCoord();</span>
+<span class="fc" id="L188">      int newY = (int) destPt.getY() + current.getYCoord();</span>
+<span class="fc" id="L189">      Tile neighbourTile = gameMap.findTile(newX, newY);</span>
+
+      // making sure position desired is on map
+<span class="pc bpc" id="L192" title="1 of 4 branches missed.">      if (neighbourTile != null &amp;&amp; gameMap.isValidTile(neighbourTile)) {</span>
+        // find the cost to reach this neighbor
+<span class="fc" id="L194">        int cost = neighbourTile.getCost();</span>
+        // if we found the destination, return a new list with the destination in it
+<span class="fc bfc" id="L196" title="All 4 branches covered.">        if (neighbourTile == destination &amp;&amp; cost &lt;= movesAvailable) {</span>
+<span class="fc" id="L197">          LinkedList&lt;Tile&gt; result = new LinkedList&lt;Tile&gt;();</span>
+<span class="fc" id="L198">          result.add(neighbourTile);</span>
+<span class="fc" id="L199">          return result;</span>
+          // if the neighbor isn't the destination but it is reachable, recurse to the neighbor
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        } else if (cost &lt;= movesAvailable) {</span>
+<span class="fc" id="L202">          List&lt;Tile&gt; neighbourResult =</span>
+<span class="fc" id="L203">              findBestPath(neighbourTile, destination, movesAvailable - cost);</span>
+          // if the neighbor was able to find a path, add it to the list of options
+<span class="fc bfc" id="L205" title="All 2 branches covered.">          if (neighbourResult != null) {</span>
+<span class="fc" id="L206">            options.add(neighbourResult);</span>
+          }
+        }
+      }
+    }
+
+    // now we have a list of paths that reach the destination. Look through them all to find the
+    // best option
+<span class="fc bfc" id="L214" title="All 2 branches covered.">    if (options.size() == 0) {</span>
+      // if there are no options, this path is a dead end
+<span class="fc" id="L216">      return null;</span>
+    } else {
+<span class="fc" id="L218">      int bestPath = Integer.MAX_VALUE;</span>
+<span class="fc" id="L219">      List&lt;Tile&gt; bestList = null;</span>
+<span class="fc" id="L220">      Iterator&lt;List&lt;Tile&gt;&gt; it = options.iterator();</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">      while (it.hasNext()) {</span>
+<span class="fc" id="L222">        List&lt;Tile&gt; thisOption = it.next();</span>
+<span class="fc" id="L223">        int cost = sizeOfPath(thisOption);</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        if (cost &lt; bestPath) {</span>
+<span class="fc" id="L225">          bestPath = cost;</span>
+<span class="fc" id="L226">          bestList = thisOption;</span>
+        }
+      }
+<span class="fc" id="L229">      bestList.add(current);</span>
+<span class="fc" id="L230">      return bestList;</span>
+    }
+  }
+
+  /**
+   * @return the animation speed
+   */
+  public int getAnimationSpeed() {
+<span class="fc" id="L238">    return this.animationSpeed;</span>
+  }
+
+  /**
+   * Finds a returns a list of the closest robots to input robot r Will return up to 4 robots, in a
+   * range up to 3 spaces Called by the ForthInterpreter
+   * 
+   * @param r the robot asking for closest robots
+   * @return
+   */
+  public List&lt;Robot&gt; getClosest(Robot r) {
+
+<span class="nc" id="L250">    LinkedList&lt;Robot&gt; closest = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L251">    boolean foundFour = false;</span>
+    // TODO find how much range increases for second for loop
+<span class="nc bnc" id="L253" title="All 2 branches missed.">    for (int range = 1; range &lt; gameMap.getMapSize(); range++) {</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">      for (int direction = 0; direction &lt; (range * 6) - 1; direction++) {</span>
+<span class="nc" id="L255">        Point dirToGO = gameMap.getDirection(range, direction);</span>
+
+<span class="nc" id="L257">        Tile tempTile = gameMap.findTile(r.getXPosition() + (int) dirToGO.getX(),</span>
+<span class="nc" id="L258">            r.getYPosition() + (int) dirToGO.getY());</span>
+        // check to see if tile is on map esle skips it
+<span class="nc bnc" id="L260" title="All 2 branches missed.">        if (gameMap.isValidTile(tempTile)) {</span>
+<span class="nc" id="L261">          Iterator&lt;Robot&gt; iter = tempTile.getRobots().iterator();</span>
+<span class="nc bnc" id="L262" title="All 4 branches missed.">          while (iter.hasNext() &amp;&amp; !foundFour) {</span>
+<span class="nc" id="L263">            closest.add(iter.next());</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">            if (closest.size() == 4)</span>
+<span class="nc" id="L265">              foundFour = true;</span>
+          }
+        }
+        // else tile is not on map
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (foundFour)</span>
+<span class="nc" id="L270">          return closest;</span>
+      }
+    }
+
+<span class="nc" id="L274">    return closest;</span>
+  }
+
+
+  /**
+   * Takes an x and y offset of range 1 and returns the direction (0-&gt;5)
+   * 
+   * @param xOffset -1, 0, 1
+   * @param yOffset -1, 0, 1
+   * @return the direction (0-&gt;5) the given offset points to, -1 if invalid input
+   */
+  public int getDirection(int xOffset, int yOffset) {
+<span class="fc bfc" id="L286" title="All 4 branches covered.">    if (xOffset == 0 &amp;&amp; yOffset == 1) {</span>
+<span class="fc" id="L287">      return 0;</span>
+<span class="fc bfc" id="L288" title="All 4 branches covered.">    } else if (xOffset == 1 &amp;&amp; yOffset == 1) {</span>
+<span class="fc" id="L289">      return 1;</span>
+<span class="fc bfc" id="L290" title="All 4 branches covered.">    } else if (xOffset == 1 &amp;&amp; yOffset == 0) {</span>
+<span class="fc" id="L291">      return 2;</span>
+<span class="fc bfc" id="L292" title="All 4 branches covered.">    } else if (xOffset == 0 &amp;&amp; yOffset == -1) {</span>
+<span class="fc" id="L293">      return 3;</span>
+<span class="fc bfc" id="L294" title="All 4 branches covered.">    } else if (xOffset == -1 &amp;&amp; yOffset == -1) {</span>
+<span class="fc" id="L295">      return 4;</span>
+<span class="fc bfc" id="L296" title="All 4 branches covered.">    } else if (xOffset == -1 &amp;&amp; yOffset == 0) {</span>
+<span class="fc" id="L297">      return 5;</span>
+    } else {
+<span class="fc" id="L299">      return -1;</span>
+    }
+  }
+
+
+  /**
+   * Gets the robot that currently has the turn to play
+   * 
+   * @param teamNum the number that represents the team that the robot to be played is on
+   * @param robotNum the s/n of the robot who's turn it is
+   */
+  public Robot getRobot(int teamNum, int robotNum) throws IndexOutOfBoundsException {
+<span class="nc" id="L311">    return teams.get(teamNum).getTeamMember(robotNum);</span>
+  }
+
+  /**
+   * Adds the robot teams to their starting positions on the map
+   */
+  private void initRobotPositions() {
+<span class="fc" id="L318">    int numTeams = teams.size();</span>
+<span class="fc" id="L319">    int size = gameMap.getMapSize();</span>
+<span class="fc" id="L320">    Point[] teamInitPoints = new Point[numTeams];</span>
+
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">    if (numTeams == 2) {</span>
+<span class="nc" id="L323">      teamInitPoints[0] = new Point(-(size - 1), -((size - 1) / 2));</span>
+<span class="nc" id="L324">      teams.get(0).setTeamDirection(-3);</span>
+<span class="nc" id="L325">      teamInitPoints[1] = new Point(size - 1, (size - 1) / 2);</span>
+<span class="nc" id="L326">      teams.get(1).setTeamDirection(0);</span>
+
+      // teamInitPoints[0] = new Point(0, 1); //for testing at closer starting positions
+      // teamInitPoints[1] = new Point(1, 0);
+
+
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">    } else if (numTeams == 3) {</span>
+<span class="nc" id="L333">      teamInitPoints[0] = new Point(-(size - 1), -((size - 1) / 2));</span>
+<span class="nc" id="L334">      teams.get(0).setTeamDirection(-3);</span>
+<span class="nc" id="L335">      teamInitPoints[1] = new Point((size - 1) / 2, size - 1);</span>
+<span class="nc" id="L336">      teams.get(1).setTeamDirection(1);</span>
+<span class="nc" id="L337">      teamInitPoints[2] = new Point((size - 1) / 2, -((size - 1) / 2));</span>
+<span class="nc" id="L338">      teams.get(2).setTeamDirection(-1);</span>
+
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">    } else if (numTeams == 6) {</span>
+<span class="fc" id="L341">      teamInitPoints[0] = new Point(-(size - 1), -((size - 1) / 2));</span>
+<span class="fc" id="L342">      teams.get(0).setTeamDirection(-3);</span>
+<span class="fc" id="L343">      teamInitPoints[1] = new Point(-((size - 1) / 2), (size - 1) / 2);</span>
+<span class="fc" id="L344">      teams.get(1).setTeamDirection(-2);</span>
+<span class="fc" id="L345">      teamInitPoints[2] = new Point((size - 1) / 2, size - 1);</span>
+<span class="fc" id="L346">      teams.get(2).setTeamDirection(-1);</span>
+<span class="fc" id="L347">      teamInitPoints[3] = new Point(size - 1, (size - 1) / 2);</span>
+<span class="fc" id="L348">      teams.get(3).setTeamDirection(0);</span>
+<span class="fc" id="L349">      teamInitPoints[4] = new Point((size - 1) / 2, -((size - 1) / 2));</span>
+<span class="fc" id="L350">      teams.get(4).setTeamDirection(1);</span>
+<span class="fc" id="L351">      teamInitPoints[5] = new Point(-((size - 1) / 2), -(size - 1));</span>
+<span class="fc" id="L352">      teams.get(5).setTeamDirection(2);</span>
+    }
+<span class="fc bfc" id="L354" title="All 2 branches covered.">    for (int l = 0; l &lt; teamInitPoints.length; l++) {</span>
+<span class="fc" id="L355">      Team tempTeam = teams.get(l);</span>
+<span class="fc" id="L356">      Queue&lt;Robot&gt; robots = tempTeam.getAllRobots();</span>
+<span class="fc" id="L357">      Tile tempTile =</span>
+<span class="fc" id="L358">          gameMap.findTile((int) (teamInitPoints[l].getX()), (int) (teamInitPoints[l].getY()));</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">      for (int i = 0; i &lt; robots.size(); i++) {</span>
+<span class="fc" id="L360">        Robot tempRobot = robots.remove();</span>
+<span class="fc" id="L361">        tempRobot.setXPosition((int) teamInitPoints[l].getX());</span>
+<span class="fc" id="L362">        tempRobot.setYPosition((int) teamInitPoints[l].getY());</span>
+<span class="fc" id="L363">        tempTile.addRobot(tempRobot);</span>
+<span class="fc" id="L364">        robots.add(tempRobot);</span>
+      }
+    }
+<span class="fc" id="L367">  }</span>
+
+
+  private void initRobots() {
+<span class="fc" id="L371">    displayMessage(&quot;Init&quot;, ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);</span>
+<span class="fc" id="L372">    Iterator&lt;Team&gt; it = this.teams.iterator();</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+<span class="fc" id="L374">      Team nextTeam = it.next();</span>
+<span class="fc" id="L375">      displayMessage(nextTeam.getTeamName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);</span>
+<span class="fc" id="L376">      Iterator&lt;Robot&gt; robotIt = nextTeam.getAllRobots().iterator();</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">      while (robotIt.hasNext()) {</span>
+<span class="fc" id="L378">        Robot nextRobot = robotIt.next();</span>
+<span class="fc" id="L379">        view.updateRobotInfo(nextRobot, 0);</span>
+<span class="fc" id="L380">        displayMessage(nextRobot.getName(), ConsoleMessageType.CONSOLE_SIMULATOR_MESSAGE);</span>
+        try {
+<span class="fc" id="L382">          ForthInterpreter.initRobot(nextRobot, this);</span>
+<span class="pc" id="L383">        } catch (ForthRunTimeException | ForthParseException e) {</span>
+<span class="nc" id="L384">          e.printStackTrace();</span>
+<span class="nc" id="L385">          displayMessage(&quot;Error: &quot; + e.getMessage(), ConsoleMessageType.CONSOLE_ERROR);</span>
+<span class="nc" id="L386">          displayMessage(&quot;Ending Init&quot;, ConsoleMessageType.CONSOLE_ERROR);</span>
+        }
+      }
+    }
+<span class="fc" id="L390">  }</span>
+
+  /**
+   * @return whether the game should be paused
+   */
+  public boolean isPaused() {
+<span class="fc" id="L396">    return this.isPaused;</span>
+  }
+
+  public int moveRobot(Robot robotToMove, int TeamNumber, int range, int direction, int movesLeft)
+      throws RuntimeException {
+
+    int newX;
+    int newY;
+<span class="fc" id="L404">    Tile curTile = gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition());</span>
+
+<span class="fc" id="L406">    Point dir = gameMap.getDirection(direction, range);</span>
+
+<span class="fc" id="L408">    Tile dest = gameMap.findTile((int) dir.getX() + curTile.getXCoord(),</span>
+<span class="fc" id="L409">        (int) dir.getY() + curTile.getYCoord());</span>
+
+<span class="pc bpc" id="L411" title="1 of 2 branches missed.">    if (!gameMap.isValidTile(dest)) {</span>
+<span class="nc" id="L412">      throw new RuntimeException(&quot;not a valid tile&quot;);</span>
+    }
+
+
+<span class="fc" id="L416">    List&lt;Tile&gt; bestPath = findBestPath(curTile, dest, movesLeft);</span>
+
+<span class="fc bfc" id="L418" title="All 2 branches covered.">    if (bestPath == null) {</span>
+<span class="fc" id="L419">      throw new RuntimeException(&quot;not enough moves&quot;);</span>
+    } else {
+
+<span class="fc" id="L422">      Iterator&lt;Tile&gt; iter = bestPath.iterator();</span>
+
+<span class="fc bfc" id="L424" title="All 2 branches covered.">      while (iter.hasNext()) {</span>
+<span class="fc" id="L425">        Tile temp = iter.next();</span>
+<span class="fc" id="L426">        newX = temp.getXCoord();</span>
+<span class="fc" id="L427">        newY = temp.getYCoord();</span>
+
+<span class="fc" id="L429">        gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition())</span>
+<span class="fc" id="L430">            .removeRobot(robotToMove);</span>
+
+<span class="fc" id="L432">        int xOffset = newX - robotToMove.getXPosition();</span>
+<span class="fc" id="L433">        int yOffset = newY - robotToMove.getYPosition();</span>
+<span class="fc" id="L434">        robotToMove.setXPosition(temp.getXCoord());</span>
+<span class="fc" id="L435">        robotToMove.setYPosition(temp.getYCoord());</span>
+
+<span class="fc" id="L437">        gameMap.findTile(robotToMove.getXPosition(), robotToMove.getYPosition())</span>
+<span class="fc" id="L438">            .addRobot(robotToMove);</span>
+<span class="fc" id="L439">        int currentDirection = getDirection(xOffset, yOffset);</span>
+<span class="fc" id="L440">        view.moveRobot((int) (robotToMove.getTeamNumber()), (int) (robotToMove.getMemberNumber()),</span>
+<span class="fc" id="L441">            currentDirection);</span>
+      }
+    }
+<span class="fc" id="L444">    return movesLeft;</span>
+
+  }
+
+  /**
+   * puts the game into a paused state
+   */
+  public void pause() {
+<span class="fc" id="L452">    this.isPaused = true;</span>
+<span class="fc" id="L453">  }</span>
+
+
+  /**
+   * Tells us the number of robots at a given square from a reference robot Called but the Forth
+   * Interpreter
+   * 
+   * @param referencePosition the robot asking for the population
+   * @param direction the direction to look in
+   * @param range the range to look in
+   * @return the number of robots on the space
+   */
+  public int populationAtPosition(Robot referencePosition, int direction, int range) {
+<span class="nc" id="L466">    return 0;</span>
+  }
+
+  /**
+   * Tells us the range between two robots
+   * 
+   * @param from the robot to start from
+   * @param to the robot we are finding the range to
+   */
+  public int rangeBetweenRobots(Robot from, Robot to) {
+<span class="nc" id="L476">    return 0;</span>
+  }
+
+  /**
+   * resumes the game from the paused state
+   */
+  public void resume() {
+<span class="fc" id="L483">    this.isPaused = false;</span>
+<span class="fc" id="L484">  }</span>
+
+
+  /**
+   * Sends a forth word from one robot to the mailbox of another Robots must be on the same team,
+   * and the forth word must be either an int, a string, or a boolean Called by the forth
+   * interpreter
+   * 
+   * @param sender the robot sending the message
+   * @param receiverNumber the member number of the robot to recieve the message (on the same team)
+   * @param value the value to send
+   * @return a bool indicating whether the operation was a success. Will fail if the receiverNumber
+   *         is invalid, if the receiver is destroyed, or if the receiver's mailbox is full
+   */
+  public boolean sendMail(Robot sender, int receiverNumber, ForthWord value) {
+<span class="nc" id="L499">    int teamNum = (int) sender.getTeamNumber();</span>
+<span class="nc" id="L500">    Team thisTeam = this.teams.get(teamNum);</span>
+    try {
+<span class="nc" id="L502">      Robot reciever = thisTeam.getTeamMember(receiverNumber);</span>
+      // attempt to send mail. Will return true if it worked, or false if it failed
+<span class="nc" id="L504">      return reciever.addMailFromMember((int) sender.getMemberNumber(), value);</span>
+<span class="nc" id="L505">    } catch (IndexOutOfBoundsException e) {</span>
+      // if there is no team mate with the number requested, return false
+<span class="nc" id="L507">      return false;</span>
+    }
+  }
+
+  /**
+   * fire at the position passed in
+   * 
+   * @param shooter is the robot that will fire a shot
+   * @param range the distance away to shoot
+   * @param direction the direction to shoot
+   */
+  public void shootAtSpace(Robot shooter, int range, int direction) {
+
+<span class="pc bpc" id="L520" title="1 of 2 branches missed.">    if (range &gt; 3) {</span>
+<span class="nc" id="L521">      this.displayMessage(&quot;Error: cannot shoot farther then range 3&quot;,</span>
+<span class="nc" id="L522">          ConsoleMessageType.CONSOLE_ERROR);</span>
+<span class="nc" id="L523">      return;</span>
+    }
+
+<span class="fc" id="L526">    Point dir = gameMap.getDirection(direction, range);</span>
+
+<span class="fc" id="L528">    int xPos = (int) (dir.getX() * range) + shooter.getXPosition();</span>
+<span class="fc" id="L529">    int yPos = (int) (dir.getY() * range) + shooter.getYPosition();</span>
+
+<span class="fc" id="L531">    Tile tileToShoot = gameMap.findTile(xPos, yPos);</span>
+<span class="fc bfc" id="L532" title="All 2 branches covered.">    if (tileToShoot != null) {</span>
+<span class="fc" id="L533">      LinkedList&lt;Robot&gt; robots = tileToShoot.getRobots();</span>
+
+<span class="fc" id="L535">      view.fireShot((int) (shooter.getTeamNumber()), (int) (shooter.getMemberNumber()), direction,</span>
+<span class="fc" id="L536">          range);</span>
+
+<span class="fc bfc" id="L538" title="All 2 branches covered.">      for (int i = 0; i &lt; robots.size(); i++) {</span>
+<span class="fc" id="L539">        Robot temp = robots.get(i);</span>
+<span class="fc" id="L540">        temp.inflictDamage(shooter.getStrength());</span>
+<span class="pc bpc" id="L541" title="1 of 2 branches missed.">        if (!temp.isAlive()) {</span>
+<span class="fc" id="L542">          view.destroyRobot((int) (temp.getTeamNumber()), (int) (temp.getMemberNumber()));</span>
+<span class="fc" id="L543">          temp.destroy();</span>
+        }
+
+      }
+<span class="fc" id="L547">    } else {</span>
+<span class="fc" id="L548">      this.displayMessage(&quot;Error: Can not shoot off map&quot;, ConsoleMessageType.CONSOLE_ERROR);</span>
+    }
+<span class="fc" id="L550">  }</span>
+
+
+  private int sizeOfPath(List&lt;Tile&gt; list) {
+<span class="fc" id="L554">    int sum = 0;</span>
+<span class="fc" id="L555">    Iterator&lt;Tile&gt; it = list.iterator();</span>
+<span class="fc bfc" id="L556" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+<span class="fc" id="L557">      Tile next = it.next();</span>
+<span class="fc" id="L558">      sum = next.getCost() + sum;</span>
+    }
+<span class="fc" id="L560">    return sum;</span>
+  }
+
+  /**
+   * Called when the user pushed the fast forward button. Finds the current speed state, and
+   * switches to the next one
+   * 
+   * @return the new state, for updating ui elements
+   */
+  public GameSpeed switchGameSpeed() {
+<span class="pc bpc" id="L570" title="1 of 5 branches missed.">    switch (this.speedMultiplier) {</span>
+      case GAME_SPEED_1X:
+<span class="fc" id="L572">        this.speedMultiplier = GameSpeed.GAME_SPEED_2X;</span>
+<span class="fc" id="L573">        this.delayDuration = 250;</span>
+<span class="fc" id="L574">        this.animationSpeed = 200;</span>
+<span class="fc" id="L575">        break;</span>
+      case GAME_SPEED_2X:
+<span class="fc" id="L577">        this.speedMultiplier = GameSpeed.GAME_SPEED_4X;</span>
+<span class="fc" id="L578">        this.delayDuration = 125;</span>
+<span class="fc" id="L579">        this.animationSpeed = 100;</span>
+<span class="fc" id="L580">        break;</span>
+      case GAME_SPEED_4X:
+<span class="fc" id="L582">        this.speedMultiplier = GameSpeed.GAME_SPEED_16X;</span>
+<span class="fc" id="L583">        this.delayDuration = 30;</span>
+<span class="fc" id="L584">        this.animationSpeed = 25;</span>
+<span class="fc" id="L585">        break;</span>
+      case GAME_SPEED_16X:
+<span class="fc" id="L587">        this.speedMultiplier = GameSpeed.GAME_SPEED_1X;</span>
+<span class="fc" id="L588">        this.delayDuration = 500;</span>
+<span class="fc" id="L589">        this.animationSpeed = 400;</span>
+        break;
+    }
+<span class="fc" id="L592">    return this.speedMultiplier;</span>
+  }
+
+  public int teamsAlive() {
+<span class="fc" id="L596">    int livingNum = 0;</span>
+<span class="fc" id="L597">    Iterator&lt;Team&gt; it = this.teams.iterator();</span>
+<span class="fc bfc" id="L598" title="All 2 branches covered.">    while (it.hasNext()) {</span>
+<span class="fc" id="L599">      Team thisTeam = it.next();</span>
+<span class="fc" id="L600">      int livingRobotCount = thisTeam.numberOfLivingRobots();</span>
+<span class="fc bfc" id="L601" title="All 2 branches covered.">      if (livingRobotCount &gt; 0) {</span>
+<span class="fc" id="L602">        livingNum++;</span>
+      }
+    }
+<span class="fc" id="L605">    return livingNum;</span>
+  }
+
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>UIManager (Nov 29, 2015 6:20:02 PM)</div></body></html>
