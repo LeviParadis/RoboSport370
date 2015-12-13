@@ -35,7 +35,7 @@
                     },
                     {"word" :       {   "name" : "turn",
                                         "comment" : "( -- )",
-                                        "body" :  "6 random 2 random 1 + move! 6 random 2 random 1 + shoot!"
+                                        "body" :  "5 random 1 move! scan! 0 = if 1 0 = else 0 identify! team <> then if shoot! drop then"
                                     }
                     }
                 ]

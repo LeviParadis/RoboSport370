@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import Constants.ConsoleMessageType;
 import Controllers.GameController;
-import Enums.ConsoleMessageType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Interfaces.ForthWord;

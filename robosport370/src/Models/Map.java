@@ -4,13 +4,13 @@ import java.awt.Point;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import Controllers.gameVariables;
+import Controllers.GameVariables;
 
 public class Map {
     boolean test = false;
-    private int mapDiameter = gameVariables.mapSize * 2 - 1;
-    private int height = gameVariables.mapSize;
-    private int mapSize = gameVariables.mapSize;
+    private int mapDiameter = GameVariables.mapSize * 2 - 1;
+    private int height = GameVariables.mapSize;
+    private int mapSize = GameVariables.mapSize;
     private int xPosMax, xPosMin, yPosMax, yPosMin;
 
     //the linkedlist that contains all of the tiles

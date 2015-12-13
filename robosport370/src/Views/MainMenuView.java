@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import Controllers.setupController;
+import Controllers.SetupController;
 
 /**
  * A GUI view for the main menu
@@ -18,9 +18,9 @@ import Controllers.setupController;
  * @author Levi Paradis
  *
  */
-public class mainMenuView extends ScreenAdapter {
+public class MainMenuView extends ScreenAdapter {
     // The controller which called the view
-    final setupController controller;
+    final SetupController controller;
 
     // Constant variables for determining menu option coordinates and dimensions
     private static final Integer menOpSrcX = 45;
@@ -57,7 +57,7 @@ public class mainMenuView extends ScreenAdapter {
     private Sprite menuOptionsExit;
 
     // For tracking the active option
-    private spriteMenuHandler menu;
+    private SpriteMenuHandler menu;
 
     /**
      * Constructor for MainMenuView
@@ -65,7 +65,7 @@ public class mainMenuView extends ScreenAdapter {
      * @param cont
      *            the controller creating this view
      */
-    public mainMenuView(final setupController cont) {
+    public MainMenuView(final SetupController cont) {
         controller = cont;
 
         SCREEN_WIDTH = Gdx.graphics.getWidth();
@@ -95,7 +95,7 @@ public class mainMenuView extends ScreenAdapter {
                 SCREEN_HEIGHT * 0.45f - 30 * 4f);
 
         // Add in the order for the associated constant variables
-        menu = new spriteMenuHandler(menuOptionsTournament);
+        menu = new SpriteMenuHandler(menuOptionsTournament);
         menu.addSprite(menuOptionsSimulation);
         menu.addSprite(menuOptionsNewRobot);
         menu.addSprite(menuOptionsExit);

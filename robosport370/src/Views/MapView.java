@@ -32,10 +32,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.Array;
 
+import Constants.ConsoleMessageType;
+import Constants.GameSpeed;
 import Controllers.GameController;
-import Controllers.gameVariables;
-import Enums.ConsoleMessageType;
-import Enums.GameSpeed;
+import Controllers.GameVariables;
 import Models.Robot;
 import Models.Team;
 import aurelienribon.tweenengine.Timeline;
@@ -48,7 +48,7 @@ import aurelienribon.tweenengine.TweenManager;
  * @author Corey
  *
  */
-public class mapView extends ScreenAdapter implements EventListener {
+public class MapView extends ScreenAdapter implements EventListener {
     // The controller which called the view
     private final GameController controller;
 
@@ -127,7 +127,7 @@ public class mapView extends ScreenAdapter implements EventListener {
      * @param teamsInMatch
      *            The number of teams in the current game
      */
-    public mapView(final GameController controller, List<Team> teamsInMatch) {
+    public MapView(final GameController controller, List<Team> teamsInMatch) {
         this.controller = controller;
 
         this.stage = new Stage();
@@ -165,7 +165,7 @@ public class mapView extends ScreenAdapter implements EventListener {
         explosionPos.setY(5000f);
 
         // Setting up the camera based on map size
-        mapSize = gameVariables.mapSize;
+        mapSize = GameVariables.mapSize;
         mapDiameter = mapSize * 2 - 1;
 
         cameraWidth = (int) (mapDiameter * sizeY * WINDOW_WIDTH / WINDOW_HEIGHT);

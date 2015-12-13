@@ -1,12 +1,12 @@
 package Controllers;
 
-public class gameVariables {
+public class GameVariables {
 
     public static int mapSize = 5;
     public static boolean isDebug;
     public static boolean isSim;
 
-    private gameVariables() {
+    private GameVariables() {
 
     }
 

@@ -8,9 +8,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import Views.AddRobotView;
-import Views.mainMenuView;
-import Views.setupView;
-import Views.endView;
+import Views.MainMenuView;
+import Views.SetupView;
+import Views.EndView;
 
 public class UIManager extends Game {
 
@@ -34,8 +34,8 @@ public class UIManager extends Game {
      * menu and it's view
      */
     public void create() {
-        setupController initialController = new setupController();
-        mainMenuView initialView = new mainMenuView(initialController);
+        SetupController initialController = new SetupController();
+        MainMenuView initialView = new MainMenuView(initialController);
 
         this.screenStack = new Stack<Screen>();
 

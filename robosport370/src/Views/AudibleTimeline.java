@@ -16,9 +16,9 @@ public class AudibleTimeline {
     private Sprite projectile;
     private Sprite source;
     private Sprite explosion;
-    private mapView mapView;
+    private MapView mapView;
 
-    public AudibleTimeline(mapView mapView) {
+    public AudibleTimeline(MapView mapView) {
         this.mapView = mapView;
     }
 

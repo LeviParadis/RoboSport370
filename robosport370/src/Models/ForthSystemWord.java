@@ -1,6 +1,6 @@
 package Models;
 
-import Enums.SystemCommandType;
+import Constants.SystemCommandType;
 import Exceptions.ForthParseException;
 import Interfaces.ForthWord;
 

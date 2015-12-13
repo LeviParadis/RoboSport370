@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  * @author Corey
  *
  */
-public class spriteMenuHandler {
+public class SpriteMenuHandler {
     private Sound beep;
 
     private Integer currentSpriteIndex;
@@ -24,7 +24,7 @@ public class spriteMenuHandler {
      * @param s
      *            the first menu option
      */
-    public spriteMenuHandler(Sprite s) {
+    public SpriteMenuHandler(Sprite s) {
         beep = Gdx.audio.newSound(Gdx.files.internal("assets/sound/Beep.mp3"));
 
         currentSpriteIndex = 1;

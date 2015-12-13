@@ -25,7 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
-import Controllers.setupController;
+import Controllers.SetupController;
 import Models.Team;
 
 /**
@@ -34,9 +34,9 @@ import Models.Team;
  * @author Corey Reviewed by:
  *
  */
-public class setupView extends ScreenAdapter {
+public class SetupView extends ScreenAdapter {
     // The controller which called the view
-    final setupController controller;
+    final SetupController controller;
 
     // To store the screen dimensions
     private Integer SCREEN_WIDTH;
@@ -61,8 +61,8 @@ public class setupView extends ScreenAdapter {
     private static final Integer menOpHeight = 30;
     private Sprite addTeam;
     private Integer teamIndex;
-    private HashMap<Integer, hideableSprite> teamMap;
-    private myTextInputListener listener;
+    private HashMap<Integer, HideableSprite> teamMap;
+    private MyTextInputListener listener;
     private Sprite deleteTeam;
     private Sprite mapToggle;
     private Sprite debugToggle;
@@ -70,15 +70,15 @@ public class setupView extends ScreenAdapter {
     private Sprite returnSprite;
 
     // For tracking the active option on the menu
-    private spriteMenuHandler setupMenu;
+    private SpriteMenuHandler setupMenu;
 
     // sprites to represent the teams
-    private hideableSprite team1;
-    private hideableSprite team2;
-    private hideableSprite team3;
-    private hideableSprite team4;
-    private hideableSprite team5;
-    private hideableSprite team6;
+    private HideableSprite team1;
+    private HideableSprite team2;
+    private HideableSprite team3;
+    private HideableSprite team4;
+    private HideableSprite team5;
+    private HideableSprite team6;
 
     // sprites to represent the configuration info
     private Sprite configuration;
@@ -110,7 +110,7 @@ public class setupView extends ScreenAdapter {
      * @param cont
      *            the controller creating this view
      */
-    public setupView(final setupController cont) {
+    public SetupView(final SetupController cont) {
         // Initailizing the controller, constants, and batch
         controller = cont;
 
@@ -132,7 +132,7 @@ public class setupView extends ScreenAdapter {
         returnSprite = new Sprite(setupOptions, menOpSrcX, menOpSrcY * 10, menOpWidth, menOpHeight);
 
         // Populating a menu with our sprites
-        setupMenu = new spriteMenuHandler(addTeam);
+        setupMenu = new SpriteMenuHandler(addTeam);
         setupMenu.addSprite(deleteTeam);
         setupMenu.addSprite(mapToggle);
         setupMenu.addSprite(debugToggle);
@@ -149,14 +149,14 @@ public class setupView extends ScreenAdapter {
 
         // Giving the team sprites and positions
         teamIndex = 0;
-        listener = new myTextInputListener();
-        team1 = new hideableSprite(setupOptions, 215, 2, 50, 20);
-        team2 = new hideableSprite(setupOptions, 215, 52, 50, 20);
-        team3 = new hideableSprite(setupOptions, 215, 102, 50, 20);
-        team4 = new hideableSprite(setupOptions, 215, 152, 50, 20);
-        team5 = new hideableSprite(setupOptions, 215, 202, 50, 20);
-        team6 = new hideableSprite(setupOptions, 215, 252, 50, 20);
-        teamMap = new HashMap<Integer, hideableSprite>();
+        listener = new MyTextInputListener();
+        team1 = new HideableSprite(setupOptions, 215, 2, 50, 20);
+        team2 = new HideableSprite(setupOptions, 215, 52, 50, 20);
+        team3 = new HideableSprite(setupOptions, 215, 102, 50, 20);
+        team4 = new HideableSprite(setupOptions, 215, 152, 50, 20);
+        team5 = new HideableSprite(setupOptions, 215, 202, 50, 20);
+        team6 = new HideableSprite(setupOptions, 215, 252, 50, 20);
+        teamMap = new HashMap<Integer, HideableSprite>();
         teamMap.put(1, team1);
         teamMap.put(2, team2);
         teamMap.put(3, team3);
@@ -382,7 +382,7 @@ public class setupView extends ScreenAdapter {
             // TODO Pass the filepath to the controller
             teamIndex++;
             teamMap.get(teamIndex).setVisible(true);
-            listener = new myTextInputListener();
+            listener = new MyTextInputListener();
         }
 
         team1.draw(batch);

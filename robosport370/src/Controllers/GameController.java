@@ -6,8 +6,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import Enums.ConsoleMessageType;
-import Enums.GameSpeed;
+
+import Constants.ConsoleMessageType;
+import Constants.GameSpeed;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Interfaces.ForthWord;
@@ -16,8 +17,8 @@ import Models.Robot;
 import Models.Team;
 import Models.Tile;
 import Models.Map;
-import Views.endView;
-import Views.mapView;
+import Views.EndView;
+import Views.MapView;
 
 public class GameController {
 
@@ -26,7 +27,7 @@ public class GameController {
     /** The map that holds the information for calculations and the size */
     private Map gameMap;
 
-    private mapView view;
+    private MapView view;
 
     private boolean isPaused;
 
@@ -64,7 +65,7 @@ public class GameController {
         this.gameComplete = false;
         this.speedMultiplier = GameSpeed.GAME_SPEED_1X;
         gameMap = new Map();
-        this.view = new mapView(this, allTeams);
+        this.view = new MapView(this, allTeams);
 
         teams = new ArrayList<Team>();
         Iterator<Team> it = allTeams.iterator();
@@ -249,7 +250,7 @@ public class GameController {
         // TODO new EndController();
         UIManager manager = UIManager.sharedInstance();
         EndController cont = new EndController();
-        endView endView = new endView(cont, teams);
+        EndView endView = new EndView(cont, teams);
         manager.pushScreen(endView);
     }
 

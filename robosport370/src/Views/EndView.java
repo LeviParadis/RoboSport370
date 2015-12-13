@@ -23,7 +23,7 @@ import Models.Robot;
 import java.util.Iterator;
 import java.util.List;
 
-public class endView extends ScreenAdapter implements EventListener {
+public class EndView extends ScreenAdapter implements EventListener {
 
     private EndController controller;
     private final Stage stage;
@@ -42,7 +42,7 @@ public class endView extends ScreenAdapter implements EventListener {
      * @param teams
      *            The the teams that will displayed on the end view
      */
-    public endView(EndController controller, List<Team> teams) {
+    public EndView(EndController controller, List<Team> teams) {
         this.controller = controller;
         this.teamsList = teams;
 

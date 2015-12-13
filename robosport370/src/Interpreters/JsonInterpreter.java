@@ -4,7 +4,6 @@ import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import Enums.JSONConstants;
 import Models.Robot;
 import Models.RobotGameStats;
 
@@ -22,6 +21,8 @@ import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+
+import Constants.JSONConstants;
 
 public class JsonInterpreter {
 

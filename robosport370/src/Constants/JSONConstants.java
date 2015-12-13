@@ -1,4 +1,4 @@
-package Enums;
+package Constants;
 
 public class JSONConstants {
     public static final String BASE_TAG = "script";

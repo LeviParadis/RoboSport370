@@ -19,10 +19,10 @@ import Models.Robot;
 import Models.Team;
 import Views.AddRobotView;
 import Views.ManageRobotView;
-import Views.mainMenuView;
-import Views.setupView;
-import Views.mapView;
-import Views.teamCreationView;
+import Views.MainMenuView;
+import Views.SetupView;
+import Views.MapView;
+import Views.TeamCreationView;
 import Views.PickRobotsView;
 
 /**
@@ -31,13 +31,13 @@ import Views.PickRobotsView;
  *         interfacing with the models
  *
  */
-public class setupController implements PickRobotsDelegate {
+public class SetupController implements PickRobotsDelegate {
     private Music introMusic;
     public int mapSize;
     public boolean isTournament, isSimulation;
     public List<Team> selectedTeams;
 
-    public setupController() {
+    public SetupController() {
         introMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/Bit Quest.mp3"));
         introMusic.setLooping(true);
         introMusic.setVolume(0.6f);
@@ -57,7 +57,7 @@ public class setupController implements PickRobotsDelegate {
     public void notifyTournament() {
         UIManager manager = UIManager.sharedInstance();
 
-        manager.pushScreen(new setupView(this));
+        manager.pushScreen(new SetupView(this));
         // System.out.println("Tournament");
     }
 
@@ -66,12 +66,12 @@ public class setupController implements PickRobotsDelegate {
      */
     public void notifySim() {
         UIManager manager = UIManager.sharedInstance();
-        manager.pushScreen(new setupView(this));
-        gameVariables.isSim = true;
+        manager.pushScreen(new SetupView(this));
+        GameVariables.isSim = true;
     }
 
     public void notifyDebug() {
-        gameVariables.isDebug = true;
+        GameVariables.isDebug = true;
     }
 
     public void notifyNewRobot() {
@@ -154,7 +154,7 @@ public class setupController implements PickRobotsDelegate {
         } else if (this.mapSize >= 11) {
             this.mapSize = this.mapSize - 6;
         }
-        gameVariables.mapSize = this.mapSize;
+        GameVariables.mapSize = this.mapSize;
     }
 
     @Override

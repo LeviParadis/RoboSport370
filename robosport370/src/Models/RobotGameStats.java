@@ -1,6 +1,6 @@
 package Models;
 
-import Enums.JSONConstants;
+import Constants.JSONConstants;
 
 public class RobotGameStats {
 

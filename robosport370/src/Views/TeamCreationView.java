@@ -24,21 +24,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-import Controllers.setupController;
+import Controllers.SetupController;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 
-public class teamCreationView extends ScreenAdapter {
+public class TeamCreationView extends ScreenAdapter {
 
     // The controller which called the view
-    final setupController controller;
+    final SetupController controller;
 
     // To store the screen dimensions
     private Integer SCREEN_WIDTH;
     private Integer SCREEN_HEIGHT;
 
     // search bar listener
-    myTextInputListener listener = new myTextInputListener();
+    MyTextInputListener listener = new MyTextInputListener();
 
     // queue and iterator of all robots from server
     Queue<Robot> robotList = JsonInterpreter.listRobots(true, null, null, null, null, null, null, null, null);
@@ -50,7 +50,7 @@ public class teamCreationView extends ScreenAdapter {
     private BitmapFont font = new BitmapFont(Gdx.files.internal("assets/MoonFlower.fnt"),
             Gdx.files.internal("assets/MoonFlower.png"), false);
 
-    public teamCreationView(final setupController cont) {
+    public TeamCreationView(final SetupController cont) {
         controller = cont;
 
         SCREEN_WIDTH = Gdx.graphics.getWidth();

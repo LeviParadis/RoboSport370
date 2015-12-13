@@ -2,12 +2,12 @@ package Controllers;
 
 import com.badlogic.gdx.Game;
 
-import Views.mainMenuView;
-import Views.endView;
+import Views.MainMenuView;
+import Views.EndView;
 
 public class EndController {
     // loggerController controller;
-    endView view;
+    EndView view;
 
     /**
      * gets called when the exit button is pressed
@@ -21,7 +21,7 @@ public class EndController {
      */
     public void notifyMainMenuPressed() {
         UIManager manager = UIManager.sharedInstance();
-        manager.pushScreen(new mainMenuView(new setupController()));
+        manager.pushScreen(new MainMenuView(new SetupController()));
     }
 
 }

@@ -1,4 +1,4 @@
-package Enums;
+package Constants;
 
 public enum ConsoleMessageType {
     CONSOLE_ACTION, CONSOLE_ERROR, CONSOLE_SIMULATOR_MESSAGE, CONSOLE_ROBOT_MESSAGE

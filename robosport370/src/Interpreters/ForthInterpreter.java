@@ -10,9 +10,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import Constants.ConsoleMessageType;
+import Constants.SystemCommandType;
 import Controllers.GameController;
-import Enums.ConsoleMessageType;
-import Enums.SystemCommandType;
 import Exceptions.ForthParseException;
 import Exceptions.ForthRunTimeException;
 import Exceptions.LeaveLoopException;
