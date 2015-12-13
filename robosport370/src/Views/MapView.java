@@ -23,17 +23,16 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.Array;
 
 import Constants.ConsoleMessageType;
 import Constants.GameSpeed;
+import Constants.UIConstants;
 import Controllers.GameController;
 import Controllers.GameVariables;
 import Models.Robot;
@@ -62,7 +61,6 @@ public class MapView extends ScreenAdapter implements EventListener {
     // For the various sprites
     private TextureAtlas atlas;
     private Array<Sprite> tiles;
-    private Array<Sprite> robotSprites;
 
     private Texture projectileTexture;
     private Sprite projectile;
@@ -141,8 +139,6 @@ public class MapView extends ScreenAdapter implements EventListener {
         // Setting up the tiles
         tiles = atlas.createSprites("tile");
 
-        // Setting up the robots
-        robotSprites = atlas.createSprites("robot");
 
         projectileTexture = new Texture("assets/game_sprites/projectile.png");
         projectile = new Sprite(projectileTexture);
@@ -190,14 +186,14 @@ public class MapView extends ScreenAdapter implements EventListener {
 
         // add table to sides
         // set up scroll bar style
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(UIConstants.BLUE_ATLAS));
         Skin skin = new Skin();
         skin.addRegions(atlas);
 
         TextButtonStyle buttonStyle = new TextButtonStyle();
         buttonStyle.font = new BitmapFont();
-        buttonStyle.up = skin.getDrawable("button_02");
-        buttonStyle.down = skin.getDrawable("button_01");
+        buttonStyle.up = skin.getDrawable(UIConstants.BUTTON_UP);
+        buttonStyle.down = skin.getDrawable(UIConstants.BUTTON_DOWN);
 
         // put lists in scroll panes, so we can scroll to see all entries
 
@@ -615,7 +611,7 @@ public class MapView extends ScreenAdapter implements EventListener {
         if (direction == 3) {
             moveY = -sizeY;
         }
-        AudibleTimeline aTimeline = new AudibleTimeline(this);
+        AudibleTimeline aTimeline = new AudibleTimeline();
         int speedMils = this.controller.getAnimationSpeed();
         aTimeline.setTimeline(Timeline.createSequence()
                 .push(Tween.to(teamList.get(team).get(robot), SpriteAccessor.POSITION_XY, speedMils / 1000f)
@@ -652,7 +648,7 @@ public class MapView extends ScreenAdapter implements EventListener {
         xTranslate = (float) ((float) 1.1 * sizeX * range * Math.cos(theta) - 2);
         yTranslate = (float) ((float) sizeY * range * Math.sin(theta) + 5);
 
-        AudibleTimeline aTimeline = new AudibleTimeline(this);
+        AudibleTimeline aTimeline = new AudibleTimeline();
         aTimeline.setProjectile(projectile);
         aTimeline.setSource(teamList.get(team).get(robot));
         int speedMils = this.controller.getAnimationSpeed();
@@ -663,7 +659,7 @@ public class MapView extends ScreenAdapter implements EventListener {
     }
 
     public void destroyRobot(int team, int robot) {
-        AudibleTimeline aTimeline = new AudibleTimeline(this);
+        AudibleTimeline aTimeline = new AudibleTimeline();
         aTimeline.setSource(teamList.get(team).get(robot));
         aTimeline.setExplosion(explosionPos);
         int speedMils = this.controller.getAnimationSpeed();

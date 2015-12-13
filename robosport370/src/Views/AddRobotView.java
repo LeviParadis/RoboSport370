@@ -23,13 +23,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import Controllers.AddRobotController;
-
+import Constants.UIConstants;
 public class AddRobotView extends ScreenAdapter implements EventListener {
 
     protected final Stage stage;
-    private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
-    private static final TextureAtlas commonAtlas = new TextureAtlas(
-            Gdx.files.internal("assets/ui_atlas/ui-commons.atlas"));
+    private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(UIConstants.BLUE_ATLAS));
+    private static final TextureAtlas commonAtlas = new TextureAtlas(Gdx.files.internal(UIConstants.COMMON_ATLAS));
 
     protected CheckBox power1;
     protected CheckBox power2;
@@ -74,26 +73,26 @@ public class AddRobotView extends ScreenAdapter implements EventListener {
         // set up buttons
         TextButtonStyle textButtonStyle = new TextButtonStyle();
         textButtonStyle.font = font;
-        textButtonStyle.up = skin.getDrawable("button_02");
-        textButtonStyle.down = skin.getDrawable("button_01");
+        textButtonStyle.up = skin.getDrawable(UIConstants.BUTTON_UP);
+        textButtonStyle.down = skin.getDrawable(UIConstants.BUTTON_DOWN);
 
-        backButton = new TextButton("Cancel", textButtonStyle);
+        backButton = new TextButton(UIConstants.BUTTON_TEXT_CANCEL, textButtonStyle);
         backButton.setPosition(100, 50);
         backButton.setSize(500, 50);
         backButton.addListener(this);
 
-        confirmButton = new TextButton("Confirm", textButtonStyle);
+        confirmButton = new TextButton(UIConstants.BUTTON_TEXT_CONFIRM, textButtonStyle);
         confirmButton.setPosition(width - 600, 50);
         confirmButton.setSize(500, 50);
         confirmButton.addListener(this);
 
         // set up text fields
         TextFieldStyle textFieldStyle = new TextFieldStyle();
-        textFieldStyle.background = skin.getDrawable("textbox_01");
+        textFieldStyle.background = skin.getDrawable(UIConstants.TEXTBOX);
         textFieldStyle.font = font;
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.cursor = skin.getDrawable("textbox_cursor_02");
-        textFieldStyle.selection = selectionSkin.getDrawable("transparent-black-30");
+        textFieldStyle.cursor = skin.getDrawable(UIConstants.TEXTBOX_CURSOR);
+        textFieldStyle.selection = selectionSkin.getDrawable(UIConstants.TEXTBOX_SELECTED);
 
         nameField = new TextField("R2D2", textFieldStyle);
         teamField = new TextField("C3", textFieldStyle);

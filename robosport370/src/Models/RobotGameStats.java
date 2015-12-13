@@ -1,7 +1,5 @@
 package Models;
 
-import Constants.JSONConstants;
-
 public class RobotGameStats {
 
     private long wins, losses, executions, gamesSurvived, gamesDied, damageGiven, damageAbsorbed, kills, distanceMoved;

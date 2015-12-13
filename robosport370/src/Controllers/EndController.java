@@ -1,7 +1,5 @@
 package Controllers;
 
-import com.badlogic.gdx.Game;
-
 import Views.MainMenuView;
 import Views.EndView;
 

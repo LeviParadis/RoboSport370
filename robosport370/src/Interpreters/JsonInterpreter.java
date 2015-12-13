@@ -8,8 +8,6 @@ import Models.Robot;
 import Models.RobotGameStats;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -17,14 +15,14 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
 import Constants.JSONConstants;
 
 public class JsonInterpreter {
+    
+    
 
     public static final String ROBOT_LIBRARIAN_URL = "http://localhost:8080/CrunchifyTutorials/api/crunchifyService";
 
@@ -54,6 +52,8 @@ public class JsonInterpreter {
      *            just the latest
      * @return a list of robots that match the above parameters
      */
+    
+    @SuppressWarnings("unchecked")
     public static Queue<Robot> listRobots(boolean currentVersionOnly, String name, String team, Integer minWins,
             Integer maxWins, Integer minLosses, Integer maxLosses, Integer minMatches, Integer maxMatches) {
 
@@ -116,6 +116,8 @@ public class JsonInterpreter {
         }
     }
 
+
+    @SuppressWarnings("unchecked")
     private static JSONArray createComparisonJSON(Integer minValueOrNull, Integer maxValueOrNull) {
         JSONArray result = new JSONArray();
         if (minValueOrNull != null) {
@@ -139,17 +141,6 @@ public class JsonInterpreter {
      * @return the robot object
      */
     public static Robot getRobot(long serial) {
-        // create the json object
-        JSONObject json = new JSONObject();
-        json.put(JSONConstants.SERIAL, new Integer((int) serial));
-        json.put(JSONConstants.VERSION, JSONConstants.VERSION_OPTION_ALL);
-        json.put(JSONConstants.LIST_TYPE_TAG, JSONConstants.LIST_TYPE_FULL);
-
-        JSONObject root = new JSONObject();
-        root.put(JSONConstants.LIST_TAG, json);
-
-        JSONObject response = contactLibrarian(root);
-        Robot newRobot = robotFromJSON(response);
 
         // TODO: implement
         JSONParser parser = new JSONParser();
@@ -196,6 +187,7 @@ public class JsonInterpreter {
      *            a text string representing the robot's forth code
      * @return a bool indicating whether the registration was a success
      */
+    @SuppressWarnings("unchecked")
     public static boolean registerRobot(String name, String team, long firepower, long health, long movement,
             String forthCode) throws RuntimeException {
 
@@ -323,13 +315,10 @@ public class JsonInterpreter {
         return newRobot;
     }
 
-    // the json library we use creates warnings when we try to write to JSON
-    // files, so we will
-    // have to suppress warnings in this function where it writes to JSON
-    @SuppressWarnings("unchecked")
     /**
      * @return a formated JSON object from all the stats from a robot
      */
+    @SuppressWarnings({"unused", "unchecked"})
     private static JSONObject statsToJSON(RobotGameStats stats) {
         JSONObject root = new JSONObject();
         root.put(JSONConstants.LOSSES, stats.getLosses());
@@ -344,6 +333,7 @@ public class JsonInterpreter {
         return root;
     }
 
+    @SuppressWarnings("unchecked")
     public static JSONArray forthCodeToJson(Set<String> vars, HashMap<String, String> words) {
         JSONArray forthArr = new JSONArray();
 

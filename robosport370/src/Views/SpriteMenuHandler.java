@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import Constants.UIConstants;
+
 /**
  * A class which handles and keeps track of a sprite menu for a view
  * 
@@ -25,7 +27,7 @@ public class SpriteMenuHandler {
      *            the first menu option
      */
     public SpriteMenuHandler(Sprite s) {
-        beep = Gdx.audio.newSound(Gdx.files.internal("assets/sound/Beep.mp3"));
+        beep = Gdx.audio.newSound(Gdx.files.internal(UIConstants.SOUND_BEEP));
 
         currentSpriteIndex = 1;
         maxSprites = 1;

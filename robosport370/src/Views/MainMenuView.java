@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import Constants.UIConstants;
 import Controllers.SetupController;
 
 /**
@@ -73,13 +75,13 @@ public class MainMenuView extends ScreenAdapter {
 
         batch = new SpriteBatch();
 
-        menuArtTexture = new Texture("assets/mainMenu/menu_title.png");
+        menuArtTexture = new Texture(UIConstants.SPRITE_MENU);
         menuArtSprite = new Sprite(menuArtTexture, 280, 126);
 
-        menuCreditTexture = new Texture("assets/mainMenu/menu_credits.png");
+        menuCreditTexture = new Texture(UIConstants.SPRITE_CREDITS);
         menuCreditSprite = new Sprite(menuCreditTexture, 295, 75);
 
-        menuOptionsTexture = new Texture("assets/mainMenu/menu_options.png");
+        menuOptionsTexture = new Texture(UIConstants.SPRITE_OPTIONS);
         menuOptionsTournament = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY * 0, menOpWidth, menOpHeight);
         menuOptionsSimulation = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY * 2, menOpWidth, menOpHeight);
         menuOptionsNewRobot = new Sprite(menuOptionsTexture, menOpSrcX, menOpSrcY * 4, menOpWidth, menOpHeight);

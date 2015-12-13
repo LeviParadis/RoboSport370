@@ -300,8 +300,6 @@ public class Map {
      */
     public static void main(String[] args) {
         Map test = new Map();
-        Tile one = new Tile(-1, -1);
-        Tile two = new Tile(3, 4);
         System.out.println(test.getDirection(7, 2));
     }
 }

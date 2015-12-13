@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.utils.Align;
 
+import Constants.UIConstants;
 import Controllers.PickRobotsController;
 import Models.Robot;
 
@@ -36,10 +37,9 @@ import javax.swing.JOptionPane;
 public class PickRobotsView extends ScreenAdapter implements EventListener {
 
     private final Stage stage;
-    private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
-    private static final TextureAtlas grayAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-gray.atlas"));
-    private static final TextureAtlas commonAtlas = new TextureAtlas(
-            Gdx.files.internal("assets/ui_atlas/ui-commons.atlas"));
+    private static final TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(UIConstants.BLUE_ATLAS));
+    private static final TextureAtlas grayAtlas = new TextureAtlas(Gdx.files.internal(UIConstants.GRAY_ATLAS));
+    private static final TextureAtlas commonAtlas = new TextureAtlas(Gdx.files.internal(UIConstants.COMMON_ATLAS));
 
     private TextButton confirmButton;
     private TextButton searchButton;
@@ -99,17 +99,17 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         // set up button styles
         TextButtonStyle buttonStyle = new TextButtonStyle();
         buttonStyle.font = font;
-        buttonStyle.up = skin.getDrawable("button_02");
-        buttonStyle.down = skin.getDrawable("button_01");
-        buttonStyle.disabled = inactiveSkin.getDrawable("button_01");
+        buttonStyle.up = skin.getDrawable(UIConstants.BUTTON_UP);
+        buttonStyle.down = skin.getDrawable(UIConstants.BUTTON_DOWN);
+        buttonStyle.disabled = inactiveSkin.getDrawable(UIConstants.BUTTON_DOWN);
 
         // set up text field styles
         TextFieldStyle textFieldStyle = new TextFieldStyle();
-        textFieldStyle.background = skin.getDrawable("textbox_01");
+        textFieldStyle.background = skin.getDrawable(UIConstants.TEXTBOX);
         textFieldStyle.font = font;
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.cursor = skin.getDrawable("textbox_cursor_02");
-        textFieldStyle.selection = selectionSkin.getDrawable("transparent-black-30");
+        textFieldStyle.cursor = skin.getDrawable(UIConstants.TEXTBOX_CURSOR);
+        textFieldStyle.selection = selectionSkin.getDrawable(UIConstants.TEXTBOX_SELECTED);
 
         // set up label styles
         LabelStyle labelStyle = new LabelStyle();
@@ -118,10 +118,10 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
 
         // set up checkbox styles
         checkboxStyle = new CheckBoxStyle();
-        checkboxStyle.checkboxOn = skin.getDrawable("checkbox_on");
-        checkboxStyle.checkboxOff = skin.getDrawable("checkbox_off");
-        checkboxStyle.checkboxOffDisabled = inactiveSkin.getDrawable("checkbox_off");
-        checkboxStyle.checkboxOnDisabled = inactiveSkin.getDrawable("checkbox_on");
+        checkboxStyle.checkboxOn = skin.getDrawable(UIConstants.CHECKBOX_ON);
+        checkboxStyle.checkboxOff = skin.getDrawable(UIConstants.CHECKBOX_OFF);
+        checkboxStyle.checkboxOffDisabled = inactiveSkin.getDrawable(UIConstants.CHECKBOX_OFF);
+        checkboxStyle.checkboxOnDisabled = inactiveSkin.getDrawable(UIConstants.CHECKBOX_ON);
         checkboxStyle.fontColor = Color.BLACK;
         checkboxStyle.font = font;
 
@@ -140,17 +140,17 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
         titleLabel.setFontScale(2);
 
         // set up buttons on the bottom
-        backButton = new TextButton("Cancel", buttonStyle);
+        backButton = new TextButton(UIConstants.BUTTON_TEXT_CANCEL, buttonStyle);
         backButton.setPosition(100, 50);
         backButton.setSize(500, 50);
         backButton.addListener(this);
 
-        confirmButton = new TextButton("Confirm", buttonStyle);
+        confirmButton = new TextButton(UIConstants.BUTTON_TEXT_CONFIRM, buttonStyle);
         confirmButton.setPosition(width - 600, 50);
         confirmButton.setSize(500, 50);
         confirmButton.addListener(this);
 
-        searchButton = new TextButton("Search", buttonStyle);
+        searchButton = new TextButton(UIConstants.BUTTON_TEXT_SEARCH, buttonStyle);
         searchButton.setPosition(width - 200, 50);
         searchButton.setSize(500, 50);
         searchButton.addListener(this);
@@ -172,8 +172,8 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
 
         // set up scroll bar style
         ScrollPaneStyle scrollStyle = new ScrollPaneStyle();
-        scrollStyle.vScrollKnob = skin.getDrawable("slider_back_ver");
-        scrollStyle.hScrollKnob = skin.getDrawable("slider_back_hor");
+        scrollStyle.vScrollKnob = skin.getDrawable(UIConstants.SLIDER_VERTICAL);
+        scrollStyle.hScrollKnob = skin.getDrawable(UIConstants.SLIDER_HORIZONTAL);
 
         // put lists in scroll panes, so we can scroll to see all entries
         ScrollPane scrollResults = new ScrollPane(resultsTable, scrollStyle);

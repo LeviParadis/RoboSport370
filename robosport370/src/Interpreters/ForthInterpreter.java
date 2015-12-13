@@ -1,14 +1,8 @@
 package Interpreters;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.EmptyStackException;
 import java.util.Queue;
 import java.util.Stack;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import Constants.ConsoleMessageType;
 import Constants.SystemCommandType;

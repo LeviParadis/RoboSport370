@@ -1,26 +1,22 @@
 package Views;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import Constants.UIConstants;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 
 public class AudibleTimeline {
     private Timeline timeline;
-    private static Sound laser = Gdx.audio.newSound(Gdx.files.internal("assets/sound/laser.wav"));
-    private static Sound boom = Gdx.audio.newSound(Gdx.files.internal("assets/sound/explosion.wav"));
+    private static Sound laser = Gdx.audio.newSound(Gdx.files.internal(UIConstants.SOUND_LASER));
+    private static Sound boom = Gdx.audio.newSound(Gdx.files.internal(UIConstants.SOUND_EXPLOSION));
     private Sprite projectile;
     private Sprite source;
     private Sprite explosion;
-    private MapView mapView;
 
-    public AudibleTimeline(MapView mapView) {
-        this.mapView = mapView;
-    }
 
     public void setExplosion(Sprite explosion) {
         this.explosion = explosion;

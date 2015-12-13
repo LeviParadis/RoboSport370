@@ -1,7 +1,5 @@
 package Controllers;
 
-import javax.swing.JOptionPane;
-
 import Interfaces.PickRobotsDelegate;
 
 import java.util.Queue;

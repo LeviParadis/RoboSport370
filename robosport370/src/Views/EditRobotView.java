@@ -14,13 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
+import Constants.UIConstants;
 import Controllers.EditRobotController;
 import Interpreters.JsonInterpreter;
 import Models.Robot;
 
 public class EditRobotView extends AddRobotView {
 
-    private static final TextureAtlas redAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-red.atlas"));
+    private static final TextureAtlas redAtlas = new TextureAtlas(Gdx.files.internal(UIConstants.RED_ATLAS));
     private TextButton retireButton;
 
     public EditRobotView(EditRobotController controller, Robot robot) {
@@ -43,8 +44,8 @@ public class EditRobotView extends AddRobotView {
 
         TextButtonStyle textButtonStyle = new TextButtonStyle();
         textButtonStyle.font = font;
-        textButtonStyle.up = skin.getDrawable("button_02");
-        textButtonStyle.down = skin.getDrawable("button_01");
+        textButtonStyle.up = skin.getDrawable(UIConstants.BUTTON_UP);
+        textButtonStyle.down = skin.getDrawable(UIConstants.BUTTON_DOWN);
 
         retireButton = new TextButton("Retire Robot", textButtonStyle);
         retireButton.setPosition(width / 2 - 250, height - 150);

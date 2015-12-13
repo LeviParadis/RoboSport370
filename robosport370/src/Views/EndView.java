@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
+import Constants.UIConstants;
 import Controllers.EndController;
 import Models.Team;
 import Models.Robot;
@@ -52,7 +53,7 @@ public class EndView extends ScreenAdapter implements EventListener {
         // set up the stage
         stage = new Stage();
 
-        TextureAtlas blueAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
+        TextureAtlas blueAtlas = new TextureAtlas(Gdx.files.internal(UIConstants.BLUE_ATLAS));
         BitmapFont font = new BitmapFont();
         BitmapFont fontTitle = new BitmapFont();
         Skin skin = new Skin();
@@ -62,8 +63,8 @@ public class EndView extends ScreenAdapter implements EventListener {
 
         TextButtonStyle textButtonStyle = new TextButtonStyle();
         textButtonStyle.font = font;
-        textButtonStyle.up = skin.getDrawable("button_02");
-        textButtonStyle.down = skin.getDrawable("button_01");
+        textButtonStyle.up = skin.getDrawable(UIConstants.BUTTON_UP);
+        textButtonStyle.down = skin.getDrawable(UIConstants.BUTTON_DOWN);
 
         mainMenuButton = new TextButton("Main Menu", textButtonStyle);
         mainMenuButton.addListener((EventListener) this);

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
+import Constants.UIConstants;
 import Controllers.ManageRobotController;
 
 public class ManageRobotView extends ScreenAdapter implements EventListener {
@@ -36,7 +37,7 @@ public class ManageRobotView extends ScreenAdapter implements EventListener {
         // set up the stage
         stage = new Stage();
 
-        TextureAtlas blueAtlas = new TextureAtlas(Gdx.files.internal("assets/ui_atlas/ui-blue.atlas"));
+        TextureAtlas blueAtlas = new TextureAtlas(Gdx.files.internal(UIConstants.BLUE_ATLAS));
         BitmapFont font = new BitmapFont();
         Skin skin = new Skin();
         skin.addRegions(blueAtlas);
@@ -45,16 +46,16 @@ public class ManageRobotView extends ScreenAdapter implements EventListener {
 
         TextButtonStyle textButtonStyle = new TextButtonStyle();
         textButtonStyle.font = font;
-        textButtonStyle.up = skin.getDrawable("button_02");
-        textButtonStyle.down = skin.getDrawable("button_01");
+        textButtonStyle.up = skin.getDrawable(UIConstants.BUTTON_UP);
+        textButtonStyle.down = skin.getDrawable(UIConstants.BUTTON_DOWN);
 
-        backButton = new TextButton("Cancel", textButtonStyle);
+        backButton = new TextButton(UIConstants.BUTTON_TEXT_CANCEL, textButtonStyle);
         backButton.addListener((EventListener) this);
 
-        addButton = new TextButton("Add Robot", textButtonStyle);
+        addButton = new TextButton(UIConstants.BUTTON_TEXT_ADD_ROBOT, textButtonStyle);
         addButton.addListener((EventListener) this);
 
-        editButton = new TextButton("Edit Robot", textButtonStyle);
+        editButton = new TextButton(UIConstants.BUTTON_TEXT_EDIT_ROBOT, textButtonStyle);
         editButton.addListener((EventListener) this);
 
         // set up the table
