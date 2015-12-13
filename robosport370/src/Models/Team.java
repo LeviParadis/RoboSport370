@@ -80,13 +80,21 @@ public class Team {
     }
 
     public Robot getTeamMember(int memberNumber) throws IndexOutOfBoundsException {
-        Robot[] array = (Robot[]) this.robotList.toArray();
-        int size = array.length;
+        int size = robotList.size();
         if (memberNumber >= size || memberNumber < 0) {
             throw new IndexOutOfBoundsException();
         } else {
-            return array[memberNumber];
+            Iterator<Robot> it = robotList.iterator();
+            while(it.hasNext()){
+                Robot next = it.next();
+                if(memberNumber == 0){
+                    return next;
+                } else {
+                    memberNumber--;
+                }
+            }
         }
+        throw new IndexOutOfBoundsException();
     }
 
     /**
