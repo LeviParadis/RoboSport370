@@ -17,12 +17,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
-import com.badlogic.gdx.utils.Align;
 
 import Constants.UIConstants;
 import Controllers.PickRobotsController;
@@ -45,7 +43,6 @@ public class PickRobotsView extends ScreenAdapter implements EventListener {
     private TextButton searchButton;
     private TextButton backButton;
 
-    private Table searchTable;
     private Table resultsTable;
     private Table rosterTable;
     private Table robotInfoTable;
