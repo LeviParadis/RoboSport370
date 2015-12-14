@@ -709,16 +709,31 @@ public class GameController {
      *            the robot to start from
      * @param to
      *            the robot we are finding the range to
-     * @return 0
+     * @return the range between two robots
      */
     public int rangeBetweenRobots(Robot from, Robot to) {
-        int fromX = from.getXPosition();
-        int fromY = from.getYPosition();
+        int diffX = from.getXPosition() - to.getXPosition();
+        int diffY = from.getYPosition() - to.getYPosition();
         
-        int toX = to.getXPosition();
-        int toY = to.getYPosition();
-        
-        return 0;
+        if(diffX == 0){
+            return Math.abs(diffY);
+        } else if(diffX < 0){
+            if(diffY > 0){
+                return Math.abs(diffX) + diffY; 
+            } else if(diffY < diffX){
+                return Math.abs(diffX) + Math.abs(diffX - diffY);
+            } else {
+                return Math.abs(diffX);
+            }
+        } else{
+            if(diffY < 0){
+                return diffX + Math.abs(diffY);
+            } else if(diffY > diffX){
+                return Math.abs(diffX) + Math.abs(diffX - diffY);
+            } else {
+                return Math.abs(diffX);
+            }
+        }
     }
 
     public void checkGameComplete() {
