@@ -493,12 +493,8 @@ public class GameController {
             return;
         }
 
-        Point dir = gameMap.getDirection(direction, range);
-
-        int xPos = (int) (dir.getX() * range) + shooter.getXPosition();
-        int yPos = (int) (dir.getY() * range) + shooter.getYPosition();
-
-        Tile tileToShoot = gameMap.findTile(xPos, yPos);
+        Tile tileToShoot = this.tileNearRobot(shooter, direction, range);
+  
         if (tileToShoot != null) {
             LinkedList<Robot> robots = tileToShoot.getRobots();
 
@@ -588,6 +584,7 @@ public class GameController {
             Iterator<Robot> it = robots.iterator();
             while(it.hasNext()){
                 Robot next = it.next();
+
                 if(!robotList.contains(next) && !next.equals(exclude) && next.isAlive()){
                     robotList.add(next);
                     if(robotList.size()==listLimit) { 
@@ -751,8 +748,8 @@ public class GameController {
      * @return int an integer saying the current direction at the position
      */
     public int directionBetweenRobots(Robot from, Robot to) {        
-        int diffX = from.getXPosition() - to.getXPosition();
-        int diffY = from.getYPosition() - to.getYPosition();
+        int diffX = to.getXPosition() - from.getXPosition();
+        int diffY = to.getYPosition() - from.getYPosition();
         
         int range = rangeBetweenRobots(from, to);
         int maxDirection = (range * 6);
@@ -785,8 +782,8 @@ public class GameController {
      * @return the range between two robots
      */
     public int rangeBetweenRobots(Robot from, Robot to) {
-        int diffX = from.getXPosition() - to.getXPosition();
-        int diffY = from.getYPosition() - to.getYPosition();
+        int diffX = to.getXPosition() - from.getXPosition();
+        int diffY = to.getYPosition() - from.getYPosition();
         
         if(diffX == 0){
             return Math.abs(diffY);
