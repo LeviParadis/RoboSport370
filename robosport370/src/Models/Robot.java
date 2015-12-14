@@ -333,7 +333,7 @@ public class Robot implements Cloneable {
      * @return a string representation of the robot
      */
     public String toString() {
-        return name + " - " + serialNumber;
+        return name + " - " + this.simTeamNumber;
     }
 
     /**
@@ -359,7 +359,7 @@ public class Robot implements Cloneable {
         if (obj instanceof Robot) {
             Robot other = (Robot) obj;
             long sn = other.getSerialNumber();
-            return (sn == this.getSerialNumber());
+            return (sn == this.getSerialNumber() && other.getTeamNumber() == this.getTeamNumber());
         }
         return false;
     }
