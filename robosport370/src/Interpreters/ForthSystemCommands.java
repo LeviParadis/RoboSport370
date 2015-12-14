@@ -691,15 +691,21 @@ public class ForthSystemCommands {
         ForthWord first = forthStack.pop();
         if (first instanceof ForthIntegerLiteral) {
             List<Robot> result = controller.getClosest(robot);
-            Robot selected = result.get((int) ((ForthIntegerLiteral) first).getValue());
-            long health = selected.getHealth();
-            long teamNum = selected.getTeamNumber();
-            int range = controller.rangeBetweenRobots(robot, selected);
-            int direction = controller.directionBetweenRobots(robot, selected);
-            forthStack.push(new ForthIntegerLiteral(health));
-            forthStack.push(new ForthIntegerLiteral(range));
-            forthStack.push(new ForthIntegerLiteral(direction));
-            forthStack.push(new ForthIntegerLiteral(teamNum));
+            int idx = (int)((ForthIntegerLiteral) first).getValue();
+            if(idx<result.size()){
+                Robot selected = result.get((int) ((ForthIntegerLiteral) first).getValue());
+                long health = selected.getHealth();
+                long teamNum = selected.getTeamNumber();
+                int range = controller.rangeBetweenRobots(robot, selected);
+                int direction = controller.directionBetweenRobots(robot, selected);
+                forthStack.push(new ForthIntegerLiteral(health));
+                forthStack.push(new ForthIntegerLiteral(range));
+                forthStack.push(new ForthIntegerLiteral(direction));
+                forthStack.push(new ForthIntegerLiteral(teamNum));
+            } else {
+                throw new ForthRunTimeException("could not identify robot " + idx + " nearby");
+            }
+            
         } else {
             throw new ForthRunTimeException("identify command called without an int on top of the stack");
         }

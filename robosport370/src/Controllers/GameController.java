@@ -527,32 +527,75 @@ public class GameController {
      * @return List a list containing the closest robots
      */
     public List<Robot> getClosest(Robot r) {
+        
+        int startX = r.getXPosition();
+        int startY = r.getYPosition();
 
         LinkedList<Robot> closest = new LinkedList<>();
-        boolean foundFour = false;
-        // TODO find how much range increases for second for loop
-        for (int range = 1; range < gameMap.getMapSize(); range++) {
-            for (int direction = 0; direction < (range * 6) - 1; direction++) {
-                Point dirToGO = gameMap.getDirection(range, direction);
-
-                Tile tempTile = gameMap.findTile(r.getXPosition() + (int) dirToGO.getX(),
-                        r.getYPosition() + (int) dirToGO.getY());
-                // check to see if tile is on map esle skips it
-                if (gameMap.isValidTile(tempTile)) {
-                    Iterator<Robot> iter = tempTile.getRobots().iterator();
-                    while (iter.hasNext() && !foundFour) {
-                        closest.add(iter.next());
-                        if (closest.size() == 4)
-                            foundFour = true;
+        final int maxDistance = 3;
+        final int listLimit = 4;
+        
+        for (int range = 0; range <= maxDistance; range++) {
+            for(int x=-range; x<=range;x++){
+                int cap = range - Math.abs(x);
+                if(x<0){
+                    for(int y=-range; y<=cap; y++){
+                        Tile nextTile = gameMap.findTile(startX+x, startY+y);
+                        this.addRobotsToToList(nextTile, closest, r, listLimit);
+                        if(closest.size() >= 4){
+                            return closest;
+                        }
+                    }
+                } else if (x>0){
+                    for(int y=range; y>=-cap; y--){
+                        Tile nextTile = gameMap.findTile(startX+x, startY+y);
+                        this.addRobotsToToList(nextTile, closest, r, listLimit);
+                        if(closest.size() >= 4){
+                            return closest;
+                        }
+                    }
+                } else {
+                    Tile topTile = gameMap.findTile(startX, startY+range);
+                    this.addRobotsToToList(topTile, closest, r, listLimit);
+                    if(closest.size() >= 4){
+                        return closest;
+                    }
+                    Tile bottomTile = gameMap.findTile(startX, startY-range);
+                    this.addRobotsToToList(bottomTile, closest, r, listLimit);
+                    if(closest.size() >= 4){
+                        return closest;
                     }
                 }
-                // else tile is not on map
-                if (foundFour)
-                    return closest;
+            }
+        }        
+        return closest;
+    }
+    
+    /**
+     * Helper method to attempt to add robots from a tile to a list of robots
+     * Will only add robots if they are unique to the list, alive, and not the caller
+     * @param newTile the tile to add robots from
+     * @param robotList the ongoing list of robots
+     * @param exclude the robot that is searching for others
+     * @param listLimit the max amount allowed in the list
+     */
+    private void addRobotsToToList(Tile newTile, List<Robot> robotList, Robot exclude, int listLimit){
+        if(robotList.size() >= 4){
+            return;
+        }
+        if(gameMap.isValidTile(newTile)){
+            List<Robot> robots = newTile.getRobots();
+            Iterator<Robot> it = robots.iterator();
+            while(it.hasNext()){
+                Robot next = it.next();
+                if(!robotList.contains(next) && !next.equals(exclude) && next.isAlive()){
+                    robotList.add(next);
+                    if(robotList.size()==listLimit) { 
+                        return;
+                    }
+                }
             }
         }
-
-        return closest;
     }
 
     /**
@@ -635,6 +678,11 @@ public class GameController {
      * @return int an integer saying the current direction at the position
      */
     public int directionBetweenRobots(Robot from, Robot to) {
+        int fromX = from.getXPosition();
+        int fromY = from.getYPosition();
+        
+        int toX = to.getXPosition();
+        int toY = to.getYPosition();
         return 0;
     }
 
