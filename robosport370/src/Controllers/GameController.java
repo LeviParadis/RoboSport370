@@ -677,13 +677,29 @@ public class GameController {
      *            
      * @return int an integer saying the current direction at the position
      */
-    public int directionBetweenRobots(Robot from, Robot to) {
-        int fromX = from.getXPosition();
-        int fromY = from.getYPosition();
+    public int directionBetweenRobots(Robot from, Robot to) {        
+        int diffX = from.getXPosition() - to.getXPosition();
+        int diffY = from.getYPosition() - to.getYPosition();
         
-        int toX = to.getXPosition();
-        int toY = to.getYPosition();
-        return 0;
+        int range = rangeBetweenRobots(from, to);
+        int maxDirection = (range * 6);
+        
+        //direction found by analyzing the hex map
+        if(diffX >= 0){
+            if(diffX == range || diffY < 0){
+                return (range * 2) - diffY;
+            } else {
+                 return diffX;
+            }
+        } else{
+            if(diffX == -range){
+                return maxDirection - range + diffY;
+            } else if(diffY >= 0){
+                return maxDirection + diffX;
+            } else {
+                return (maxDirection/2) - diffX;
+            }
+        }
     }
 
     /**
@@ -696,6 +712,12 @@ public class GameController {
      * @return 0
      */
     public int rangeBetweenRobots(Robot from, Robot to) {
+        int fromX = from.getXPosition();
+        int fromY = from.getYPosition();
+        
+        int toX = to.getXPosition();
+        int toY = to.getYPosition();
+        
         return 0;
     }
 
