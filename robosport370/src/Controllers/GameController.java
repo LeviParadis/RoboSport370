@@ -664,8 +664,81 @@ public class GameController {
      * @return the number of robots on the space
      */
     public int populationAtPosition(Robot referencePosition, int direction, int range) {
-        return 0;
+        Tile requestedTile = tileNearRobot(referencePosition, direction, range);
+        if(requestedTile != null && gameMap.isValidTile(requestedTile)){
+            return requestedTile.getRobots().size();
+        } else {
+            return 0;
+        }
     }
+    
+    /**
+     * Finds a tile some direction and range away from the input robot
+     * @param r the robot we are looking in reference from
+     * @param direction the direction we are looking away from the robot
+     * @param range the range away from the robot we are looking
+     * @return the tile at the specified direction and range
+     */
+    private Tile tileNearRobot(Robot r, int direction, int range){
+        int newX = r.getXPosition();
+        int newY = r.getYPosition() + range;
+        if(direction==0){
+            return gameMap.findTile(newX, newY);
+        } else {
+            //move along edge 1
+            for(int i=0; i<range; i++){
+                newX++;
+                direction--;
+                if(direction==0){
+                    return gameMap.findTile(newX, newY);
+                }
+            }
+          //move along edge 2
+            for(int i=0; i<range; i++){
+                newY--;
+                direction--;
+                if(direction==0){
+                    return gameMap.findTile(newX, newY);
+                }
+            }
+            //move along edge 3
+            for(int i=0; i<range; i++){
+                newX--;
+                newY--;
+                direction--;
+                if(direction==0){
+                    return gameMap.findTile(newX, newY);
+                }
+            }
+          //move along edge 4
+            for(int i=0; i<range; i++){
+                newX--;
+                direction--;
+                if(direction==0){
+                    return gameMap.findTile(newX, newY);
+                }
+            }
+          //move along edge 5
+            for(int i=0; i<range; i++){
+                newY++;
+                direction--;
+                if(direction==0){
+                    return gameMap.findTile(newX, newY);
+                }
+            }
+          //move along edge 6
+            for(int i=0; i<range-1; i++){
+                newX++;
+                newY++;
+                direction--;
+                if(direction==0){
+                    return gameMap.findTile(newX, newY);
+                }
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Tells us the direction between two robots
