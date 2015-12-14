@@ -311,8 +311,7 @@ public class Robot implements Cloneable {
             this.mailBox.put(member, memberMessages);
             return message;
         } else {
-            String errorMessage = "robot " + this.simMemberNumber + " attempted to recieve mail from teammate " + sender
-                    + ", but there were no messages in the mailbox";
+            String errorMessage = "no mail from teammate " + sender;
             throw new ForthRunTimeException(errorMessage);
         }
     }
