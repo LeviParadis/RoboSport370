@@ -703,7 +703,7 @@ public class ForthSystemCommands {
                 forthStack.push(new ForthIntegerLiteral(direction));
                 forthStack.push(new ForthIntegerLiteral(teamNum));
             } else {
-                throw new ForthRunTimeException("there are not " + (idx+1) + "robots near by");
+                throw new ForthRunTimeException("there are not " + (idx+1) + " robots near by");
             }
             
         } else {
