@@ -692,7 +692,7 @@ public class ForthSystemCommands {
         if (first instanceof ForthIntegerLiteral) {
             List<Robot> result = controller.getClosest(robot);
             int idx = (int)((ForthIntegerLiteral) first).getValue();
-            if(idx<result.size()){
+            if(idx<result.size() && idx >= 0){
                 Robot selected = result.get((int) ((ForthIntegerLiteral) first).getValue());
                 long health = selected.getHealth();
                 long teamNum = selected.getTeamNumber();
@@ -703,7 +703,7 @@ public class ForthSystemCommands {
                 forthStack.push(new ForthIntegerLiteral(direction));
                 forthStack.push(new ForthIntegerLiteral(teamNum));
             } else {
-                throw new ForthRunTimeException("could not identify robot " + idx + " nearby");
+                throw new ForthRunTimeException("there are not " + (idx+1) + "robots near by");
             }
             
         } else {
